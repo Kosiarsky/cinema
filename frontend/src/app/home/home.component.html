@@ -1,0 +1,58 @@
+<app-header></app-header>
+
+<app-slider></app-slider>
+
+<div class="container mt-5 text-dark">
+  <h2 class="text-left py-5">POLECANE</h2>
+  <div class="row">
+    <div class="col-md-3" *ngFor="let movie of recommendedMovies">
+      <div class="card bg-light text-dark">
+        <img src="https://via.placeholder.com/150" class="card-img-top" alt="{{ movie.title }}">
+        <div class="card-body">
+          <h5 class="card-title">{{ movie.title }}</h5>
+          <p class="card-text">{{ movie.description }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="text-center mt-3">
+    <button class="btn btn-primary">POKAŻ WIĘCEJ</button>
+  </div>
+</div>
+
+<div class="container mt-5 text-dark">
+  <h2 class="text-left py-5">NOWOŚCI</h2>
+  <div class="row">
+    <div class="col-md-4" *ngFor="let news of newsList">
+      <div class="card bg-light text-dark">
+        <div class="card-body">
+          <h5 class="card-title">{{ news.title }}</h5>
+          <p class="card-text">{{ news.summary }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="text-center mt-3">
+    <button class="btn btn-primary">POKAŻ WIĘCEJ</button>
+  </div>
+</div>
+
+<div class="container mt-5 mb-5 text-dark">
+  <h2 class="text-left py-5">ZAPOWIEDZI</h2>
+  <div class="row">
+    <div class="col-md-3" *ngFor="let movie of upcomingMovies">
+      <div class="card bg-light text-dark">
+        <img src="https://via.placeholder.com/150" class="card-img-top" alt="{{ movie.title }}">
+        <div class="card-body">
+          <h5 class="card-title">{{ movie.title }}</h5>
+          <p class="card-text">{{ movie.description }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="text-center mt-3">
+    <button class="btn btn-primary">POKAŻ WIĘCEJ</button>
+  </div>
+</div>
+
+<app-footer></app-footer>
