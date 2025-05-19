@@ -1,0 +1,49 @@
+<app-header></app-header>
+<div class="login-container">
+  <div class="container">
+    <div class="row justify-content-left align-items-center">
+      <div class="col-md-6 col-lg-5">
+        <div class="card-body login-card p-5">
+          <h2 class="text-left mb-4 px-5 red-border-bar">LOGOWANIE</h2>
+          <form (ngSubmit)="onSubmit()">
+            <!-- Pole Email -->
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input
+                type="email"
+                id="email"
+                class="form-control"
+                formControlName="email"
+                placeholder="Wprowadź email"
+              />
+              <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="text-danger">
+                Podaj poprawny adres email.
+              </div>
+            </div>
+            <!-- Pole Hasło -->
+            <div class="mb-3">
+              <label for="password" class="form-label">Hasło</label>
+              <input
+                type="password"
+                id="password"
+                class="form-control"
+                formControlName="password"
+                placeholder="Wprowadź hasło"
+              />
+              <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="text-danger">
+                Hasło jest wymagane.
+              </div>
+            </div>
+            <!-- Przyciski -->
+            <div class="d-flex justify-content-between flex-column">
+              <button type="submit" class="btn btn-primary apl-button" [disabled]="loginForm.invalid">Zaloguj</button>
+              <p class="pt-4 pb-0">Nie masz konta? Zarejestruj się!</p>
+              <button type="button" class="btn btn-secondary apl-button" routerLink="/register">Zarejestruj się</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>
