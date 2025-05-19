@@ -1,0 +1,23 @@
+<app-header></app-header>
+
+<div class="container mt-5 text-light">
+  <h2 class="text-center mb-4">WSZYSTKIE ZAPOWIEDZI</h2>
+  <div class="row">
+    <div class="col-md-12" *ngFor="let news of newsList">
+      <div class="card announcements-card mb-4 d-flex flex-row">
+        <!-- Obrazek po lewej stronie -->
+        <img src="{{ news.image }}" class="announcements-card-img" alt="{{ news.title }}">
+        <!-- Informacje po prawej stronie -->
+        <div class="announcements-card-body flex-grow-1">
+          <h3 class="announcements-card-title">{{ news.title }}</h3>
+          <p class="announcements-card-text">{{ news.content }}</p>
+          <p class="announcements-card-date">Obsada: {{ news.cast }}</p>
+          <p class="announcements-card-date">Data premiery: {{ news.date }}</p>
+          <p class="announcements-card-date">Czas trwania: {{ news.time }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer>
