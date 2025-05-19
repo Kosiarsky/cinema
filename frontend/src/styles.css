@@ -1,6 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 body {
-    background-color: #0f1b2f !important; 
+    background-color: #03060a !important; 
     color: #eaeaea !important; 
+    font-family: 'Roboto', sans-serif !important; /* Ustaw czcionkę na Roboto */
 }
 
 h1 {
@@ -8,31 +10,141 @@ h1 {
 }
 
 .navbar-brand {
+    color: #cc0000 !important;
     font-weight: bold;
+    transition: 0.3s ease, border 0.3s ease; /* Animacja przejścia */
+}
+.navbar-brand:hover {
+    color: #ff0000 !important;
+    text-decoration: none;
+    transition: 0.3s ease, border 0.3s ease; /* Animacja przejścia */
+}
+
+.red-border-bar {
+    padding-bottom: 10px;
+    border-bottom: 2px solid #cc0000 !important;
+    max-width: 400px;
+} 
+
+.red-border-menu {
+    border-bottom: 2px solid #cc0000 !important;
+} 
+
+.header-menu {
+    border-bottom: 2px solid #cc0000 !important;
+}
+
+.header-menu-item {
+    background-color: rgb(15, 27, 47, 0) !important; /* Kolor tła karty */
+}
+
+.header-menu-item:hover {
+    background-color: #0f1b2f !important; /* Kolor tła karty po najechaniu */
+    transition: background-color 0.3s ease, border 0.3s ease; /* Animacja przejścia */
 }
 
 .navbar {
     z-index: 1030;
 }
+
+.header {
+    z-index: 1000;
+}
   
 h2 {
     color: #ffffff !important;
 }
-  
-.card {
-    border: none;
-    background-color: #162447 !important;
+
+.header-nav-item {
+    background-color: rgb(15, 27, 47, 0) !important; /* Kolor tła karty */
+    border-bottom: 2px solid rgb(15, 27, 47, 0) !important;
+    box-sizing: border-box; /* Uwzględnij padding i border w wysokości */
+}
+
+.header-nav-item:hover {
+    background-color: #111f38 !important; /* Kolor tła karty po najechaniu */
+    border-bottom: 2px solid #1f4068 !important; /* Kolor obramowania po najechaniu */
+    transition: background-color 0.3s ease, border 0.3s ease; /* Animacja przejścia */
 }
   
+.news-card{
+    height: 200px !important; /* Stała wysokość kart */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden; /* Ukryj nadmiar zawartości */
+    background-color: #0f1b2f !important;
+    /*border: 2px solid #0f1b2f !important;*/
+    box-sizing: border-box; /* Uwzględnij padding i border w wysokości */
+}
+
+.news-card:hover {
+    background-color: rgb(15, 27, 47, 0.2) !important; /* Kolor tła karty po najechaniu */
+    border: 2px solid #1f4068 !important; /* Kolor obramowania po najechaniu */
+    transition: background-color 0.3s ease, border 0.3s ease; /* Animacja przejścia */
+}
+
+/* Karty w sekcjach "Polecane" i "Zapowiedzi" */
+.film-card{
+    height: 370px !important; /* Stała wysokość kart */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden; /* Ukryj nadmiar zawartości */
+    background-color: rgb(15, 27, 47, 0.2) !important; /* Kolor tła karty */
+    border: 2px solid #0f1b2f !important;
+    box-sizing: border-box; /* Uwzględnij padding i border w wysokości */
+}
+
+.film-card:hover {
+    background-color: #0f1b2f !important; /* Kolor tła karty po najechaniu */
+    border: 2px solid #1f4068 !important; /* Kolor obramowania po najechaniu */
+    transition: background-color 0.3s ease, border 0.3s ease; /* Animacja przejścia */
+}
+
+/* Obrazki w kartach */
+.card img {
+    height: 270px; /* Stała wysokość obrazków */
+    object-fit: cover; /* Dopasuj obrazek do kontenera, przytnij nadmiar */
+    object-position: center; /* Wyśrodkuj obrazek */
+    width: 100%; /* Dopasuj szerokość obrazka do kontenera */
+}
+
+/* Treść karty */
+.card-body {
+    flex-grow: 1; /* Wypełnij pozostałą przestrzeń w karcie */
+    display: flex; /* Użyj Flexboxa do wyśrodkowania */
+    flex-direction: column; /* Ustaw elementy w kolumnie */
+    justify-content: center; /* Wyśrodkuj w pionie */
+    align-items: center; /* Wyśrodkuj w poziomie */
+    text-align: center; /* Wyśrodkuj tekst w poziomie */
+    padding: 15px;
+    box-sizing: border-box; /* Uwzględnij padding w wysokości */
+  }
+
+/* Tytuł karty */
+.card-title {
+    font-size: 1.0rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #ffffff; /* Kolor tekstu */
+}
+
+/* Opis karty */
+.card-text {
+    font-size: 0.9rem;
+    color: #bbbbbb; /* Kolor tekstu opisu */
+}
 
 .btn-primary {
-    background-color: #1f4068 !important;
-    border-color: #1f4068 !important;
+    background-color: #0f1b2f !important;
+    border: 2px solid rgba(15, 27, 47, 0) !important;
 }
   
 .btn-primary:hover {
-    background-color: #162447 !important;
-    border-color: #162447 !important;
+    background-color: rgb(15, 27, 47, 0.2) !important; /* Kolor tła karty po najechaniu */
+    border: 2px solid #1f4068 !important; /* Kolor obramowania po najechaniu */
+    transition: background-color 0.3s ease, border 0.3s ease; /* Animacja przejścia */
 }
   
 
@@ -41,7 +153,324 @@ footer {
     color: #eaeaea !important;
 }
 
-.carousel-caption {
-    background-image: linear-gradient(180deg, rgba(15, 27, 47, 0), rgba(15, 27, 47, 1) 90%) !important;
-    padding: 20px;
+
+
+.dark-bg {
+    background-color: #0f1b2f !important;
 }
+
+owl-carousel-o, .owl-carousel, .owl-stage-outer {
+    overflow: hidden;
+    width: 100%;
+  }
+  
+  .owl-stage {
+    display: flex;
+  }
+  
+  .owl-item {
+    flex-shrink: 0;
+    width: 100%;
+  }
+  
+ /* Kontener carousel */
+ .carousel-wrapper {
+    width: 100%;
+    max-width: 100%; /* Domyślnie pełna szerokość */
+    margin: 0 auto;
+    margin-top:10px;
+    border-radius: 15px;
+    overflow: hidden;
+    position: relative; /* Ustaw pozycjonowanie dla strzałek */
+  }
+  
+  /* Dostosowanie szerokości dla różnych rozdzielczości */
+  @media (min-width: 576px) {
+    .carousel-wrapper {
+      max-width: 540px;
+    }
+  }
+  @media (min-width: 768px) {
+    .carousel-wrapper {
+      max-width: 720px;
+    }
+  }
+  @media (min-width: 992px) {
+    .carousel-wrapper {
+      max-width: 960px;
+    }
+  }
+  @media (min-width: 1200px) {
+    .carousel-wrapper {
+      max-width: 1140px;
+    }
+  }
+  @media (min-width: 1400px) {
+    .carousel-wrapper {
+      max-width: 1320px;
+    }
+  }
+  
+  /* Kontener pojedynczego slajdu */
+  .slide-container {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: 56.25%; /* Proporcje 16:9 (dostosuj według potrzeb) */
+  }
+
+  /* Kontener pojedynczego slajdu */
+  .slide-content {
+    position: relative; /* Ustaw kontekst pozycjonowania dla podpisów */
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Ukryj nadmiar zawartości */
+  }
+  
+/* Obrazki w sliderze */
+.owl-carousel .owl-item img {
+    width: 100%; /* Dopasuj szerokość obrazka do kontenera */
+    height: 100%; /* Zachowaj proporcje obrazka */
+    object-fit: cover; /* Dopasuj obrazek do kontenera bez deformacji */
+    object-position: center; /* Wyśrodkuj obrazek w kontenerze */
+  }
+  
+  /* Kontener slidera */
+  .owl-carousel .owl-stage {
+    display: flex;
+    justify-content: center; /* Wyśrodkuj slajdy */
+  }
+  
+  .owl-carousel .owl-item {
+    flex: 0 0 auto; /* Zapewnia, że każdy slajd ma swoją szerokość */
+    width: 100%; /* Ustaw szerokość slajdu na 100% */
+    height: 600px;
+  }
+  /* Podpis slajdu */
+  .slide-caption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%; /* Rozciągnij na całą szerokość slidera */
+    height: 100%; /* Rozciągnij na całą wysokość slidera */
+    background: linear-gradient(to top, rgba(3, 6, 10, 1), rgba(3, 6, 10, 0) 90%); /* Gradient od dołu do góry */
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* Umieść tekst na dole */
+    padding: 20px;
+    box-sizing: border-box;
+    z-index: 10;
+    text-align: center;
+  }
+  
+  .slide-caption h4 {
+    font-size: 1.7rem;
+    margin: 0 0 10px;
+    font-weight: bold;
+  }
+  
+  .slide-caption p {
+    font-size: 1.2rem;
+    margin: 0;
+    line-height: 1.4;
+    color: #eaeaea;
+  }
+  
+  /* Naprawa stylów Owl Carousel */
+  owl-carousel-o, .owl-carousel, .owl-stage-outer {
+    height: 100%;
+  }
+  
+  .owl-stage {
+    display: flex;
+    height: 100%;
+  }
+  
+  .owl-item {
+    height: 100%;
+  }
+
+  /* Strzałki nawigacyjne */
+.owl-nav {
+  position: absolute;
+  top: 50%; /* Umieść strzałki na środku wysokości slidera */
+  width: 100%;
+  display: flex;
+  padding: 0 20px; /* Odstęp od krawędzi */
+  justify-content: space-between; /* Rozmieść strzałki po lewej i prawej stronie */
+  transform: translateY(-50%); /* Wyrównaj do środka */
+  pointer-events: none; /* Pozwala kliknąć tylko na strzałki, a nie na cały kontener */
+}
+
+.owl-nav i {
+  background: rgba(0, 0, 0, 0.5); /* Półprzezroczyste tło */
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 50%;
+  cursor: pointer;
+  pointer-events: all; /* Aktywuj kliknięcie tylko na przyciski */
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.owl-nav i:hover {
+  background: rgba(255, 255, 255, 0.8); /* Zmień tło na hover */
+  color: black;
+  transform: scale(1.1); /* Powiększ strzałkę na hover */
+}
+
+.owl-nav i {
+    border: 2px solid white !important; /* Gradient od środka */
+    color: white;
+    border: none;
+    padding: 22px 15px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease; /* Animacja */
+}
+
+.owl-nav i:hover {
+    transform: scale(1.15); 
+}
+  
+
+  /* Podpisy slajdów */
+#movieSlider h4 {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    text-align: center;
+    z-index: 10;
+  }
+
+.announcements-card {
+    background-color: rgba(0, 0, 0, 0.0) !important;	
+    color: #eaeaea;
+    border: none;
+    padding: 20px;
+    border-radius: 0px !important;
+    border-bottom: 2px solid #1f4068 !important;
+  display: flex;
+  align-items: flex-start; /* Wyrównaj zawartość do góry */
+  gap: 20px; /* Odstęp między obrazkiem a tekstem */
+}
+
+
+.announcements-card .announcements-card-img {
+  width: 150px; /* Szerokość obrazka */
+  height: auto; /* Zachowaj proporcje */
+  border-radius: 5px;
+  object-fit: cover; /* Dopasuj obrazek do kontenera */
+}
+
+/* Treść karty */
+.announcements-card .announcements-card-body {
+  flex-grow: 1; /* Wypełnij pozostałą przestrzeń */
+}
+  
+.announcements-card .announcements-card-title {
+    font-size: 1.8rem;
+    color: #eaeaea;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+.announcements-card .announcements-card-date {
+    font-size: 0.8rem;
+    color: #eaeaea;
+    margin-bottom: 3px;
+  }
+  
+.announcements-card .announcements-card-text {
+    font-size: 1rem;
+    color: #eaeaea;
+    line-height: 1.6;
+  }
+
+  .login-container {
+    background: url('assets/images/background.jpg') no-repeat center center fixed; /* Ustaw tło */
+    background-size: cover; /* Dopasuj tło do rozmiaru ekranu */
+    height: 79vh; /* Wysokość na pełny ekran */
+    display: flex;
+    align-items: center; /* Wyśrodkuj w pionie */
+    justify-content: center; /* Wyśrodkuj w poziomie */
+  }
+  
+
+  .login-card {
+    background-color: #050A11 !important; /* Kolor tła karty */
+    border: 2px solid #0f1b2f !important;
+    color: #eaeaea;
+    border: none;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+
+/* Stylizacja inputów */
+input {
+    color: white !important; /* Kolor tekstu */
+}
+
+input::placeholder {
+    color: #969696 !important; /* Kolor placeholdera */
+    opacity: 0.7; /* Przezroczystość placeholdera */
+}
+
+input.form-control {
+    background-color: #111f38 !important; /* Kolor tła karty po najechaniu */
+    border-bottom: 2px solid #1f406800 !important; /* Kolor obramowania po najechaniu */
+    color: white !important; /* Kolor tekstu */
+    border: none; /* Usuń obramowanie */
+    border-radius: 5px; /* Zaokrąglone rogi */
+    padding: 10px 15px; /* Wewnętrzne odstępy */
+    font-size: 1rem; /* Rozmiar tekstu */
+    text-align: center; /* Wyśrodkowanie tekstu */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Animacja */
+  }
+  
+  /* Stylizacja inputów na focus */
+  input.form-control:focus {
+    background-color: #0056b3; /* Ciemniejszy kolor na focus */
+    border-color: #cc0000 !important; /* Kolor obramowania na focus */
+    outline: none; /* Usuń domyślny outline */
+    transition: background-color 0.3s ease, border 0.3s ease; /* Animacja przejścia */
+  }
+  
+  /* Stylizacja inputów na hover */
+  input.form-control:hover {
+    background-color: #0056b3; /* Ciemniejszy kolor na hover */
+    border-color: #cc0000 !important; /* Kolor obramowania na focus */
+    cursor: pointer; /* Zmień kursor na wskaźnik */
+    transition: background-color 0.3s ease, border 0.3s ease; /* Animacja przejścia */
+  }
+
+  .apl-button {
+    background-color: #0f1b2f !important; /* Kolor tła karty po najechaniu */
+    border: 2px solid rgb(15, 27, 47, 0) !important; /* Kolor obramowania po najechaniu */
+    border-bottom: 2px solid #1f406800 !important; /* Kolor obramowania po najechaniu */
+    color: white !important; /* Kolor tekstu */
+    border: none; /* Usuń obramowanie */
+    border-radius: 5px; /* Zaokrąglone rogi */
+    padding: 10px 15px; /* Wewnętrzne odstępy */
+    font-size: 1rem; /* Rozmiar tekstu */
+    text-align: center; /* Wyśrodkowanie tekstu */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Animacja */
+    text-transform: uppercase;
+  }
+
+
+    /* Stylizacja inputów na hover */
+    .apl-button:hover {
+        background-color: #0056b3; /* Ciemniejszy kolor na hover */
+        border-bottom: 2px solid #cc0000 !important; /* Kolor obramowania po najechaniu */
+        cursor: pointer; /* Zmień kursor na wskaźnik */
+        transition: background-color 0.3s ease, border 0.3s ease; /* Animacja przejścia */
+    }
