@@ -2,11 +2,13 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
+import { RouterLink } from '@angular/router';
+
 
 @Component({
   selector: 'app-announcements',
   standalone: true,
-  imports: [ CommonModule, HeaderComponent, FooterComponent ],
+  imports: [ CommonModule, HeaderComponent, FooterComponent, RouterLink ],
   templateUrl: './announcements.component.html',
   styles: ``
 })

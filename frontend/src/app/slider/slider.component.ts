@@ -1,11 +1,12 @@
 import { Component, ChangeDetectorRef  } from '@angular/core';
 import { CarouselModule } from 'ngx-owl-carousel-o';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-slider',
   standalone: true,
-  imports: [CommonModule, CarouselModule],
+  imports: [CommonModule, CarouselModule , RouterLink],
   templateUrl: './slider.component.html',
   styles: ``
 })
