@@ -1,0 +1,109 @@
+<app-header></app-header>
+<div class="register-container">
+  <div class="container">
+    <div class="row justify-content-left align-items-center">
+      <div class="col-md-8 col-lg-6">
+        <div class="card-body register-card p-5">
+          <h2 class="text-left mb-4 register-bar">REJESTRACJA</h2>
+          <form (ngSubmit)="onSubmit()">
+            <div class="row">
+              <!-- Pole Imię -->
+              <div class="col-md-6 mb-3">
+                <label for="firstName" class="form-label">Imię</label>
+                <input
+                  type="text"
+                  id="firstName"
+                  class="form-control"
+                  formControlName="firstName"
+                  placeholder="Wprowadź imię"
+                />
+                <div *ngIf="registerForm.get('firstName')?.invalid && registerForm.get('firstName')?.touched" class="text-danger">
+                  Imię jest wymagane.
+                </div>
+              </div>
+              <!-- Pole Nazwisko -->
+              <div class="col-md-6 mb-3">
+                <label for="lastName" class="form-label">Nazwisko</label>
+                <input
+                  type="text"
+                  id="lastName"
+                  class="form-control"
+                  formControlName="lastName"
+                  placeholder="Wprowadź nazwisko"
+                />
+                <div *ngIf="registerForm.get('lastName')?.invalid && registerForm.get('lastName')?.touched" class="text-danger">
+                  Nazwisko jest wymagane.
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <!-- Pole Email -->
+              <div class="col-md-6 mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  class="form-control"
+                  formControlName="email"
+                  placeholder="Wprowadź email"
+                />
+                <div *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched" class="text-danger">
+                  Podaj poprawny adres email.
+                </div>
+              </div>
+              <!-- Pole Telefon -->
+              <div class="col-md-6 mb-3">
+                <label for="phone" class="form-label">Telefon</label>
+                <input
+                  type="text"
+                  id="phone"
+                  class="form-control"
+                  formControlName="phone"
+                  placeholder="Wprowadź numer telefonu"
+                />
+                <div *ngIf="registerForm.get('phone')?.invalid && registerForm.get('phone')?.touched" class="text-danger">
+                  Numer telefonu jest wymagany.
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <!-- Pole Hasło -->
+              <div class="col-md-6 mb-3">
+                <label for="password" class="form-label">Hasło</label>
+                <input
+                  type="password"
+                  id="password"
+                  class="form-control"
+                  formControlName="password"
+                  placeholder="Wprowadź hasło"
+                />
+                <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="text-danger">
+                  Hasło jest wymagane.
+                </div>
+              </div>
+              <!-- Pole Potwierdzenie Hasła -->
+              <div class="col-md-6 mb-3">
+                <label for="confirmPassword" class="form-label">Potwierdź Hasło</label>
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  class="form-control"
+                  formControlName="confirmPassword"
+                  placeholder="Potwierdź hasło"
+                />
+                <div *ngIf="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched" class="text-danger">
+                  Potwierdzenie hasła jest wymagane.
+                </div>
+              </div>
+            </div>
+            <!-- Przyciski -->
+            <div class="d-flex justify-content-center mt-4">
+              <button type="submit" class="btn btn-primary apl-button" [disabled]="registerForm.invalid">Zarejestruj się</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<app-footer></app-footer>
