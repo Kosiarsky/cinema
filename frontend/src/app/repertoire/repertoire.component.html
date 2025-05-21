@@ -1,22 +1,70 @@
-<h1 class="text-center mt-4">Repertoire</h1>
-<p class="lead text-muted text-center">
-Welcome to the cinema repertoire page!
-</p>
-<div class="row">
-<div class="col-md-4">
-    <div class="card">
-    <div class="card-body">
-        <h5 class="card-title">Movie 1</h5>
-        <p class="card-text">Description of Movie 1.</p>
+<app-header></app-header>
+
+<div class="third-container">
+    <div class="container mt-5 text-light">
+    <div class="text-left py-5 bar-border">
+        <h2 class="red-border-bar">REPERTUAR</h2>
+    </div>
+    <div class="nav-item-first">Wybierz dzień, który cie interesuje:</div>
+    <ul class="nav nav-tabs" id="repertoireTabs" role="tablist">
+        <li class="nav-item" *ngFor="let day of days; let i = index">
+        <button
+            class="nav-link"
+            [ngClass]="{ 'active': i === 0 }"
+            id="{{ day.date }}-tab"
+            [attr.data-bs-toggle]="'tab'"
+            [attr.data-bs-target]="'#' + day.date"
+            type="button"
+            role="tab"
+            [attr.aria-controls]="day.date"
+            [attr.aria-selected]="i === 0 ? 'true' : 'false'"
+        >
+            {{ day.day }}
+        </button>
+        </li>
+    </ul>
+    <div class="tab-content mt-4" id="repertoireContent">
+        
+        <div
+        class="tab-pane fade"
+        [ngClass]="{ 'show active': i === 0 }"
+        *ngFor="let day of days; let i = index"
+        id="{{ day.date }}"
+        role="tabpanel"
+        [attr.aria-labelledby]="day.date + '-tab'"
+        >
+        <div class="row">
+            <div class="col-md-12" *ngFor="let movie of getMoviesForDay(day.date)">
+            <div class="card repertoire-card mb-4 d-flex flex-row">
+                <!-- Obrazek po lewej stronie -->
+                <img src="{{ movie.image }}" class="repertoire-card-img" alt="{{ movie.title }}">
+                <!-- Informacje po prawej stronie -->
+                <div class="repertoire-card-body flex-grow-1">
+                    <div class="d-flex justify-content-between">
+                        <h3 class="repertoire-card-title">{{ movie.title }}</h3>
+                        <p class="repertoire-card-text">Ocena: <i class="fa-solid fa-star"></i> {{ movie.rating }}</p>
+                    </div>
+                    <p class="repertoire-card-date">Gatunek: {{ movie.type }}</p>
+                    <p class="repertoire-card-date">Obsada: {{ movie.cast }}</p>
+                    <p class="repertoire-card-date">Czas trwania: {{ movie.duration }}</p>
+                    <div class="d-flex flex-wrap repertoire-border">
+                        <button
+                        *ngFor="let time of movie.times"
+                        class="btn btn-outline-primary me-2 mb-2"
+                        >
+                        <b>{{ time[0] }}</b>
+                        <br />
+                        <p class="repertoire-card-date">{{ time[1] }}</p>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        </div>
     </div>
     </div>
 </div>
-<div class="col-md-4">
-    <div class="card">
-    <div class="card-body">
-        <h5 class="card-title">Movie 2</h5>
-        <p class="card-text">Description of Movie 2.</p>
-    </div>
-    </div>
-</div>
-</div>
+
+
+<app-footer></app-footer>
