@@ -6,6 +6,7 @@ import { NewsComponent } from './news/news.component';
 import { RecommendedComponent } from './recommended/recommended.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
+import { PricelistComponent } from './pricelist/pricelist.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -15,4 +16,6 @@ export const routes: Routes = [
     { path: 'recommended', component: RecommendedComponent },
     { path: 'login', component: LoginComponent },
     { path: 'register', component: RegisterComponent },
+    { path: 'pricelist', component: PricelistComponent },
+    { path: '**', redirectTo: '' } 
 ];
