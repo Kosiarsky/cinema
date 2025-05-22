@@ -27,6 +27,11 @@ h1 {
   max-width: 400px;
 }
 
+.red-border-small-bar {
+  padding-bottom: 10px;
+  border-bottom: 2px solid #cc0000 !important;
+}
+
 .red-border-menu {
   border-bottom: 2px solid #cc0000 !important;
 }
@@ -395,6 +400,18 @@ footer {
   padding: 20px; 
 }
 
+.fourth-container {
+  background: linear-gradient(to bottom right, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0) 50%), 
+              url('assets/images/background.jpg') no-repeat center center fixed;
+  background-size: cover;
+  height:400px;
+  display: flex;
+  flex-direction: column; 
+  align-items: flex-start; 
+  justify-content: flex-end; 
+  padding: 20px; 
+}
+
 .login-card {
   background-color: #050A11 !important;
   border: 2px solid #0f1b2f !important;
@@ -667,4 +684,35 @@ input.form-control:hover {
 .py-25 {
   padding-top: 0.7rem !important;
   padding-bottom: 0.5rem !important;
+}
+
+.movie-card-img {
+  width: 300px;
+  height: auto;
+  border-radius: 5px;
+  object-fit: cover;
+  margin-bottom: -70%;
+}
+
+.movie-rating {
+  font-size: 1.2rem;
+}
+
+.movie-card-img-2 {
+  width: 300px;
+  height: auto;
+  border-radius: 5px;
+  object-fit: cover;
+  margin-top: -80%;
+}
+
+.movie-title-bottom {
+  display: flex;
+  flex-direction: column; /* Ustaw układ w kolumnie */
+  justify-content: flex-end; /* Wyrównaj zawartość do dołu */
+  height: 100%; /* Wymagane, aby flex działał poprawnie */
+}
+
+.uppercase {
+  text-transform: uppercase;
 }
