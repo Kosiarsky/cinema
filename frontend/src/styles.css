@@ -716,3 +716,7 @@ input.form-control:hover {
 .uppercase {
   text-transform: uppercase;
 }
+
+.pointer {
+  cursor: pointer;
+}

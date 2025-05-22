@@ -75,7 +75,7 @@ export class MovieComponent implements OnInit {
     this.movie = this.movies.find((movie) => movie.id === id);
 
     if (!this.movie) {
-      this.router.navigate(['/']);
+      this.router.navigate(['/not-found']);
     }
   }
 
@@ -86,10 +86,10 @@ export class MovieComponent implements OnInit {
   getFormattedDate(dateString: string): string {
     const date = new Date(dateString);
     return date.toLocaleDateString('pl-PL', {
-      weekday: 'long', // Pełna nazwa dnia tygodnia
-      day: 'numeric',  // Dzień miesiąca
-      month: 'long',   // Pełna nazwa miesiąca
-      year: 'numeric', // Rok
+      weekday: 'long', 
+      day: 'numeric',  
+      month: 'long',   
+      year: 'numeric', 
     });
   }
 }

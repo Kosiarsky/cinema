@@ -8,6 +8,7 @@ import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { PricelistComponent } from './pricelist/pricelist.component';
 import { MovieComponent } from './movie/movie.component'; 
+import { NotFoundComponent } from './not-found/not-found.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -19,5 +20,6 @@ export const routes: Routes = [
     { path: 'register', component: RegisterComponent },
     { path: 'pricelist', component: PricelistComponent },
     { path: 'movie/:id', component: MovieComponent }, 
-    { path: '**', redirectTo: '' }
+    { path: 'not-found', component: NotFoundComponent },
+    { path: '**', redirectTo: 'not-found' }
 ];

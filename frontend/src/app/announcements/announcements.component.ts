@@ -16,6 +16,7 @@ import { RouterLink } from '@angular/router';
 export class AnnouncementsComponent {
   newsList = [
     {
+      id: 1,
       title: 'Oszukać przeznaczenie: Wieże krwi',
       image: 'https://fwcdn.pl/fpo/94/80/10009480/8166856.8.webp',
       date: '2025-05-01',
@@ -24,6 +25,7 @@ export class AnnouncementsComponent {
       content: 'Film opowiada o walce z przeznaczeniem i tajemniczymi wydarzeniami. To pełna emocji historia, która trzyma w napięciu do samego końca.',
     },
     {
+      id: 2,
       title: 'Hurry Up Tomorrow',
       image: 'https://fwcdn.pl/fpo/88/48/10068848/8173706.8.webp',
       date: '2025-04-25',
@@ -32,6 +34,7 @@ export class AnnouncementsComponent {
       content: 'Historia pełna emocji i niespodziewanych zwrotów akcji. Film, który z pewnością poruszy serca widzów.',
     },
     {
+      id: 3,
       title: 'Amator',
       image: 'https://fwcdn.pl/fpo/15/75/10031575/8171655.8.webp',
       date: '2025-04-20',

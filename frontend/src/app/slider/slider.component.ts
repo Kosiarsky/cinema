@@ -13,16 +13,19 @@ import { RouterLink } from '@angular/router';
 export class SliderComponent {
   slides = [
     {
+      filmId: 1,
       image: 'https://img.helios.pl/obrazy/1110x440w/film/oszukac-przeznaczenie-wiezy-krwi/oszukac-przeznaczenie-wiezy-krwi-duzy-obraz-22537.jpg',
       title: 'Oszukać przeznaczenie: Wieże krwi',
       description: 'Film o walce z przeznaczeniem i tajemniczymi wydarzeniami.'
     },
     {
+      filmId: 2,
       image: 'https://img.helios.pl/obrazy/1110x440w/film/hurry-up-tomorrow/hurry-up-tomorrow-duzy-obraz-92537.jpg',
       title: 'Hurry Up Tomorrow',
       description: 'Historia pełna emocji i niespodziewanych zwrotów akcji.'
     },
     {
+      filmId: 3,
       image: 'https://moviesroom.pl/storage/media/31819/Rami-Malek-o-filmie-Amator.jpg?v=1743947007',
       title: 'Amator',
       description: 'Poruszający dramat o pasji i wytrwałości w dążeniu do celu.'
