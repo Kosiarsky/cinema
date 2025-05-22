@@ -1,23 +1,23 @@
 <app-header></app-header>
-
-<div class="container mt-5 text-light">
-  <div class="text-left py-5 bar-border"><h2 class="red-border-bar">POLECANE FILMY</h2></div>
-  <div class="row">
-    <div class="col-md-12" *ngFor="let recommended of recommendedList">
-      <div class="card announcements-card mb-4 d-flex flex-row">
-        <!-- Obrazek po lewej stronie -->
-        <img src="{{ recommended.image }}" class="announcements-card-img" alt="{{ recommended.title }}">
-        <!-- Informacje po prawej stronie -->
-        <div class="announcements-card-body flex-grow-1">
-          <h3 class="announcements-card-title">{{ recommended.title }}</h3>
-          <p class="announcements-card-text">Ocena: <i class="fa-solid fa-star"></i> {{ recommended.rating }}</p>
-          <p class="announcements-card-text">{{ recommended.content }}</p>
-          <p class="announcements-card-date">Obsada: {{ recommended.cast }}</p>
-          <p class="announcements-card-date">Czas trwania: {{ recommended.time }}</p>
+<div class="third-container">
+  <div class="container mt-5 text-light">
+    <div class="text-left py-5 bar-border"><h2 class="red-border-bar">POLECANE FILMY</h2></div>
+    <div class="row">
+      <div class="col-md-12" *ngFor="let recommended of recommendedList">
+        <div class="card announcements-card mb-4 d-flex flex-row">
+          <!-- Obrazek po lewej stronie -->
+          <img src="{{ recommended.image }}" class="announcements-card-img" alt="{{ recommended.title }}">
+          <!-- Informacje po prawej stronie -->
+          <div class="announcements-card-body flex-grow-1">
+            <h3 class="announcements-card-title">{{ recommended.title }}</h3>
+            <p class="announcements-card-text">Ocena: <i class="fa-solid fa-star"></i> {{ recommended.rating }}</p>
+            <p class="announcements-card-text">{{ recommended.content }}</p>
+            <p class="announcements-card-date">Obsada: {{ recommended.cast }}</p>
+            <p class="announcements-card-date">Czas trwania: {{ recommended.time }}</p>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
-
 <app-footer></app-footer>

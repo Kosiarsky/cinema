@@ -37,6 +37,7 @@ h1 {
 
 .header-menu-item {
   background-color: rgb(15, 27, 47, 0) !important;
+  border-radius: 5px 5px 0px 0px !important;
 }
 
 .header-menu-item:hover {
@@ -326,12 +327,12 @@ footer {
 }
 
 .announcements-card {
-  background-color: rgba(0, 0, 0, 0.0) !important;
+  background-color: #050A11 !important;
+  border: 2px solid #0f1b2f !important;
+  border-radius: 10px !important;
   color: #eaeaea;
   border: none;
   padding: 20px;
-  border-radius: 0px !important;
-  border-bottom: 2px solid #1f4068 !important;
   display: flex;
   align-items: flex-start;
   gap: 20px;
@@ -367,13 +368,24 @@ footer {
   line-height: 1.6;
 }
 
-.login-container {
+.second-container {
   background: url('assets/images/background.jpg') no-repeat center center fixed;
   background-size: cover;
-  height: 79vh;
+  min-height: 79vh;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.third-container {
+  background: url('assets/images/background.jpg') no-repeat center center fixed;
+  background-size: cover;
+  min-height: 79vh;
+  display: flex;
+  flex-direction: column; 
+  align-items: flex-start; 
+  justify-content: flex-start; 
+  padding: 20px; 
 }
 
 .login-card {
@@ -383,15 +395,6 @@ footer {
   border: none;
   padding: 20px;
   border-radius: 10px;
-}
-
-.register-container {
-  background: url('assets/images/background.jpg') no-repeat center center fixed;
-  background-size: cover;
-  height: 79vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .register-card {
@@ -519,6 +522,12 @@ input.form-control:hover {
   border-bottom: 1px solid rgba(0, 0, 0, 0) !important;
 }
 
+.table-striped > tbody > tr > td {
+  --bs-table-color-type: var(--bs-table-striped-color);
+  --bs-table-bg-type: #050A11 !important;
+  border-bottom: 1px solid #050A11 !important;
+}
+
 .table-striped > tbody > tr:hover {
   color: #eaeaea !important;
   transition: background-color 0.3s ease, color 0.3s ease;
@@ -528,4 +537,130 @@ input.form-control:hover {
 .table-striped > tbody > tr:hover > th {
   border-bottom: 1px solid #cc0000 !important;
   transition: border-color 0.3s ease;
+}
+
+.nav-item-first {
+  padding-top: 10px;
+  font-weight: bold;
+  padding-right: 20px;
+  padding-bottom: 10px;
+}
+.nav-tabs {
+  --bs-nav-tabs-border-width: 2px !important;
+  --bs-nav-tabs-border-color: #cc0000 !important;
+  --bs-nav-tabs-border-radius: var(--bs-border-radius);
+  --bs-nav-tabs-link-hover-border-color: var(--bs-secondary-bg) var(--bs-secondary-bg) var(--bs-border-color);
+  --bs-nav-tabs-link-active-color: var(--bs-emphasis-color);
+  --bs-nav-tabs-link-active-bg: var(--bs-body-bg);
+  --bs-nav-tabs-link-active-border-color: var(--bs-border-color) var(--bs-border-color) var(--bs-body-bg);
+  border-bottom: var(--bs-nav-tabs-border-width) solid var(--bs-nav-tabs-border-color);
+  padding-top: 2px;
+}
+
+.nav-tabs li, .nav-tabs ul {
+  border: 0;
+}
+
+.nav-tabs .nav-link {
+  text-transform: uppercase;
+  color: #eaeaea;
+  background-color: #16244700;
+  border-right: 0px solid #cc000000 !important;
+  border-left: 0px solid #cc000000 !important;
+  border-top: 2px solid #cc000000 !important;
+  border-bottom: 2px solid #cc0000 !important;
+  margin-right: 5px;
+  border-radius: 5px 5px 0px 0px  !important;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.nav-tabs .nav-link:hover {
+  background-color: rgb(15, 27, 47, 1) !important;
+  color: #ffffff;
+  border-color: #cc0000;
+}
+
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active, .nav-tabs .nav-link.focus {
+  text-transform: uppercase;
+  background-color: rgb(15, 27, 47, 1) !important;
+  color: #ffffff !important;
+  border-radius: 5px 5px 0px 0px  !important;
+  border-right: 0px solid #cc000000 !important;
+  border-left: 0px solid #cc000000 !important;
+  border-top: 2px solid #cc000000 !important;
+  border-bottom: 2px solid #cc0000 !important;
+}
+
+.nav-text {
+  color: #eaeaea;
+  font-size: 0.8rem;
+  margin-bottom: 0px;
+}
+
+.repertoire-card {
+  background-color: #050A11 !important;
+  border: 2px solid #0f1b2f !important;
+  color: #eaeaea;
+  padding: 20px;
+  border-radius: 10px !important;
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.repertoire-card .repertoire-card-img {
+  width: 150px;
+  height: auto;
+  border-radius: 5px;
+  object-fit: cover;
+}
+
+.repertoire-card .repertoire-card-body {
+  flex-grow: 1;
+}
+
+.repertoire-card .repertoire-card-title {
+  font-size: 1.8rem;
+  color: #eaeaea;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.repertoire-card .repertoire-card-date {
+  font-size: 0.8rem;
+  color: #eaeaea;
+  margin-bottom: 3px;
+}
+
+.repertoire-card .repertoire-card-text {
+  font-size: 1rem;
+  color: #eaeaea;
+  line-height: 1.6;
+}
+
+.repertoire-card .repertoire-border {
+  border-top: 2px solid #0f1b2f !important;
+  font-size: 1rem;
+  color: #eaeaea;
+  margin-top: 10px;
+  padding-top: 15px;
+}
+
+.btn-outline-primary {
+  color: #ffffff !important;
+  border: 2px solid #0f1b2f !important;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  padding-left: 25px !important;
+  padding-right: 25px !important;
+}
+
+.btn-outline-primary:hover {
+  background-color: #0f1b2f !important;
+  border-color: #cc0000 !important;
+  color: #ffffff;
+}
+
+.py-25 {
+  padding-top: 0.7rem !important;
+  padding-bottom: 0.5rem !important;
 }
