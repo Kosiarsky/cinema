@@ -1,15 +1,17 @@
-<div class="carousel-wrapper">
-  <owl-carousel-o [options]="carouselOptions">
-    <ng-container *ngFor="let slide of slides">
-      <ng-template carouselSlide>
-        <div class="slide-content">
-          <img [src]="slide.image" [alt]="slide.title" />
-          <div class="slide-caption">
-            <h4>{{ slide.title }}</h4>
-            <p>{{ slide.description }}</p>
+<div class="pb-5">
+  <div class="carousel-wrapper">
+    <owl-carousel-o [options]="carouselOptions">
+      <ng-container *ngFor="let slide of slides">
+        <ng-template carouselSlide>
+          <div class="slide-content">
+            <img [src]="slide.image" [alt]="slide.title" />
+            <div class="slide-caption">
+              <h4>{{ slide.title }}</h4>
+              <p>{{ slide.description }}</p>
+            </div>
           </div>
-        </div>
-      </ng-template>
-    </ng-container>
-  </owl-carousel-o>
+        </ng-template>
+      </ng-container>
+    </owl-carousel-o>
+  </div>
 </div>

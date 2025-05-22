@@ -37,11 +37,14 @@ h1 {
 
 .header-menu-item {
   background-color: rgb(15, 27, 47, 0) !important;
+  border: 2px solid rgb(15, 27, 47, 0) !important;
+  border-bottom: 0px solid rgb(15, 27, 47, 0) !important;
   border-radius: 5px 5px 0px 0px !important;
 }
 
 .header-menu-item:hover {
   background-color: #0f1b2f !important;
+  border-color: #cc0000 !important;
   transition: background-color 0.3s ease, border 0.3s ease;
 }
 
@@ -71,6 +74,7 @@ h2 {
 }
 
 .news-card {
+  cursor: pointer;
   height: 200px !important;
   display: flex;
   flex-direction: column;
@@ -78,28 +82,31 @@ h2 {
   overflow: hidden;
   background-color: #0f1b2f !important;
   box-sizing: border-box;
+  transition: background-color 0.3s ease, border 0.3s ease;
 }
 
 .news-card:hover {
-  background-color: rgb(15, 27, 47, 0.2) !important;
-  border: 2px solid #1f4068 !important;
+  background-color: #050A11 !important;
+  border: 2px solid #cc0000 !important;
   transition: background-color 0.3s ease, border 0.3s ease;
 }
 
 .film-card {
+  cursor: pointer;
   height: 370px !important;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   overflow: hidden;
-  background-color: rgb(15, 27, 47, 0.2) !important;
+  background-color: #050A11 !important;
   border: 2px solid #0f1b2f !important;
   box-sizing: border-box;
+  transition: background-color 0.3s ease, border 0.3s ease;
 }
 
 .film-card:hover {
   background-color: #0f1b2f !important;
-  border: 2px solid #1f4068 !important;
+  border: 2px solid #cc0000 !important;
   transition: background-color 0.3s ease, border 0.3s ease;
 }
 
@@ -140,7 +147,7 @@ h2 {
 
 .btn-primary:hover {
   background-color: rgb(15, 27, 47, 0.2) !important;
-  border: 2px solid #1f4068 !important;
+  border: 2px solid #cc0000 !important;
   transition: background-color 0.3s ease, border 0.3s ease;
 }
 
@@ -565,30 +572,27 @@ input.form-control:hover {
   text-transform: uppercase;
   color: #eaeaea;
   background-color: #16244700;
-  border-right: 0px solid #cc000000 !important;
-  border-left: 0px solid #cc000000 !important;
-  border-top: 2px solid #cc000000 !important;
+  border: 2px solid rgb(15, 27, 47, 0) !important;
   border-bottom: 2px solid #cc0000 !important;
   margin-right: 5px;
   border-radius: 5px 5px 0px 0px  !important;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
+
+
 .nav-tabs .nav-link:hover {
-  background-color: rgb(15, 27, 47, 1) !important;
+  background-color: #0f1b2f !important;
+  border-color: #cc0000 !important;
+  transition: background-color 0.3s ease, border 0.3s ease;
   color: #ffffff;
-  border-color: #cc0000;
 }
 
 .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active, .nav-tabs .nav-link.focus {
   text-transform: uppercase;
-  background-color: rgb(15, 27, 47, 1) !important;
+  background-color: #16244700 !important;
+  border-color: #cc0000 !important;
   color: #ffffff !important;
-  border-radius: 5px 5px 0px 0px  !important;
-  border-right: 0px solid #cc000000 !important;
-  border-left: 0px solid #cc000000 !important;
-  border-top: 2px solid #cc000000 !important;
-  border-bottom: 2px solid #cc0000 !important;
 }
 
 .nav-text {
