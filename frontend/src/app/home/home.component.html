@@ -7,7 +7,7 @@
     <div class="text-left py-5 bar-border"><h2 class="red-border-bar">POLECANE</h2></div>
     <div class="row">
       <div class="col-md-2" *ngFor="let movie of recommendedMovies">
-        <div class="card film-card text-light" >
+        <div class="card film-card text-light" routerLink="movie/{{ movie.id }}">
           <img src="{{ movie.image }}" class="card-img-top" alt="{{ movie.title }}">
           <div class="card-body">
             <h3 class="card-title">{{ movie.title }}</h3>
@@ -29,7 +29,7 @@
       <div class="text-left py-5 bar-border"><h2 class="red-border-bar">NOWOŚCI</h2></div>
       <div class="row">
           <div class="col-md-4" *ngFor="let news of newsList">
-          <div class="card news-card text-light">
+          <div class="card news-card text-light" >
               <div class="card-body">
               <h3 class="card-title">{{ news.title }}</h3>
               <p class="card-text">{{ news.summary | slice:0:140 }}...
@@ -48,7 +48,7 @@
     <div class="text-left py-5 bar-border"><h2 class="red-border-bar">ZAPOWIEDZI</h2></div>
     <div class="row">
       <div class="col-md-2" *ngFor="let movie of upcomingMovies">
-        <div class="card film-card text-light" >
+        <div class="card film-card text-light" routerLink="movie/{{ movie.id }}">
           <img src="{{ movie.image }}" class="card-img-top" alt="{{ movie.title }}">
           <div class="card-body">
             <h3 class="card-title">{{ movie.title }}</h3>

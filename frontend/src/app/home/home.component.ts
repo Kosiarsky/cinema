@@ -15,26 +15,31 @@ import { RouterLink } from '@angular/router';
 export class HomeComponent {
   recommendedMovies = [
     {
+      id: 3,
       image: 'https://fwcdn.pl/fpo/15/75/10031575/8171655.8.webp',
       title: 'Amator',
       description: 'Poruszający dramat o pasji i wytrwałości w dążeniu do celu.'
     },
     {
+      id: 1,
       image: 'https://fwcdn.pl/fpo/94/80/10009480/8166856.8.webp',
       title: 'Oszukać przeznaczenie: Wieże krwi',
       description: 'Film o walce z przeznaczeniem i tajemniczymi wydarzeniami.'
     },
     {
+      id: 2,
       image: 'https://fwcdn.pl/fpo/88/48/10068848/8173706.8.webp',
       title: 'Hurry Up Tomorrow',
       description: 'Historia pełna emocji i niespodziewanych zwrotów akcji.'
     },
     {
+      id: 3,
       image: 'https://fwcdn.pl/fpo/15/75/10031575/8171655.8.webp',
       title: 'Amator',
       description: 'Poruszający dramat o pasji i wytrwałości w dążeniu do celu.'
     },
     {
+      id: 2,
       image: 'https://fwcdn.pl/fpo/88/48/10068848/8173706.8.webp',
       title: 'Hurry Up Tomorrow',
       description: 'Historia pełna emocji i niespodziewanych zwrotów akcji.'
@@ -49,26 +54,31 @@ export class HomeComponent {
 
   upcomingMovies = [
     {
+      id: 3,
       image: 'https://fwcdn.pl/fpo/15/75/10031575/8171655.8.webp',
       title: 'Amator',
       description: 'Poruszający dramat o pasji i wytrwałości w dążeniu do celu.'
     },
     {
+      id: 1,
       image: 'https://fwcdn.pl/fpo/94/80/10009480/8166856.8.webp',
       title: 'Oszukać przeznaczenie: Wieże krwi',
       description: 'Film o walce z przeznaczeniem i tajemniczymi wydarzeniami.'
     },
     {
+      id: 2,
       image: 'https://fwcdn.pl/fpo/88/48/10068848/8173706.8.webp',
       title: 'Hurry Up Tomorrow',
       description: 'Historia pełna emocji i niespodziewanych zwrotów akcji.'
     },
     {
+      id: 3,
       image: 'https://fwcdn.pl/fpo/15/75/10031575/8171655.8.webp',
       title: 'Amator',
       description: 'Poruszający dramat o pasji i wytrwałości w dążeniu do celu.'
     },
     {
+      id: 2,
       image: 'https://fwcdn.pl/fpo/88/48/10068848/8173706.8.webp',
       title: 'Hurry Up Tomorrow',
       description: 'Historia pełna emocji i niespodziewanych zwrotów akcji.'
