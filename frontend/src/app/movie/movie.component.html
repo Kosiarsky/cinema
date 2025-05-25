@@ -1,5 +1,5 @@
 <app-header></app-header>
-<div class="fourth-container" style="background: linear-gradient(to bottom right, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0) 100%), 
+<div class="fourth-container" style="background: linear-gradient(to top, #03060aff, #03060a00 40%), 
               url('{{ movie.big_image }}') no-repeat center center fixed;">
     <div class="container mt-4 text-light">
         <div class="row">
@@ -16,7 +16,7 @@
 <div class="container mt-5 mb-5 text-light">
     <div class="row">
         <div class="col-md-3">
-            <img src="{{ movie.image }}" alt="{{ movie.title }}" class="img-fluid rounded movie-poster movie-card-img-2 mb-4">
+            <img src="{{ movie.image }}" alt="{{ movie.title }}" class="img-fluid rounded movie-poster movie-card-img mb-4">
             <p class="movie-genre"><strong>Gatunek:</strong><br> {{ movie.genre }}</p>
             <p class="movie-duration"><strong>Czas trwania:</strong><br> {{ movie.duration }}</p>
             <p class="movie-cast"><strong>Obsada:</strong><br> {{ movie.cast }}</p>

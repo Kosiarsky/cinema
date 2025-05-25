@@ -686,24 +686,17 @@ input.form-control:hover {
   padding-bottom: 0.5rem !important;
 }
 
+.movie-rating {
+  font-size: 1.2rem;
+}
+
 .movie-card-img {
   width: 300px;
   height: auto;
   border-radius: 5px;
   object-fit: cover;
-  margin-bottom: -70%;
-}
-
-.movie-rating {
-  font-size: 1.2rem;
-}
-
-.movie-card-img-2 {
-  width: 300px;
-  height: auto;
-  border-radius: 5px;
-  object-fit: cover;
   margin-top: -80%;
+  box-shadow: 0px 0px 20px #03060a;
 }
 
 .movie-title-bottom {
