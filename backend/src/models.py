@@ -14,14 +14,7 @@ class User(Base):
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
     password = Column(String, nullable=False)
-
-# Tabela pośrednia dla relacji wiele-do-wielu (aktorzy w filmach)
-movie_cast = Table(
-    'movie_cast',
-    Base.metadata,
-    Column('movie_id', Integer, ForeignKey('movies.id'), primary_key=True),
-    Column('actor_id', Integer, ForeignKey('actors.id'), primary_key=True)
-)
+    is_admin = Column(Integer, default=0)  
 
 class Movie(Base):
     __tablename__ = 'movies'
@@ -35,23 +28,10 @@ class Movie(Base):
     image = Column(String, nullable=True)
     big_image = Column(String, nullable=True)
     trailer = Column(String, nullable=True)
+    cast = Column(String, nullable=True)
 
     # Relacja z repertuarem
     schedules = relationship("Schedule", back_populates="movie")
-
-    # Relacja z aktorami
-    cast = relationship("Actor", secondary=movie_cast, back_populates="movies")
-
-
-class Actor(Base):
-    __tablename__ = 'actors'
-
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=False)
-
-    # Relacja z filmami
-    movies = relationship("Movie", secondary=movie_cast, back_populates="cast")
-
 
 class Schedule(Base):
     __tablename__ = 'schedules'
