@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from models import Movie, Schedule
+from schemas import Movie, Schedule
 from movie.schemas import MovieCreate, ScheduleCreate
 
 def get_movies(db: Session):

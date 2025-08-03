@@ -15,6 +15,7 @@ class Schedule(ScheduleBase):
     class Config:
         orm_mode = True
 
+
 class MovieBase(BaseModel):
     title: str
     genre: str

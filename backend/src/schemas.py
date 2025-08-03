@@ -1,38 +1,58 @@
-from pydantic import BaseModel
 from typing import List, Optional
 from datetime import date
+from pydantic import BaseModel
+from sqlalchemy import Column, Integer, String, Float, Date, ForeignKey, Table
+from sqlalchemy.orm import relationship, Mapped
 
-class ScheduleBase(BaseModel):
-    date: date
-    time: str
+try:
+    from database import Base
+except ModuleNotFoundError:
+    from .database import Base
 
-class ScheduleCreate(ScheduleBase):
-    movie_id: int
+class User(Base):
+    __tablename__ = 'users'
 
-class Schedule(ScheduleBase):
-    id: int
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String, unique=True, nullable=False)
+    first_name = Column(String, nullable=False)
+    last_name = Column(String, nullable=False)
+    phone: str = Column(String, nullable=True)
+    password = Column(String, nullable=False)
+    is_admin = Column(Integer, default=0)  
 
-    class Config:
-        orm_mode = True
+class Movie(Base):
+    __tablename__ = 'movies'
 
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, nullable=False)
+    genre = Column(String, nullable=False)
+    duration = Column(String, nullable=False)
+    rating = Column(Float, nullable=True)
+    description = Column(String, nullable=True)
+    image = Column(String, nullable=True)
+    big_image = Column(String, nullable=True)
+    trailer = Column(String, nullable=True)
+    cast = Column(String, nullable=True)
 
-class MovieBase(BaseModel):
-    title: str
-    genre: str
-    duration: str
-    rating: Optional[float]
-    description: Optional[str]
-    image: Optional[str]
-    big_image: Optional[str]
-    trailer: Optional[str]
-    cast: Optional[str]
+    schedules = relationship("Schedule", back_populates="movie")
 
-class MovieCreate(MovieBase):
-    pass
+class Schedule(Base):
+    __tablename__ = 'schedules'
 
-class Movie(MovieBase):
-    id: int
-    schedules: List[Schedule] = []
+    id = Column(Integer, primary_key=True, index=True)
+    date = Column(Date, nullable=False)
+    time = Column(String, nullable=False)
+    movie_id = Column(Integer, ForeignKey('movies.id'))
 
-    class Config:
-        orm_mode = True
+    movie = relationship("Movie", back_populates="schedules")
+
+class TicketPrice(Base):
+    __tablename__ = 'ticket_prices'
+
+    id = Column(Integer, primary_key=True, index=True)
+    type = Column(String, nullable=False)
+    cheap_thursday = Column(String, nullable=False)
+    three_days_before = Column(String, nullable=False)
+    two_days_before = Column(String, nullable=False)
+    one_day_before = Column(String, nullable=False)
+    same_day = Column(String, nullable=False)

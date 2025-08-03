@@ -4,7 +4,7 @@ from get_db import get_db
 from user import service
 from user.schemas import UserCreate, UserResponse, UserLogin, UserUpdate, PasswordChange
 from user.service import get_current_user, admin_required, update_user, change_password
-from models import User 
+from schemas import User 
 
 router = APIRouter()
 
