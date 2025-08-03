@@ -66,7 +66,7 @@ export class AuthService {
   updateUser(user: any) {
     const token = this.getToken();
     return this.http.put(
-      'http://localhost:8000/api/user/update',
+      `${this.baseUrl}/update`,
       user,
       {
         headers: {
@@ -78,7 +78,7 @@ export class AuthService {
 
   updatePassword(oldPassword: string, newPassword: string) {
     const token = this.getToken();
-    return this.http.post('http://localhost:8000/api/user/change-password', {
+    return this.http.post(`${this.baseUrl}/change-password`, {
       old_password: oldPassword,
       new_password: newPassword
     }, 

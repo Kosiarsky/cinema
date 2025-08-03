@@ -34,4 +34,8 @@ export class ServerService {
   createActor(actor: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/movie/actors`, actor);
   }
+
+  getTicketPrices(): Observable<any> {
+    return this.http.get<any[]>(`${this.baseUrl}/general/ticket-prices`);
+  }
 }

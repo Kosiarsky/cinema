@@ -17,16 +17,16 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let item of pricelist">
-              <th class="pricelist-td"><b>{{ item.type }}</b></th>
-              <td>{{ item.prices.cheapThursday }}</td>
-              <td>{{ item.prices.threeDaysBefore }}</td>
-              <td>{{ item.prices.twoDaysBefore }}</td>
-              <td>{{ item.prices.oneDayBefore }}</td>
-              <td>{{ item.prices.sameDay }}</td>
-          </tr>
+            <tr *ngFor="let ticket of ticketPrices">
+              <td>{{ ticket.type }}</td>
+              <td>{{ ticket.cheap_thursday }}</td>
+              <td>{{ ticket.three_days_before }}</td>
+              <td>{{ ticket.two_days_before }}</td>
+              <td>{{ ticket.one_day_before }}</td>
+              <td>{{ ticket.same_day }}</td>
+            </tr>
           </tbody>
-      </table>
+        </table>
       </div>
   </div>
 </div>
