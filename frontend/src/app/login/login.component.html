@@ -5,8 +5,10 @@
       <div class="col-md-6 col-lg-5">
         <div class="card-body login-card p-5">
           <h2 class="text-left mb-4 px-5 red-border-bar">LOGOWANIE</h2>
-          <form (ngSubmit)="onSubmit()">
-            <!-- Pole Email -->
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <div *ngIf="errorMessage" id="errorMessage" class="text-danger mb-3">
+              {{ errorMessage }}
+            </div>
             <div class="mb-3">
               <label for="email" class="form-label">Email</label>
               <input
@@ -20,7 +22,6 @@
                 Podaj poprawny adres email.
               </div>
             </div>
-            <!-- Pole Hasło -->
             <div class="mb-3">
               <label for="password" class="form-label">Hasło</label>
               <input
@@ -34,7 +35,6 @@
                 Hasło jest wymagane.
               </div>
             </div>
-            <!-- Przyciski -->
             <div class="d-flex justify-content-between flex-column">
               <button type="submit" class="btn btn-primary apl-button" [disabled]="loginForm.invalid">Zaloguj</button>
               <p class="pt-4 pb-0">Nie masz konta? Zarejestruj się!</p>

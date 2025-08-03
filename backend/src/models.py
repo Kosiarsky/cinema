@@ -13,6 +13,7 @@ class User(Base):
     email = Column(String, unique=True, nullable=False)
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
+    phone: str = Column(String, nullable=True)
     password = Column(String, nullable=False)
     is_admin = Column(Integer, default=0)  
 
@@ -30,7 +31,6 @@ class Movie(Base):
     trailer = Column(String, nullable=True)
     cast = Column(String, nullable=True)
 
-    # Relacja z repertuarem
     schedules = relationship("Schedule", back_populates="movie")
 
 class Schedule(Base):
@@ -41,5 +41,15 @@ class Schedule(Base):
     time = Column(String, nullable=False)
     movie_id = Column(Integer, ForeignKey('movies.id'))
 
-    # Relacja z filmem
     movie = relationship("Movie", back_populates="schedules")
+
+class TicketPrice(Base):
+    __tablename__ = 'ticket_prices'
+
+    id = Column(Integer, primary_key=True, index=True)
+    type = Column(String, nullable=False)
+    cheap_thursday = Column(String, nullable=False)
+    three_days_before = Column(String, nullable=False)
+    two_days_before = Column(String, nullable=False)
+    one_day_before = Column(String, nullable=False)
+    same_day = Column(String, nullable=False)

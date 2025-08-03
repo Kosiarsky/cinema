@@ -713,3 +713,25 @@ input.form-control:hover {
 .pointer {
   cursor: pointer;
 }
+
+#errorMessage, #passwordErrorMessage {
+  background-color: #0b1425 !important;
+  border-bottom: 2px solid #cc0000 !important;
+  color: #cc0000 !important;
+  border-radius: 5px;
+  padding: 7px 15px;
+  font-size: 0.9rem;
+  text-align: center;
+  font-weight: bold;
+}
+
+#successMessage, #passwordSuccessMessage {
+  background-color: #0b1425 !important;
+  border-bottom: 2px solid #00cc00 !important;
+  color: #00cc00 !important;
+  border-radius: 5px;
+  padding: 7px 15px;
+  font-size: 0.9rem;
+  text-align: center;
+  font-weight: bold;
+}

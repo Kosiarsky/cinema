@@ -1,21 +1,23 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule,FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ CommonModule, HeaderComponent, FooterComponent, RouterLink ],
+  imports: [ReactiveFormsModule, CommonModule, HeaderComponent, FooterComponent, RouterLink],
   templateUrl: './login.component.html',
-  styles: ``
+  styles: ``,
 })
 export class LoginComponent {
   loginForm: FormGroup;
+  errorMessage: string | null = null;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private authService: AuthService, private fb: FormBuilder, private router: Router) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]],
@@ -23,14 +25,21 @@ export class LoginComponent {
   }
 
   onSubmit(): void {
-    if (this.loginForm.valid) {
-      console.log('Form Data:', this.loginForm.value);
-      // Dodaj logikę logowania
-    }
+  if (this.loginForm.valid) {
+    this.authService.login(this.loginForm.value).subscribe({
+      next: (response) => {
+        this.authService.saveToken(response.access_token);
+        this.authService.saveUser(response.user); 
+        this.router.navigate(['/']); 
+      },
+      error: (error) => {
+        this.errorMessage = error.error.detail || 'Logowanie nie powiodło się!';
+      },
+    });
   }
+}
 
   onRegister(): void {
-    console.log('Przejdź do rejestracji');
-    // Dodaj logikę przejścia do rejestracji
+    this.router.navigate(['/register']); 
   }
 }

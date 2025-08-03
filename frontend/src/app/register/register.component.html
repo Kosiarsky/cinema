@@ -5,7 +5,10 @@
       <div class="col-md-8 col-lg-6">
         <div class="card-body register-card p-5">
           <h2 class="text-left mb-4 register-bar">REJESTRACJA</h2>
-          <form (ngSubmit)="onSubmit()">
+          <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+            <div *ngIf="errorMessage" id="errorMessage" class="text-danger mb-3">
+              {{ errorMessage }}
+            </div>
             <div class="row">
               <!-- Pole Imię -->
               <div class="col-md-6 mb-3">
@@ -62,7 +65,12 @@
                   placeholder="Wprowadź numer telefonu"
                 />
                 <div *ngIf="registerForm.get('phone')?.invalid && registerForm.get('phone')?.touched" class="text-danger">
-                  Numer telefonu jest wymagany.
+                  <ng-container *ngIf="registerForm.get('phone')?.errors?.['required']">
+                    Numer telefonu jest wymagany.
+                  </ng-container>
+                  <ng-container *ngIf="registerForm.get('phone')?.errors?.['pattern']">
+                    Podaj poprawny numer telefonu (9 cyfr).
+                  </ng-container>
                 </div>
               </div>
             </div>
@@ -78,7 +86,15 @@
                   placeholder="Wprowadź hasło"
                 />
                 <div *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched" class="text-danger">
-                  Hasło jest wymagane.
+                  <ng-container *ngIf="registerForm.get('password')?.errors?.['required']">
+                    Hasło jest wymagane.
+                  </ng-container>
+                  <ng-container *ngIf="registerForm.get('password')?.errors?.['minlength']">
+                    Hasło musi mieć co najmniej 8 znaków.
+                  </ng-container>
+                  <ng-container *ngIf="registerForm.get('password')?.errors?.['pattern']">
+                    Hasło musi zawierać cyfrę i znak specjalny.
+                  </ng-container>
                 </div>
               </div>
               <!-- Pole Potwierdzenie Hasła -->
@@ -93,6 +109,9 @@
                 />
                 <div *ngIf="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched" class="text-danger">
                   Potwierdzenie hasła jest wymagane.
+                </div>
+                <div *ngIf="registerForm.errors?.['passwordsMismatch'] && registerForm.get('confirmPassword')?.touched" class="text-danger">
+                  Hasła muszą być takie same.
                 </div>
               </div>
             </div>
