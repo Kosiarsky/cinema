@@ -38,9 +38,23 @@ export class AuthService {
     return null;
   }
 
+  saveRefreshToken(token: string): void {
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem('refresh_token', token);
+    }
+  }
+
+  getRefreshToken(): string | null {
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem('refresh_token');
+    }
+    return null;
+  }
+
   logout(): void {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem('auth_token'); 
+      localStorage.removeItem('refresh_token'); 
     }
     this.router.navigate(['/login']);
   }
@@ -64,28 +78,18 @@ export class AuthService {
   }
 
   updateUser(user: any) {
-    const token = this.getToken();
-    return this.http.put(
-      `${this.baseUrl}/update`,
-      user,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }
-    );
+    return this.http.put(`${this.baseUrl}/update`, user);
   }
 
   updatePassword(oldPassword: string, newPassword: string) {
-    const token = this.getToken();
     return this.http.post(`${this.baseUrl}/change-password`, {
       old_password: oldPassword,
       new_password: newPassword
-    }, 
-    { 
-      headers: { 
-        Authorization: `Bearer ${token}` 
-      } 
     });
+  }
+
+  refreshToken() {
+    const refresh_token = this.getRefreshToken();
+    return this.http.post<any>(`${this.baseUrl}/refresh-token`, { refresh_token });
   }
 }

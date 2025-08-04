@@ -29,6 +29,7 @@ export class LoginComponent {
     this.authService.login(this.loginForm.value).subscribe({
       next: (response) => {
         this.authService.saveToken(response.access_token);
+        this.authService.saveRefreshToken(response.refresh_token);
         this.authService.saveUser(response.user); 
         this.router.navigate(['/']); 
       },

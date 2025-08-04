@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from get_db import get_db
 from user import service
-from user.schemas import UserCreate, UserResponse, UserLogin, UserUpdate, PasswordChange
+from user.schemas import UserCreate, UserResponse, UserLogin, UserUpdate, PasswordChange, RefreshTokenRequest, TicketCreate, TicketResponse
 from user.service import get_current_user, admin_required, update_user, change_password
 from schemas import User 
 
@@ -32,8 +32,12 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
         "sub": authenticated_user.email,
         "is_admin": authenticated_user.is_admin
     })
+    refresh_token = service.create_refresh_token({
+        "sub": authenticated_user.email
+    })
     return {
         "access_token": access_token,
+        "refresh_token": refresh_token,
         "token_type": "bearer",
         "user": {
             "email": authenticated_user.email,
@@ -42,6 +46,10 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
             "phone": authenticated_user.phone
         }
     }
+
+@router.post("/refresh-token")
+def refresh_token(request: RefreshTokenRequest):
+    return service.refresh_access_token(request.refresh_token)
 
 @router.get("/me", response_model=UserResponse)
 def get_me(current_user: UserResponse = Depends(get_current_user)):
@@ -58,3 +66,11 @@ def update_me(user_update: UserUpdate, db: Session = Depends(get_db), current_us
 @router.post("/change-password")
 def update_password(passwords: PasswordChange, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     return change_password(db, current_user, passwords.old_password, passwords.new_password)
+
+@router.post("/tickets", response_model=TicketResponse)
+def buy_ticket(ticket: TicketCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    return service.create_ticket(db, current_user.id, ticket.dict())
+
+@router.get("/tickets", response_model=list[TicketResponse])
+def get_my_tickets(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    return service.get_user_tickets(db, current_user.id)

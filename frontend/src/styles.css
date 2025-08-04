@@ -25,6 +25,8 @@ h1 {
   padding-bottom: 10px;
   border-bottom: 2px solid #cc0000 !important;
   max-width: 400px;
+  font-size: 1.8rem;
+  text-transform: uppercase;
 }
 
 .red-border-small-bar {
@@ -34,6 +36,14 @@ h1 {
 
 .red-border-menu {
   border-bottom: 2px solid #cc0000 !important;
+}
+
+.red-border-bar-profile {
+  padding-bottom: 10px;
+  border-bottom: 2px solid #cc0000 !important;
+  max-width: 500px;
+  font-size: 1.2rem;
+  text-transform: uppercase;
 }
 
 .header-menu {
@@ -143,6 +153,65 @@ h2 {
 .card-text {
   font-size: 0.9rem;
   color: #bbbbbb;
+}
+
+.profile-card-body {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+  align-items: left;
+  text-align: left;
+  background-color: #050A11 !important;
+  border: 2px solid #0f1b2f !important;
+  color: #eaeaea;
+  border: none;
+  padding: 5px;
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+
+.profile-card-title {
+  font-size: 1.0rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #ffffff;
+}
+
+.profile-card-text {
+  font-size: 0.9rem;
+  color: #bbbbbb;
+}
+
+.profile-list-group {
+  background-color: #050A11 !important;
+  color: #eaeaea;
+  border: none;
+}
+
+.profile-list-group .list-group-item {
+  background-color: #050A11 !important;
+  border: 1px solid #050A11  !important;
+  color: #ffffff !important;
+  cursor: pointer;
+}
+
+.profile-list-group .list-group-item.active {
+  transition: background-color 0.3s ease, border 0.3s ease;
+  border: 1px solid #cc0000 !important;
+  color: #ffffff !important;
+}
+
+.profile-list-group .list-group-item:hover {
+  transition: background-color 0.3s ease, border 0.3s ease;
+  transition: border 0.3s ease, border 0.3s ease;
+  color: #ffffff !important;
+  border: 1px solid #cc0000 !important;
+  background-color: #0f1b2f !important;
+}
+
+.profile-list-group .list-group-item:not(:last-child) {
+  border-bottom: 1px solid #cc0000 !important;
 }
 
 .btn-primary {

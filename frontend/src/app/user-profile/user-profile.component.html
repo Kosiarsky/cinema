@@ -1,0 +1,68 @@
+<app-header></app-header>
+
+<div class="third-container" *ngIf="isLoggedIn; else notLoggedIn">
+    <div class="container mt-1 text-light">
+        <div class="pb-5 mb-5 row">
+            <div class="col-md-3">
+                <div class="text-left py-5 pb-3 bar-border">
+                    <h2 class="red-border-bar-profile">
+                        Witaj, {{user.first_name}}!
+                    </h2>
+                </div>
+                <ul class="list-group profile-list-group">
+                    <li class="list-group-item" [class.active]="selectedSection === 'tickets'" (click)="selectedSection = 'tickets'">
+                        BILETY
+                    </li>
+                    <li class="list-group-item" [class.active]="selectedSection === 'settings'" (click)="selectedSection = 'settings'">
+                        ZMIEŃ USTAWIENIA
+                    </li>
+                    <li class="list-group-item" [class.active]="selectedSection === 'change-password'" (click)="selectedSection = 'change-password'">
+                        ZMIEŃ HASŁO
+                    </li>
+                    <li class="list-group-item" [class.active]="selectedSection === 'history'" (click)="selectedSection = 'history'">
+                        HISTORIA REZERWACJI
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-md-9">
+                <div class="text-left py-5 pb-3 bar-border">
+                    <h2 class="red-border-bar-profile">
+                        <ng-container [ngSwitch]="selectedSection">
+                            <span *ngSwitchCase="'tickets'">Twoje bilety</span>
+                            <span *ngSwitchCase="'settings'">Zmień ustawienia konta</span>
+                            <span *ngSwitchCase="'change-password'">Zmień hasło</span>
+                            <span *ngSwitchCase="'history'">Historia rezerwacji</span>
+                            <span *ngSwitchDefault>{{user.first_name}} {{user.last_name}}</span>
+                        </ng-container>
+                    </h2>
+                </div>
+                <div [ngSwitch]="selectedSection" class="profile-card-body p-4">
+                    <div *ngSwitchCase="'tickets'">
+                        <app-tickets></app-tickets>
+                    </div>
+                    <div *ngSwitchCase="'settings'">
+                        <app-settings></app-settings>
+                    </div>
+                    <div *ngSwitchCase="'change-password'">
+                        <app-change-password></app-change-password>
+                    </div>
+                    <div *ngSwitchCase="'history'">
+                        <h3 class="profile-card-title">HISTORIA REZERWACJI</h3>
+                        <!-- Tu możesz wstawić np. <app-reservation-history></app-reservation-history> -->
+                    </div>
+                    <div *ngSwitchDefault>
+                        <h3 class="profile-card-title">WYBIERZ SEKCJĘ Z MENU</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #notLoggedIn>
+    <div class="container mt-5">
+        <div class="alert alert-warning">Musisz być zalogowany, aby edytować dane konta.</div>
+    </div>
+</ng-template>
+
+<app-footer></app-footer>

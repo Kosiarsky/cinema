@@ -1,0 +1,18 @@
+<div *ngIf="tickets.length; else noTickets">
+    <ul class="list-group">
+        <li class="list-group-item" *ngFor="let ticket of tickets">
+        Seans: {{ ticket.schedule_id }}<br>
+        Sala: {{ ticket.hall || 'brak' }}<br>
+        Miejsce: {{ ticket.seat || 'brak' }}<br>
+        Data zakupu: {{ ticket.purchase_date | date:'dd.MM.yyyy' }}<br>
+        Cena: {{ ticket.price }} PLN<br>
+        </li>
+    </ul>
+</div>
+<ng-template #noTickets>
+    <div class="text-center">
+        <b>Nie masz jeszcze żadnych biletów.</b> 
+        <br>
+        <a routerLink="/repertoire" class="btn btn-primary mt-3">PRZEJDŹ DO REPERTUARU</a>
+    </div>
+</ng-template>

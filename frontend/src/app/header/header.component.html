@@ -6,8 +6,8 @@
       <div class="d-flex align-items-center">
         <ng-container *ngIf="authService.isLoggedIn(); else loggedOut">
           <div class="py-2 px-4">Witaj, <b>{{authService.getUser().first_name}} {{authService.getUser().last_name}}</b>!</div>
-          <a href="/settings" class="text-white text-decoration-none"><div class="header-nav-item py-2 px-4">USTAWIENIA</div></a>
-          <a class="text-white text-decoration-none" (click)="authService.logout()" style="cursor: pointer;"><div class="header-nav-item py-2 px-4">Wyloguj</div></a>
+          <a href="/user-profile" class="text-white text-decoration-none"><div class="header-nav-item py-2 px-4">TWÓJ PROFIL</div></a>
+          <a class="text-white text-decoration-none" (click)="authService.logout()" style="cursor: pointer;"><div class="header-nav-item py-2 px-4">WYLOGUJ</div></a>
         </ng-container>
         <ng-template #loggedOut>
           <a href="/login" class="text-white text-decoration-none"><div class="header-nav-item py-2 px-4">LOGOWANIE</div></a>

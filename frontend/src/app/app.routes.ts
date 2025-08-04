@@ -9,7 +9,7 @@ import { RegisterComponent } from './register/register.component';
 import { PricelistComponent } from './pricelist/pricelist.component';
 import { MovieComponent } from './movie/movie.component'; 
 import { NotFoundComponent } from './not-found/not-found.component';
-import { SettingsComponent } from './settings/settings.component';
+import { UserProfileComponent } from './user-profile/user-profile.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -22,6 +22,6 @@ export const routes: Routes = [
     { path: 'pricelist', component: PricelistComponent },
     { path: 'movie/:id', component: MovieComponent }, 
     { path: 'not-found', component: NotFoundComponent },
-    { path: 'settings', component: SettingsComponent },
+    { path: 'user-profile', component: UserProfileComponent },
     { path: '**', redirectTo: 'not-found' }
 ];

@@ -38,4 +38,8 @@ export class ServerService {
   getTicketPrices(): Observable<any> {
     return this.http.get<any[]>(`${this.baseUrl}/general/ticket-prices`);
   }
+
+  getUserTickets(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/user/tickets`);
+  }
 }

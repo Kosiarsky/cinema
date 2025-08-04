@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr
 from typing import Optional
+from datetime import date
 
 class UserBase(BaseModel):
     email: EmailStr
@@ -34,3 +35,20 @@ class UserUpdate(BaseModel):
 class PasswordChange(BaseModel):
     old_password: str
     new_password: str
+
+class RefreshTokenRequest(BaseModel):
+    refresh_token: str
+
+class TicketBase(BaseModel):
+    schedule_id: int
+    seat: Optional[str] = None
+
+class TicketCreate(TicketBase):
+    pass
+
+class TicketResponse(TicketBase):
+    id: int
+    purchase_date: date
+
+    class Config:
+        orm_mode = True

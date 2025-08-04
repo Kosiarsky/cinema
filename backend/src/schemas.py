@@ -56,3 +56,17 @@ class TicketPrice(Base):
     two_days_before = Column(String, nullable=False)
     one_day_before = Column(String, nullable=False)
     same_day = Column(String, nullable=False)
+
+class Ticket(Base):
+    __tablename__ = 'tickets'
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    schedule_id = Column(Integer, ForeignKey('schedules.id'), nullable=False)
+    seat = Column(String, nullable=True)  
+    hall = Column(String, nullable=True)
+    price = Column(Float, nullable=False, default=0.0)
+    purchase_date = Column(Date, default=date.today)
+
+    user = relationship("User")
+    schedule = relationship("Schedule")

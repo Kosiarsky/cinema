@@ -1,105 +1,38 @@
-<app-header></app-header>
-<div class="second-container">
-  <div class="container">
-    <div class="row justify-content-between align-items-center" *ngIf="isLoggedIn; else notLoggedIn">
-            <div class="col-md-6 col-lg-5">
-                <div class="card-body login-card p-5">
-                    <h2 class="text-left mb-4 px-5 red-border-bar">USTAWIENIA KONTA</h2>
-                    <form [formGroup]="settingsForm" (ngSubmit)="onSubmit()">
-                        <div *ngIf="errorMessage" id="errorMessage" class="text-danger mb-3">
-                            {{ errorMessage }}
-                        </div>
-                        <div *ngIf="successMessage" id="successMessage" class="text-danger mb-3">
-                            {{ successMessage }}
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Imię</label>
-                            <input class="form-control" formControlName="first_name" />
-                            <div *ngIf="settingsForm.get('first_name')?.invalid && settingsForm.get('first_name')?.touched" class="text-danger">
-                                Podaj imię.
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Nazwisko</label>
-                            <input class="form-control" formControlName="last_name" />
-                            <div *ngIf="settingsForm.get('last_name')?.invalid && settingsForm.get('last_name')?.touched" class="text-danger">
-                                Podaj nazwisko.
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Email</label>
-                            <input class="form-control" formControlName="email" />
-                            <div *ngIf="settingsForm.get('email')?.invalid && settingsForm.get('email')?.touched" class="text-danger">
-                                Podaj email.
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Telefon</label>
-                            <input class="form-control" formControlName="phone" />
-                        </div>
-                        <div class="d-flex justify-content-between flex-column">
-                            <button class="btn btn-primary apl-button" type="submit" [disabled]="settingsForm.invalid">Zapisz zmiany</button>
-                        </div>
-                    </form>
-                </div>
+<div class="card-body p-2">
+    <form [formGroup]="settingsForm" (ngSubmit)="onSubmit()">
+        <div *ngIf="errorMessage" id="errorMessage" class="text-danger mb-3">
+            {{ errorMessage }}
+        </div>
+        <div *ngIf="successMessage" id="successMessage" class="text-danger mb-3">
+            {{ successMessage }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Imię</label>
+            <input class="form-control" formControlName="first_name" />
+            <div *ngIf="settingsForm.get('first_name')?.invalid && settingsForm.get('first_name')?.touched" class="text-danger">
+                Podaj imię.
             </div>
-            <div class="col-md-6 col-lg-5">
-                <div class="card-body login-card p-5">
-                    <h2 class="text-left mb-4 px-5 red-border-bar">ZMIANA HASŁA</h2>
-                    <form [formGroup]="passwordForm" (ngSubmit)="onPasswordSubmit()">
-                        <div *ngIf="passwordErrorMessage" id="passwordErrorMessage" class="text-danger mb-3">
-                            {{ passwordErrorMessage }}
-                        </div>
-                        <div *ngIf="passwordSuccessMessage" id="passwordSuccessMessage" class="text-success mb-3">
-                            {{ passwordSuccessMessage }}
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Stare hasło</label>
-                            <input type="password" class="form-control" formControlName="old_password" />
-                            <div *ngIf="passwordForm.get('old_password')?.invalid && passwordForm.get('old_password')?.touched" class="text-danger">
-                                Podaj stare hasło.
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Nowe hasło</label>
-                            <input type="password" class="form-control" formControlName="new_password" />
-                            <div *ngIf="passwordForm.get('new_password')?.invalid && passwordForm.get('new_password')?.touched" class="text-danger">
-                                <ng-container *ngIf="passwordForm.get('new_password')?.errors?.['required']">
-                                    Podaj nowe hasło.
-                                </ng-container>
-                                <ng-container *ngIf="passwordForm.get('new_password')?.errors?.['minlength']">
-                                    Hasło musi mieć co najmniej 8 znaków.
-                                </ng-container>
-                                <ng-container *ngIf="passwordForm.get('new_password')?.errors?.['pattern']">
-                                    Hasło musi zawierać cyfrę i znak specjalny.
-                                </ng-container>
-                            </div>
-                            <div *ngIf="passwordForm.errors?.['passwordsSame'] && passwordForm.get('new_password')?.touched" class="text-danger">
-                                Nowe hasło nie może być takie samo jak stare.
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Potwierdź nowe hasło</label>
-                            <input type="password" class="form-control" formControlName="confirm_password" />
-                            <div *ngIf="passwordForm.get('confirm_password')?.invalid && passwordForm.get('confirm_password')?.touched" class="text-danger">
-                                Potwierdzenie hasła jest wymagane.
-                            </div>
-                            <div *ngIf="passwordForm.errors?.['passwordsMismatch'] && passwordForm.get('confirm_password')?.touched" class="text-danger">
-                                Hasła muszą być takie same.
-                            </div>
-                        </div>
-                        <div class="d-flex justify-content-between flex-column">
-                            <button class="btn btn-primary apl-button" type="submit" [disabled]="passwordForm.invalid">Zmień hasło</button>
-                        </div>
-                    </form>
-                </div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Nazwisko</label>
+            <input class="form-control" formControlName="last_name" />
+            <div *ngIf="settingsForm.get('last_name')?.invalid && settingsForm.get('last_name')?.touched" class="text-danger">
+                Podaj nazwisko.
             </div>
-    </div>
-    <ng-template #notLoggedIn>
-    <div class="container mt-5">
-        <div class="alert alert-warning">Musisz być zalogowany, aby edytować dane konta.</div>
-    </div>
-    </ng-template>
-  </div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input class="form-control" formControlName="email" />
+            <div *ngIf="settingsForm.get('email')?.invalid && settingsForm.get('email')?.touched" class="text-danger">
+                Podaj email.
+            </div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Telefon</label>
+            <input class="form-control" formControlName="phone" />
+        </div>
+        <div class="d-flex justify-content-between flex-column">
+            <button class="btn btn-primary apl-button" type="submit" [disabled]="settingsForm.invalid">Zapisz zmiany</button>
+        </div>
+    </form>
 </div>
-<app-footer></app-footer>
