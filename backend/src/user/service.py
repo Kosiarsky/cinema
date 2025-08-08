@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
-from schemas import User
+from schemas import User, Ticket
 from user.schemas import UserCreate, UserUpdate
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
@@ -145,7 +145,6 @@ def change_password(db: Session, user: User, old_password: str, new_password: st
         raise HTTPException(status_code=401, detail="Invalid token")
     
 def create_ticket(db: Session, user_id: int, ticket_data: dict):
-    from schemas import Ticket
     ticket = Ticket(user_id=user_id, **ticket_data)
     db.add(ticket)
     db.commit()
@@ -153,5 +152,4 @@ def create_ticket(db: Session, user_id: int, ticket_data: dict):
     return ticket
 
 def get_user_tickets(db: Session, user_id: int):
-    from schemas import Ticket
     return db.query(Ticket).filter(Ticket.user_id == user_id).all()

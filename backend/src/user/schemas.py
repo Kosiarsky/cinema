@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr
-from typing import Optional
+from typing import Optional, List
 from datetime import date
 
 class UserBase(BaseModel):
@@ -39,16 +39,62 @@ class PasswordChange(BaseModel):
 class RefreshTokenRequest(BaseModel):
     refresh_token: str
 
+class MovieResponse(BaseModel):
+    id: int
+    title: str
+    genre: str
+    duration: str
+    rating: Optional[float] = None
+    description: Optional[str] = None
+    image: Optional[str] = None
+    big_image: Optional[str] = None
+    trailer: Optional[str] = None
+    cast: Optional[str] = None
+
+    class Config:
+        orm_mode = True
+
+class ScheduleResponse(BaseModel):
+    id: int
+    date: date
+    time: str
+    movie: MovieResponse 
+
+    class Config:
+        orm_mode = True
+
 class TicketBase(BaseModel):
     schedule_id: int
     seat: Optional[str] = None
+    purchase_date: date
+    price: float
+    hall: Optional[str] = None
 
-class TicketCreate(TicketBase):
+class TicketSeatBase(BaseModel):
+    seat: str
+    price: float
+    type: str
+
+class TicketSeatCreate(TicketSeatBase):
     pass
 
-class TicketResponse(TicketBase):
+class TicketSeatResponse(TicketSeatBase):
     id: int
-    purchase_date: date
+    class Config:
+        orm_mode = True
 
+class TicketCreate(BaseModel):
+    schedule_id: int
+    hall: Optional[str]
+    seats: List[TicketSeatCreate]
+
+class TicketResponse(BaseModel):
+    id: int
+    schedule_id: int
+    hall: Optional[str]
+    purchase_date: date
+    total_price: float
+    seats: List[TicketSeatResponse]
+    schedule: ScheduleResponse
     class Config:
         orm_mode = True

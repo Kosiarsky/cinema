@@ -57,16 +57,27 @@ class TicketPrice(Base):
     one_day_before = Column(String, nullable=False)
     same_day = Column(String, nullable=False)
 
+class TicketSeat(Base):
+    __tablename__ = 'ticket_seats'
+
+    id = Column(Integer, primary_key=True, index=True)
+    ticket_id = Column(Integer, ForeignKey('tickets.id'), nullable=False)
+    seat = Column(String, nullable=False)
+    price = Column(Float, nullable=False)
+    type = Column(String, nullable=False)
+
+    ticket = relationship("Ticket", back_populates="seats")
+
 class Ticket(Base):
     __tablename__ = 'tickets'
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     schedule_id = Column(Integer, ForeignKey('schedules.id'), nullable=False)
-    seat = Column(String, nullable=True)  
     hall = Column(String, nullable=True)
-    price = Column(Float, nullable=False, default=0.0)
     purchase_date = Column(Date, default=date.today)
+    total_price = Column(Float, nullable=False, default=0.0)
 
     user = relationship("User")
     schedule = relationship("Schedule")
+    seats = relationship("TicketSeat", back_populates="ticket", cascade="all, delete-orphan")

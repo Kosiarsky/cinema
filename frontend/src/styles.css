@@ -705,6 +705,13 @@ input.form-control:hover {
   object-fit: cover;
 }
 
+.repertoire-card .repertoire-card-qr {
+  width: 150px;
+  height: auto;
+  border-radius: 5px;
+  object-fit: cover;
+}
+
 .repertoire-card .repertoire-card-body {
   flex-grow: 1;
 }
@@ -728,8 +735,22 @@ input.form-control:hover {
   line-height: 1.6;
 }
 
+.repertoire-card .repertoire-card-big-text {
+  font-size: 1.2rem;
+  color: #eaeaea;
+  line-height: 1.6;
+}
+
 .repertoire-card .repertoire-border {
   border-top: 2px solid #0f1b2f !important;
+  font-size: 1rem;
+  color: #eaeaea;
+  margin-top: 10px;
+  padding-top: 15px;
+}
+
+.repertoire-card .repertoire-border-red {
+  border-top: 2px solid #cc0000 !important;
   font-size: 1rem;
   color: #eaeaea;
   margin-top: 10px;

@@ -37,21 +37,21 @@
                         </ng-container>
                     </h2>
                 </div>
-                <div [ngSwitch]="selectedSection" class="profile-card-body p-4">
+                <div [ngSwitch]="selectedSection" >
                     <div *ngSwitchCase="'tickets'">
                         <app-tickets></app-tickets>
                     </div>
-                    <div *ngSwitchCase="'settings'">
+                    <div *ngSwitchCase="'settings'" class="profile-card-body p-4">
                         <app-settings></app-settings>
                     </div>
-                    <div *ngSwitchCase="'change-password'">
+                    <div *ngSwitchCase="'change-password'" class="profile-card-body p-4">
                         <app-change-password></app-change-password>
                     </div>
-                    <div *ngSwitchCase="'history'">
+                    <div *ngSwitchCase="'history'" class="profile-card-body p-4">
                         <h3 class="profile-card-title">HISTORIA REZERWACJI</h3>
                         <!-- Tu możesz wstawić np. <app-reservation-history></app-reservation-history> -->
                     </div>
-                    <div *ngSwitchDefault>
+                    <div *ngSwitchDefault class="profile-card-body p-4">
                         <h3 class="profile-card-title">WYBIERZ SEKCJĘ Z MENU</h3>
                     </div>
                 </div>

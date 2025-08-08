@@ -1,18 +1,36 @@
 <div *ngIf="tickets.length; else noTickets">
     <ul class="list-group">
-        <li class="list-group-item" *ngFor="let ticket of tickets">
-        Seans: {{ ticket.schedule_id }}<br>
-        Sala: {{ ticket.hall || 'brak' }}<br>
-        Miejsce: {{ ticket.seat || 'brak' }}<br>
-        Data zakupu: {{ ticket.purchase_date | date:'dd.MM.yyyy' }}<br>
-        Cena: {{ ticket.price }} PLN<br>
+        <li class="card repertoire-card mb-4 d-flex flex-column flex-md-row align-items-md-start align-items-center" *ngFor="let ticket of tickets">
+            <img src="{{ ticket.schedule?.movie.image }}" class="repertoire-card-img pointer" alt="{{ ticket.schedule?.movie.title }}" routerLink="/movie/{{ ticket.schedule?.movie.id }}">
+            <div class="repertoire-card-body flex-grow-1">
+                <h3 class="repertoire-card-title pointer" routerLink="/movie/{{ ticket.schedule?.movie.id }}">{{ ticket.schedule?.movie.title }}</h3>
+                <p class="repertoire-card-text">
+                    <b>{{ ticket.schedule?.date | date:'dd.MM.yyyy' }}</b> | 
+                    <b>{{ ticket.schedule?.time }}</b> | 
+                    <b>Sala {{ ticket.hall || 'brak' }}</b>
+                </p>
+                <div *ngFor="let seat of ticket.seats" class="mb-2">
+                    <div class="d-flex repertoire-border flex-wrap px-2">
+                        <span class="repertoire-card-text">Miejsce: <b>{{ seat.seat }}</b></span>
+                        <span class="flex-fill repertoire-card-text px-4">Bilet: <b>{{ seat.type }}</b></span>
+                        <span class="repertoire-card-text ms-2"><b>{{ seat.price }} ZŁ</b></span>
+                    </div>
+                </div>
+                <div class="d-flex repertoire-border-red px-2 ">
+                    <div class="flex-fill repertoire-card-big-text"><b>Cena łączna:</b></div>
+                    <div class="repertoire-card-big-text ms-2 mb-md-4"><b>{{ ticket.total_price }} ZŁ</b></div>
+                </div>
+            </div>
+            <img src="https://i.imgur.com/7Uj50MZ.png" class="repertoire-card-qr" alt="QR Code for Ticket" />
         </li>
     </ul>
 </div>
 <ng-template #noTickets>
-    <div class="text-center">
-        <b>Nie masz jeszcze żadnych biletów.</b> 
-        <br>
-        <a routerLink="/repertoire" class="btn btn-primary mt-3">PRZEJDŹ DO REPERTUARU</a>
+    <div class="profile-card-body p-4">
+        <div class="text-center">
+            <b>Nie masz jeszcze żadnych biletów.</b> 
+            <br>
+            <a routerLink="/repertoire" class="btn btn-primary mt-3">PRZEJDŹ DO REPERTUARU</a>
+        </div>
     </div>
 </ng-template>
