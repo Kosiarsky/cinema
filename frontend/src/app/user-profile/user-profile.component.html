@@ -13,14 +13,14 @@
                     <li class="list-group-item" [class.active]="selectedSection === 'tickets'" (click)="selectedSection = 'tickets'">
                         BILETY
                     </li>
+                    <li class="list-group-item" [class.active]="selectedSection === 'tickets-history'" (click)="selectedSection = 'tickets-history'">
+                        HISTORIA BILETÓW
+                    </li>
                     <li class="list-group-item" [class.active]="selectedSection === 'settings'" (click)="selectedSection = 'settings'">
                         ZMIEŃ USTAWIENIA
                     </li>
                     <li class="list-group-item" [class.active]="selectedSection === 'change-password'" (click)="selectedSection = 'change-password'">
                         ZMIEŃ HASŁO
-                    </li>
-                    <li class="list-group-item" [class.active]="selectedSection === 'history'" (click)="selectedSection = 'history'">
-                        HISTORIA REZERWACJI
                     </li>
                 </ul>
             </div>
@@ -32,7 +32,7 @@
                             <span *ngSwitchCase="'tickets'">Twoje bilety</span>
                             <span *ngSwitchCase="'settings'">Zmień ustawienia konta</span>
                             <span *ngSwitchCase="'change-password'">Zmień hasło</span>
-                            <span *ngSwitchCase="'history'">Historia rezerwacji</span>
+                            <span *ngSwitchCase="'tickets-history'">HISTORIA BILETÓW</span>
                             <span *ngSwitchDefault>{{user.first_name}} {{user.last_name}}</span>
                         </ng-container>
                     </h2>
@@ -47,9 +47,8 @@
                     <div *ngSwitchCase="'change-password'" class="profile-card-body p-4">
                         <app-change-password></app-change-password>
                     </div>
-                    <div *ngSwitchCase="'history'" class="profile-card-body p-4">
-                        <h3 class="profile-card-title">HISTORIA REZERWACJI</h3>
-                        <!-- Tu możesz wstawić np. <app-reservation-history></app-reservation-history> -->
+                    <div *ngSwitchCase="'tickets-history'">
+                        <app-tickets-history></app-tickets-history>
                     </div>
                     <div *ngSwitchDefault class="profile-card-body p-4">
                         <h3 class="profile-card-title">WYBIERZ SEKCJĘ Z MENU</h3>

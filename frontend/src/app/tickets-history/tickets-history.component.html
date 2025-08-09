@@ -3,7 +3,6 @@
     <span class="visually-hidden">Ładowanie...</span>
   </div>
 </div>
-
 <div *ngIf="!isLoading">
     <div *ngIf="tickets.length; else noTickets">
         <ul class="list-group">
@@ -35,7 +34,7 @@
     <ng-template #noTickets>
         <div class="profile-card-body p-4">
             <div class="text-center">
-                <b>Nie masz jeszcze żadnych biletów.</b> 
+                <b>Nie masz jeszcze żadnych biletów w historii!</b> 
                 <br>
                 <a routerLink="/repertoire" class="btn btn-primary mt-3">PRZEJDŹ DO REPERTUARU</a>
             </div>
