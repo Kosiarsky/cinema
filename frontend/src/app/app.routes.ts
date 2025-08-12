@@ -10,6 +10,7 @@ import { PricelistComponent } from './pricelist/pricelist.component';
 import { MovieComponent } from './movie/movie.component'; 
 import { NotFoundComponent } from './not-found/not-found.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
+import { PurchaseComponent } from './purchase/purchase.component'; 
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -23,5 +24,6 @@ export const routes: Routes = [
     { path: 'movie/:id', component: MovieComponent }, 
     { path: 'not-found', component: NotFoundComponent },
     { path: 'user-profile', component: UserProfileComponent },
+    { path: 'purchase/:id', component: PurchaseComponent },
     { path: '**', redirectTo: 'not-found' }
 ];

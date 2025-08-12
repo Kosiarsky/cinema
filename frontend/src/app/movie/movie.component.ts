@@ -16,6 +16,7 @@ import { ServerService } from '../services/server.service';
 export class MovieComponent implements OnInit {
   movie: any; 
   groupedSchedules: { [date: string]: any[] } = {};
+  isLoading = true;
 
   constructor(
     private route: ActivatedRoute,
@@ -29,14 +30,16 @@ export class MovieComponent implements OnInit {
   }
 
   loadMovieById(id: number): void {
-   
+    this.isLoading = true;
     this.serverService.getMovieById(id).subscribe({
       next: (result: any) => {
         this.movie = result;
         this.groupSchedulesByDate(result.schedules);
+        this.isLoading = false;
       },
       error: (error: Error)=> {
         console.error('Error fetching image author', error);
+        this.isLoading = false;
       }
     });
   }

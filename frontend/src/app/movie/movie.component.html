@@ -1,52 +1,59 @@
 <app-header></app-header>
-<ng-container *ngIf="movie">
-    <div class="fourth-container" style="background: linear-gradient(to top, #03060aff, #03060a00 40%), 
-                url('{{ movie.big_image }}') no-repeat center center fixed;">
-        <div class="container mt-4 text-light">
+<div *ngIf="isLoading" class="card profile-card-body d-flex justify-content-center align-items-center" style="min-height: 200px;">
+  <div class="spinner-border text-primary" role="status">
+    <span class="visually-hidden">Ładowanie...</span>
+  </div>
+</div>
+
+<div *ngIf="!isLoading">
+    <ng-container *ngIf="movie">
+        <div class="fourth-container" style="background: linear-gradient(to top, #03060aff, #03060a00 40%), 
+                    url('{{ movie.big_image }}') no-repeat center center fixed;">
+            <div class="container mt-4 text-light">
+                <div class="row">
+                    <div class="col-md-3">
+                    </div>
+                    <div class="col-md-9">
+                        <h1 class="movie-title">{{ movie.title }}</h1>
+                        <p class="movie-rating"><strong>Ocena:</strong> &nbsp; <i class="fa-solid fa-star"></i> {{ movie.rating }}</p>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        <div class="container mt-5 mb-5 text-light">
             <div class="row">
                 <div class="col-md-3">
+                    <img src="{{ movie.image }}" alt="{{ movie.title }}" class="img-fluid rounded movie-poster movie-card-img mb-4">
+                    <p class="movie-genre"><strong>Gatunek:</strong><br> {{ movie.genre }}</p>
+                    <p class="movie-duration"><strong>Czas trwania:</strong><br> {{ movie.duration }}</p>
+                    <p class="movie-cast"><strong>Obsada:</strong><br> {{ movie.cast }}</p>
                 </div>
                 <div class="col-md-9">
-                    <h1 class="movie-title">{{ movie.title }}</h1>
-                    <p class="movie-rating"><strong>Ocena:</strong> &nbsp; <i class="fa-solid fa-star"></i> {{ movie.rating }}</p>
-                </div>
-            </div>
-            
-        </div>
-    </div>
-    <div class="container mt-5 mb-5 text-light">
-        <div class="row">
-            <div class="col-md-3">
-                <img src="{{ movie.image }}" alt="{{ movie.title }}" class="img-fluid rounded movie-poster movie-card-img mb-4">
-                <p class="movie-genre"><strong>Gatunek:</strong><br> {{ movie.genre }}</p>
-                <p class="movie-duration"><strong>Czas trwania:</strong><br> {{ movie.duration }}</p>
-                <p class="movie-cast"><strong>Obsada:</strong><br> {{ movie.cast }}</p>
-            </div>
-            <div class="col-md-9">
-                <div class="row">
-                    <div class="col-12 mb-3">
-                        <h4 class="red-border-small-bar pl-0">Opis filmu</h4>
-                        <p class="movie-description pt-2">{{ movie.description }}</p>
-                    </div>
-                    <br>
-                    <div class="col-12 mt-2" *ngIf="groupedSchedules">
-                        <h4 class="red-border-small-bar pl-0">Seanse</h4>
-                      
-                        <div *ngFor="let date of getScheduleDates()">
-                          <h6 class="uppercase mt-3">{{ getFormattedDate(date) }}</h6>
-                          <div class="d-flex flex-wrap">
-                            <button
-                              *ngFor="let schedule of groupedSchedules[date]"
-                              class="btn btn-outline-primary me-2 mb-2">
-                              {{ schedule.time }}
-                            </button>
-                          </div>
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <h4 class="red-border-small-bar pl-0">Opis filmu</h4>
+                            <p class="movie-description pt-2">{{ movie.description }}</p>
                         </div>
-                      </div>
+                        <br>
+                        <div class="col-12 mt-2" *ngIf="groupedSchedules">
+                            <h4 class="red-border-small-bar pl-0">Seanse</h4>
+                        
+                            <div *ngFor="let date of getScheduleDates()">
+                            <h6 class="uppercase mt-3">{{ getFormattedDate(date) }}</h6>
+                            <div class="d-flex flex-wrap">
+                                <button
+                                *ngFor="let schedule of groupedSchedules[date]"
+                                class="btn btn-outline-primary me-2 mb-2">
+                                {{ schedule.time }}
+                                </button>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</ng-container>
-
+    </ng-container>
+</div>
 <app-footer></app-footer>

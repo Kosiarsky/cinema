@@ -2,69 +2,79 @@
 
 <div class="third-container">
     <div class="container mt-5 text-light">
-    <div class="text-left py-5 bar-border">
-        <h2 class="red-border-bar">REPERTUAR</h2>
-    </div>
-    <div class="nav-item-first">Wybierz dzień, który cie interesuje:</div>
-    <ul class="nav nav-tabs" id="repertoireTabs" role="tablist">
-        <li class="nav-item" *ngFor="let day of days; let i = index">
-        <button
-            class="nav-link"
-            [ngClass]="{ 'active': i === 0 }"
-            id="{{ day.date }}-tab"
-            [attr.data-bs-toggle]="'tab'"
-            [attr.data-bs-target]="'#' + day.date"
-            type="button"
-            role="tab"
-            [attr.aria-controls]="day.date"
-            [attr.aria-selected]="i === 0 ? 'true' : 'false'"
-        >
-            {{ day.day }}
-            <br />
-            <p class="nav-text">{{ day.date }}</p>
-        </button>
-        </li>
-    </ul>
-    <div class="tab-content mt-4" id="repertoireContent">
-        
-        <div
-        class="tab-pane fade"
-        [ngClass]="{ 'show active': i === 0 }"
-        *ngFor="let day of days; let i = index"
-        id="{{ day.date }}"
-        role="tabpanel"
-        [attr.aria-labelledby]="day.date + '-tab'"
-        >
-        <div class="row">
-            <div class="col-md-12" *ngFor="let movie of getMoviesForDay(day.date)">
-            <div class="card repertoire-card mb-4 d-flex flex-row">
-                <img src="{{ movie.image }}" class="repertoire-card-img  pointer" alt="{{ movie.title }}"  routerLink="/movie/{{ movie.id }}">
-                <div class="repertoire-card-body flex-grow-1">
-                    <div class="d-flex justify-content-between">
-                        <h3 class="repertoire-card-title pointer" routerLink="/movie/{{ movie.id }}">{{ movie.title }}</h3>
-                        <p class="repertoire-card-text">Ocena: <i class="fa-solid fa-star"></i> {{ movie.rating }}</p>
-                    </div>
-                    <p class="repertoire-card-date">Gatunek: {{ movie.type }}</p>
-                    <p class="repertoire-card-date">Obsada: {{ movie.cast }}</p>
-                    <p class="repertoire-card-date">Czas trwania: {{ movie.duration }}</p>
-                    <div class="d-flex flex-wrap repertoire-border">
-                        <button
-                        *ngFor="let time of movie.times"
-                        class="btn btn-outline-primary me-2 mb-2"
-                        >
-                        <b>{{ time[0] }}</b>
-                        <br />
-                        <p class="repertoire-card-date">{{ time[1] }}</p>
-                        </button>
+        <div *ngIf="isLoading" class="card profile-card-body d-flex justify-content-center align-items-center" style="min-height: 200px;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Ładowanie...</span>
+            </div>
+        </div>
+        <div *ngIf="!isLoading">
+            <div class="text-left py-5 bar-border">
+                <h2 class="red-border-bar">REPERTUAR</h2>
+            </div>
+            <div class="nav-item-first">Wybierz dzień, który cie interesuje:</div>
+            <ul class="nav nav-tabs" id="repertoireTabs" role="tablist">
+                <li class="nav-item" *ngFor="let day of days; let i = index">
+                    <button
+                    class="nav-link"
+                    [ngClass]="{ 'active': i === 0 }"
+                    id="{{ day.id }}-tab"
+                    [attr.data-bs-toggle]="'tab'"
+                    [attr.data-bs-target]="'#' + day.id"
+                    type="button"
+                    role="tab"
+                    [attr.aria-controls]="day.id"
+                    [attr.aria-selected]="i === 0 ? 'true' : 'false'"
+                    >
+                    {{ day.day }}
+                    <br />
+                    <p class="nav-text">{{ day.date }}</p>
+                    </button>
+                </li>
+            </ul>
+            <div class="tab-content mt-4" id="repertoireContent">
+                <div
+                    class="tab-pane fade"
+                    [ngClass]="{ 'show active': i === 0 }"
+                    *ngFor="let day of days; let i = index"
+                    id="{{ day.id }}"
+                    role="tabpanel"
+                    [attr.aria-labelledby]="day.id + '-tab'"
+                >
+                    <div class="row">
+                        <div class="col-md-12" *ngFor="let group of getGroupedSchedulesForDay(day.date_numeric)">
+                            <div class="card repertoire-card mb-4 d-flex flex-row">
+                                <img [src]="group.movie?.image" class="repertoire-card-img pointer" [alt]="group.movie?.title" routerLink="/movie/{{ group.movie?.id }}">
+                                <div class="repertoire-card-body flex-grow-1">
+                                <div class="d-flex justify-content-between">
+                                    <h3 class="repertoire-card-title pointer" routerLink="/movie/{{ group.movie?.id }}">{{ group.movie?.title }}</h3>
+                                    <p class="repertoire-card-text">Ocena: <i class="fa-solid fa-star"></i> {{ group.movie?.rating }}</p>
+                                </div>
+                                <p class="repertoire-card-date">Gatunek: {{ group.movie?.genre }}</p>
+                                <p class="repertoire-card-date">Obsada: {{ group.movie?.cast }}</p>
+                                <p class="repertoire-card-date">Czas trwania: {{ group.movie?.duration }}</p>
+                                <div class="d-flex flex-wrap repertoire-border">
+                                    <button
+                                    *ngFor="let time of group.times; let idx = index"
+                                    class="btn btn-outline-primary me-2 mb-2"
+                                    [routerLink]="'/purchase/' + group.movie?.id"
+                                    >
+                                    <b>{{ time }}</b>
+                                    <br />
+                                    <p class="repertoire-card-date">Napisy</p>
+                                    </button>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="getSchedulesForDay(day.date_numeric).length === 0" class="text-center py-5">
+                            {{ day.date }}
+                            <b>Brak seansów w tym dniu.</b>
+                        </div>
                     </div>
                 </div>
             </div>
-            </div>
         </div>
-        </div>
-    </div>
     </div>
 </div>
-
 
 <app-footer></app-footer>

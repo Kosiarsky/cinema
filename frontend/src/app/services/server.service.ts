@@ -42,4 +42,8 @@ export class ServerService {
   getUserTickets(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/user/tickets`);
   }
+
+  getRepertoire(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/movie/get-schedules`);
+  }
 }

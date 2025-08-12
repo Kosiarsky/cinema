@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { CommonModule } from '@angular/common';
+import { Observable, of } from 'rxjs';
 
 
 @Component({
@@ -15,14 +16,21 @@ import { CommonModule } from '@angular/common';
 export class SettingsComponent implements OnInit {
   settingsForm!: FormGroup;
   user: any = null;
-  isLoggedIn: boolean = false;
+  isLoggedIn: Observable<boolean> = of(false);
   successMessage: string | null = null;
   errorMessage: string | null = null;
 
   constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {}
-
+    
   ngOnInit(): void {
-    this.isLoggedIn = this.authService.isLoggedIn();
+          this.isLoggedIn = this.authService.isLoggedIn();
+          if (!this.isLoggedIn) {
+            this.router.navigate(['/login']);
+            return;
+          }
+          this.user = this.authService.getUser();
+
+    
     if (!this.isLoggedIn) {
       this.router.navigate(['/login']);
       return;

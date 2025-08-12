@@ -55,6 +55,10 @@ def refresh_token(request: RefreshTokenRequest):
 def get_me(current_user: UserResponse = Depends(get_current_user)):
     return current_user
 
+@router.get("/is-logged-in")
+def is_logged_in(current_user: UserResponse = Depends(get_current_user)):
+    return {"is_logged_in": current_user is not None}
+
 @router.get("/admin-only")
 def admin_endpoint(current_user = Depends(admin_required)):
     return {"msg": "Tylko dla admina!"}

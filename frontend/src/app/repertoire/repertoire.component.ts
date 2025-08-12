@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { CommonModule, formatDate } from '@angular/common';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
 import { RouterLink } from '@angular/router';
-  
+import { ServerService } from '../services/server.service';
 
 @Component({
   selector: 'app-repertoire',
@@ -12,18 +12,83 @@ import { RouterLink } from '@angular/router';
   templateUrl: './repertoire.component.html',
   styles: [],
 })
-export class RepertoireComponent {
-  
+export class RepertoireComponent implements OnInit {
+  repertoire: any[] = [];
+  isLoading = true;
+  days: { id: string, date_numeric: string, date: string, day: string }[] = [];
 
-  days = [
-    { date: '2025-05-21', day: 'Poniedziałek' },
-    { date: '2025-05-22', day: 'Wtorek' },
-    { date: '2025-05-23', day: 'Środa' },
-    { date: '2025-05-24', day: 'Czwartek' },
-    { date: '2025-05-25', day: 'Piątek' },
-  ];
+  constructor(private serverService: ServerService) {}
 
-  repertoire = [
+  ngOnInit(): void {
+    this.generateDays();
+    this.isLoading = true;
+    this.serverService.getRepertoire().subscribe({
+      next: (schedules) => {
+        this.repertoire = schedules;
+        console.log('Repertoire loaded:', this.repertoire);
+        this.isLoading = false;
+      },
+      error: () => {
+        this.repertoire = [];
+        this.isLoading = false;
+      }
+    });
+  }
+
+  generateDays() {
+    const today = new Date();
+    this.days = [];
+    for (let i = 0; i < 5; i++) {
+      const d = new Date(today);
+      d.setDate(today.getDate() + i);
+      this.days.push({
+        id: i.toString(),
+        date_numeric: formatDate(d, 'yyyy-MM-dd', 'en-US'),
+        date: d.toLocaleDateString('pl-PL', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        }),
+        day: d.toLocaleDateString('pl-PL', {
+          weekday: 'long',
+        }),
+      });
+    }
+  }
+
+  getSchedulesForDay(day: string) {
+    return this.repertoire.filter(schedule => schedule.date === day);
+  }
+
+  getGroupedSchedulesForDay(day: string) {
+  const schedules = this.repertoire.filter(schedule => schedule.date === day);
+
+  const grouped: { movie: any, times: string[], scheduleIds: number[] }[] = [];
+
+  schedules.forEach(schedule => {
+    const found = grouped.find(
+      g => g.movie.title === schedule.movie.title
+    );
+    if (found) {
+      found.times.push(schedule.time);
+      found.scheduleIds.push(schedule.id);
+    } else {
+      grouped.push({
+        movie: schedule.movie,
+        times: [schedule.time],
+        scheduleIds: [schedule.id]
+      });
+    }
+  });
+
+  grouped.forEach(group => {
+    group.times.sort((a, b) => a.localeCompare(b));
+  });
+
+  return grouped;
+}
+
+  repertoire2 = [
     {
       id: 1,
       title: 'Oszukać przeznaczenie: Wieże krwi',
@@ -74,7 +139,5 @@ export class RepertoireComponent {
     },
   ];
 
-  getMoviesForDay(date: string) {
-    return this.repertoire.filter((movie) => movie.day === date);
-  }
+  
 }

@@ -2,6 +2,9 @@ from pydantic import BaseModel
 from typing import List, Optional
 from datetime import date
 
+
+
+
 class ScheduleBase(BaseModel):
     date: date
     time: str
@@ -9,11 +12,6 @@ class ScheduleBase(BaseModel):
 class ScheduleCreate(ScheduleBase):
     movie_id: int
 
-class Schedule(ScheduleBase):
-    id: int
-
-    class Config:
-        orm_mode = True
 
 
 class MovieBase(BaseModel):
@@ -27,8 +25,17 @@ class MovieBase(BaseModel):
     trailer: Optional[str]
     cast: Optional[str]
 
+class Schedule(ScheduleBase):
+    id: int
+    movie: Optional[MovieBase] = None 
+
+    class Config:
+        orm_mode = True
+
+
 class MovieCreate(MovieBase):
     pass
+
 
 class Movie(MovieBase):
     id: int

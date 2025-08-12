@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
@@ -59,8 +59,12 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
-  isLoggedIn(): boolean {
-    return !!this.getToken(); 
+  isLoggedIn(): Observable<boolean> {
+    const token = this.getToken();
+    if (!token) {
+      return of(false);
+    }
+    return this.http.get<boolean>(`${this.baseUrl}/is-logged-in`);
   }
 
   saveUser(user: any): void {
@@ -69,12 +73,8 @@ export class AuthService {
     }
   }
 
-  getUser(): any | null {
-    if (isPlatformBrowser(this.platformId)) {
-      const user = localStorage.getItem('user');
-      return user ? JSON.parse(user) : null;
-    }
-    return null;
+  getUser(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/me`);
   }
 
   updateUser(user: any) {
