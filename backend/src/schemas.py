@@ -42,7 +42,9 @@ class Schedule(Base):
     id = Column(Integer, primary_key=True, index=True)
     date = Column(Date, nullable=False)
     time = Column(String, nullable=False)
+    movie_type = Column(String, nullable=True) 
     movie_id = Column(Integer, ForeignKey('movies.id'))
+    seats: List[List[bool]] = []
 
     movie = relationship("Movie", back_populates="schedules")
 

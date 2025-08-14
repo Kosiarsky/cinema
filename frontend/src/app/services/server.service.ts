@@ -46,4 +46,35 @@ export class ServerService {
   getRepertoire(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/movie/get-schedules`);
   }
+
+  getScheduleById(id: number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/movie/schedules/${id}`);
+  }
+
+  blockSeat(scheduleId: number, row: number, col: number): Observable<{ status: string; expires: string }> {
+    return this.http.post<{ status: string; expires: string }>(
+      `${this.baseUrl}/movie/schedules/${scheduleId}/block-seat`,
+      { row, col }
+    );
+  }
+
+  releaseSeat(scheduleId: number, row: number, col: number): Observable<{ status: string }> {
+    return this.http.post<{ status: string }>(
+      `${this.baseUrl}/movie/schedules/${scheduleId}/release-seat`,
+      { row, col }
+    );
+  }
+
+  releaseSeats(scheduleId: number, seats: Array<[number, number]>): Observable<{ released: number }> {
+    return this.http.post<{ released: number }>(
+      `${this.baseUrl}/movie/schedules/${scheduleId}/release-seats`,
+      seats
+    );
+  }
+
+  getBlockedSeats(scheduleId: number): Observable<{ blocked_seats: Array<[number, number]> }> {
+    return this.http.get<{ blocked_seats: Array<[number, number]> }>(
+      `${this.baseUrl}/movie/schedules/${scheduleId}/blocked-seats`
+    );
+  }
 }

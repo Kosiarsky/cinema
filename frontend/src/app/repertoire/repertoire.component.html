@@ -56,19 +56,22 @@
                                     <button
                                     *ngFor="let time of group.times; let idx = index"
                                     class="btn btn-outline-primary me-2 mb-2"
-                                    [routerLink]="'/purchase/' + group.movie?.id"
+                                    [routerLink]="'/purchase/' + group.scheduleIds[idx]"
                                     >
                                     <b>{{ time }}</b>
                                     <br />
-                                    <p class="repertoire-card-date">Napisy</p>
+                                    <p class="repertoire-card-date">{{ group.movieTypes[idx] }}</p>
                                     </button>
                                 </div>
                                 </div>
                             </div>
                         </div>
-                        <div *ngIf="getSchedulesForDay(day.date_numeric).length === 0" class="text-center py-5">
-                            {{ day.date }}
-                            <b>Brak seansów w tym dniu.</b>
+                        <div *ngIf="getSchedulesForDay(day.date_numeric).length === 0" class="text-center">
+                            <div class="card-body login-card p-5">
+                                <h2 class="text-left mb-4 px-5 red-border-bar">NIE ZNALEZIONO</h2>
+                                <strong>Nie znaleziono seansów dla wybranego dnia.</strong>
+                                Wybierz inny dzień!
+                            </div>
                         </div>
                     </div>
                 </div>

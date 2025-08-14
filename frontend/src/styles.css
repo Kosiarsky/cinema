@@ -46,6 +46,13 @@ h1 {
   text-transform: uppercase;
 }
 
+.red-border-bar-big {
+  padding-bottom: 10px;
+  border-bottom: 2px solid #cc0000 !important;
+  width: 100%;
+  font-size: 1.7rem;
+}
+
 .header-menu {
   border-bottom: 2px solid #cc0000 !important;
 }
@@ -774,6 +781,11 @@ input.form-control:hover {
 .py-25 {
   padding-top: 0.7rem !important;
   padding-bottom: 0.5rem !important;
+}
+
+.px-6 {
+  padding-left: 2.5rem !important;
+  padding-right: 2.5rem !important;
 }
 
 .movie-rating {

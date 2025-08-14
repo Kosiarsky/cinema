@@ -17,6 +17,7 @@ export class MovieComponent implements OnInit {
   movie: any; 
   groupedSchedules: { [date: string]: any[] } = {};
   isLoading = true;
+  notFound = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -35,10 +36,11 @@ export class MovieComponent implements OnInit {
       next: (result: any) => {
         this.movie = result;
         this.groupSchedulesByDate(result.schedules);
+        this.notFound = false;
         this.isLoading = false;
       },
       error: (error: Error)=> {
-        console.error('Error fetching image author', error);
+        this.notFound = true;
         this.isLoading = false;
       }
     });

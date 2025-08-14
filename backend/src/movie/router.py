@@ -1,10 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import Body
 from sqlalchemy.orm import Session
 from get_db import get_db
 from movie import service
 from schemas import Schedule
 from movie.schemas import MovieCreate, Movie, ScheduleCreate
 from movie.schemas import Schedule as ScheduleSchema
+from typing import List
+
 router = APIRouter()
 
 @router.get("/movies", response_model=list[Movie])
@@ -40,4 +43,37 @@ def delete_movie(movie_id: int, db: Session = Depends(get_db)):
 
 @router.get("/get-schedules", response_model=list[ScheduleSchema])
 def get_all_schedules(db: Session = Depends(get_db)):
-    return db.query(Schedule).all()
+    return service.get_all_schedules(db)
+
+@router.get("/schedules/{schedule_id}", response_model=ScheduleSchema)
+def get_schedule(schedule_id: int, db: Session = Depends(get_db)):
+    schedule = service.get_schedule(db, schedule_id)
+    if not schedule:
+        raise HTTPException(status_code=404, detail="Schedule not found")
+    return schedule
+
+@router.post("/schedules/{schedule_id}/block-seat")
+def block_seat(schedule_id: int, row: int = Body(...), col: int = Body(...)):
+    success, expiry = service.block_seat(None, schedule_id, row, col)
+    if not success:
+        raise HTTPException(status_code=409, detail=f"Seat already blocked until {expiry}")
+    return {"status": "blocked", "expires": expiry}
+
+@router.post("/schedules/{schedule_id}/release-seat")
+def release_seat(schedule_id: int, row: int = Body(...), col: int = Body(...)):
+    ok = service.release_seat(schedule_id, row, col)
+    if not ok:
+        raise HTTPException(status_code=404, detail="Seat not found or not blocked")
+    return {"status": "released"}
+
+@router.post("/schedules/{schedule_id}/release-seats")
+def release_seats(schedule_id: int, seats: List[tuple[int,int]] = Body(...)):
+    try:
+        released = service.release_seats(schedule_id, seats)
+        return {"released": released}
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid payload")
+
+@router.get("/schedules/{schedule_id}/blocked-seats")
+def get_blocked_seats(schedule_id: int):
+    return {"blocked_seats": service.get_blocked_seats(schedule_id)}

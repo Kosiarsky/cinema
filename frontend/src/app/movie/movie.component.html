@@ -55,5 +55,22 @@
             </div>
         </div>
     </ng-container>
+    
+    <ng-container *ngIf="notFound">
+        <div class="second-container">
+            <div class="container">
+                <div class="row justify-content-left align-items-center">
+                    <div class="col-md-6 col-lg-5">
+                        <div class="card-body login-card p-5">
+                            <h2 class="text-left mb-4 px-5 red-border-bar">NIE ZNALEZIONO</h2>
+                            <strong>Nie znaleziono filmu o podanym ID!</strong> Sprawdź poprawność linku lub wybierz inny film.
+                            <a routerLink="/" class="btn btn-primary mt-3">Powrót na stronę główną</a>
+                        </div>
+                    </div>
+                </div>  
+            </div>
+        </div>
+        
+    </ng-container>
 </div>
 <app-footer></app-footer>

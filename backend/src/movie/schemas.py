@@ -8,6 +8,7 @@ from datetime import date
 class ScheduleBase(BaseModel):
     date: date
     time: str
+    movie_type: Optional[str]
 
 class ScheduleCreate(ScheduleBase):
     movie_id: int
@@ -15,6 +16,7 @@ class ScheduleCreate(ScheduleBase):
 
 
 class MovieBase(BaseModel):
+    id: Optional[int] = None
     title: str
     genre: str
     duration: str
@@ -43,3 +45,12 @@ class Movie(MovieBase):
 
     class Config:
         orm_mode = True
+
+
+class BlockSeatRequest(BaseModel):
+    row: int
+    col: int
+
+class BlockSeatResponse(BaseModel):
+    status: str
+    expires: str
