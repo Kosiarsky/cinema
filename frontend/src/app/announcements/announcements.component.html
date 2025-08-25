@@ -5,9 +5,7 @@
     <div class="row">
       <div class="col-md-12" *ngFor="let news of newsList">
         <div class="card announcements-card mb-4 d-flex flex-row">
-          <!-- Obrazek po lewej stronie -->
           <img src="{{ news.image }}" class="announcements-card-img pointer" alt="{{ news.title }}"  routerLink="/movie/{{ news.id }}">
-          <!-- Informacje po prawej stronie -->
           <div class="announcements-card-body flex-grow-1">
             <h3 class="announcements-card-title pointer"  routerLink="/movie/{{ news.id }}">{{ news.title }}</h3>
             <p class="announcements-card-text">{{ news.content }}</p>

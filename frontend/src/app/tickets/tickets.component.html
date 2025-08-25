@@ -28,7 +28,7 @@
                         <div class="repertoire-card-big-text ms-2 mb-md-4"><b>{{ ticket.total_price }} ZŁ</b></div>
                     </div>
                 </div>
-                <img src="https://i.imgur.com/7Uj50MZ.png" class="repertoire-card-qr" alt="QR Code for Ticket" />
+                <img [src]="ticket.qr_code_data_url" class="repertoire-card-qr" alt="Kod QR biletu" />
             </li>
         </ul>
     </div>

@@ -74,6 +74,10 @@ class TicketSeatBase(BaseModel):
     seat: str
     price: float
     type: str
+    row_index: Optional[int] = None
+    col_index: Optional[int] = None
+    row_label: Optional[str] = None
+    seat_number: Optional[int] = None
 
 class TicketSeatCreate(TicketSeatBase):
     pass
@@ -96,5 +100,6 @@ class TicketResponse(BaseModel):
     total_price: float
     seats: List[TicketSeatResponse]
     schedule: ScheduleResponse
+    qr_code_data_url: Optional[str] = None
     class Config:
         orm_mode = True

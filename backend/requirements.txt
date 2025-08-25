@@ -16,3 +16,4 @@ PyQRCode==1.2.1
 pypng==0.20220715.0
 starlette-csrf==3.0.0
 fastapi-cli==0.0.4
+stripe==7.13.0

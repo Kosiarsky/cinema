@@ -55,6 +55,7 @@ export class AuthService {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.removeItem('auth_token'); 
       localStorage.removeItem('refresh_token'); 
+      localStorage.removeItem('user');
     }
     this.router.navigate(['/login']);
   }
@@ -64,7 +65,10 @@ export class AuthService {
     if (!token) {
       return of(false);
     }
-    return this.http.get<boolean>(`${this.baseUrl}/is-logged-in`);
+    return this.http.get<{ is_logged_in: boolean }>(`${this.baseUrl}/is-logged-in`).pipe(
+      map((res) => !!res?.is_logged_in),
+      catchError(() => of(false))
+    );
   }
 
   saveUser(user: any): void {

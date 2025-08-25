@@ -1,0 +1,49 @@
+<app-header></app-header>
+
+<div class="second-container mt-4 text-light">
+  <div class="d-flex justify-content-center align-items-center" style="min-height:200px;">
+    <ng-container [ngSwitch]="status">
+        <div *ngSwitchCase="'pending'" class="status pending">
+        <h2>Przetwarzanie płatności...</h2>
+        <p>Proszę czekać. Potwierdzamy płatność i zapisujemy bilet.</p>
+        </div>
+
+        <div *ngSwitchCase="'success'" class="status success">
+        <h2>Sukces!</h2>
+        <p>{{ message }}</p>
+
+        <div *ngIf="ticket" class="ticket">
+            <h3>Podsumowanie biletu</h3>
+            <p><strong>Nr biletu:</strong> {{ ticket.id }}</p>
+            <p><strong>Seans:</strong> {{ ticket.schedule_id }}</p>
+            <p><strong>Kwota:</strong> {{ ticket.total_price | number:'1.2-2' }} zł</p>
+            <div *ngIf="ticket.seats?.length">
+            <p><strong>Miejsca:</strong></p>
+            <ul>
+                <li *ngFor="let s of ticket.seats">{{ s.seat }} ({{ s.type }}) — {{ s.price | number:'1.2-2' }} zł</li>
+            </ul>
+            </div>
+        </div>
+
+        <div class="actions" style="margin-top: 16px; display: flex; gap: 12px;">
+            <a class="btn btn-primary" [routerLink]="['/tickets-history']">Moje bilety</a>
+            <a class="btn btn-secondary" [routerLink]="['/']">Strona główna</a>
+        </div>
+        </div>
+
+        <div *ngSwitchCase="'noSession'" class="status error">
+        <h2>Brak danych płatności</h2>
+        <p>{{ message }}</p>
+        <a class="btn btn-secondary" [routerLink]="['/']">Wróć na stronę główną</a>
+        </div>
+
+        <div *ngSwitchCase="'error'" class="status error">
+        <h2>Błąd</h2>
+        <p>{{ message }}</p>
+        <a class="btn btn-secondary" [routerLink]="['/']">Wróć na stronę główną</a>
+        </div>
+    </ng-container>
+  </div>
+</div>
+
+<app-footer></app-footer>

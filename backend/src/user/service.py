@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
-from schemas import User, Ticket
+from schemas import User, Ticket, TicketSeat
 from user.schemas import UserCreate, UserUpdate
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
@@ -10,6 +10,7 @@ from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from get_db import get_db
 from jose.exceptions import ExpiredSignatureError
+from sqlalchemy import and_, or_
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/user/login")
 
@@ -143,13 +144,87 @@ def change_password(db: Session, user: User, old_password: str, new_password: st
         raise HTTPException(status_code=401, detail="Token expired")
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
-    
+
+def _attach_qr_code(ticket: Ticket):
+    try:
+        import pyqrcode
+        import base64
+        import io
+        import json as _json
+        payload = {
+            "ticket_id": ticket.id,
+            "schedule_id": ticket.schedule_id,
+        }
+        data_str = _json.dumps(payload, separators=(',', ':'))
+        qr = pyqrcode.create(data_str, error='M')
+        buf = io.BytesIO()
+        qr.png(buf, scale=4)
+        png_b64 = base64.b64encode(buf.getvalue()).decode('ascii')
+        setattr(ticket, 'qr_code_data_url', f"data:image/png;base64,{png_b64}")
+    except Exception:
+        setattr(ticket, 'qr_code_data_url', None)
+
 def create_ticket(db: Session, user_id: int, ticket_data: dict):
-    ticket = Ticket(user_id=user_id, **ticket_data)
+    seats_data = ticket_data.get('seats', []) or []
+
+    schedule_id = ticket_data.get('schedule_id')
+    if not schedule_id:
+        raise HTTPException(status_code=400, detail="Brak schedule_id")
+
+    for s in seats_data:
+        r = s.get('row_index')
+        c = s.get('col_index')
+        r_label = s.get('row_label')
+        seat_num = s.get('seat_number')
+        seat_txt = s.get('seat')
+        conflict = db.query(TicketSeat) \
+            .join(Ticket, TicketSeat.ticket_id == Ticket.id) \
+            .filter(Ticket.schedule_id == schedule_id) \
+            .filter(
+                or_(
+                    and_(TicketSeat.row_index == r, TicketSeat.col_index == c),
+                    and_(TicketSeat.row_label == r_label, TicketSeat.seat_number == seat_num),
+                    TicketSeat.seat == seat_txt
+                )
+            ) \
+            .first()
+        if conflict:
+            raise HTTPException(status_code=409, detail=f"Seat already sold: {seat_txt or (r_label and seat_num and f'{r_label}-{seat_num}') or 'unknown'}")
+
+    ticket = Ticket(
+        user_id=user_id,
+        schedule_id=schedule_id,
+        hall=ticket_data.get('hall'),
+    )
     db.add(ticket)
+    db.flush()
+
+    total = 0.0
+    for s in seats_data:
+        seat_price = float(s.get('price') or 0.0)
+        ts = TicketSeat(
+            ticket_id=ticket.id,
+            seat=s.get('seat'),
+            price=seat_price,
+            type=s.get('type'),
+            row_index=s.get('row_index'),
+            col_index=s.get('col_index'),
+            row_label=s.get('row_label'),
+            seat_number=s.get('seat_number'),
+        )
+        db.add(ts)
+        total += seat_price
+
+    ticket.total_price = total
     db.commit()
     db.refresh(ticket)
+
+    _attach_qr_code(ticket)
+
     return ticket
 
 def get_user_tickets(db: Session, user_id: int):
-    return db.query(Ticket).filter(Ticket.user_id == user_id).all()
+    tickets = db.query(Ticket).filter(Ticket.user_id == user_id).all()
+    for t in tickets:
+        _attach_qr_code(t)
+    return tickets

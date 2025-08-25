@@ -2,40 +2,40 @@
   <div class="container">
     <div></div>
     <div *ngIf="!isLoading" class="d-flex align-items-center">
-      <ng-container *ngIf="authService.isLoggedIn(); else loggedOut">
+      <ng-container *ngIf="isLoggedIn; else loggedOut">
         <div class="py-2 px-4">
           Witaj, <b>{{user?.first_name}} {{user?.last_name}}</b>!
         </div>
-        <a href="/user-profile" class="text-white text-decoration-none"><div class="header-nav-item py-2 px-4">TWÓJ PROFIL</div></a>
-        <a class="text-white text-decoration-none" (click)="authService.logout()" style="cursor: pointer;"><div class="header-nav-item py-2 px-4">WYLOGUJ</div></a>
+        <a routerLink="/user-profile" class="text-white text-decoration-none"><div class="header-nav-item py-2 px-4">TWÓJ PROFIL</div></a>
+        <a class="text-white text-decoration-none" (click)="logout()" style="cursor: pointer;"><div class="header-nav-item py-2 px-4">WYLOGUJ</div></a>
       </ng-container>
       <ng-template #loggedOut>
-        <a href="/login" class="text-white text-decoration-none"><div class="header-nav-item py-2 px-4">LOGOWANIE</div></a>
-        <a href="/register" class="text-white text-decoration-none"><div class="header-nav-item py-2 px-4">REJESTRACJA</div></a>
+        <a routerLink="/login" class="text-white text-decoration-none"><div class="header-nav-item py-2 px-4">LOGOWANIE</div></a>
+        <a routerLink="/register" class="text-white text-decoration-none"><div class="header-nav-item py-2 px-4">REJESTRACJA</div></a>
       </ng-template>
     </div>  
   </div>
 </nav>
 <div class="py-3 mt-5 header">
   <div class="container d-flex justify-content-between align-items-center flex-column flex-md-row">
-    <a href="/" class="text-light text-decoration-none p-5 p-md-0">
+    <a routerLink="/" class="text-light text-decoration-none p-5 p-md-0">
       <h1><i class="fa-solid fa-film fa-sm navbar-brand"></i> APOLLO</h1>
     </a>
     <ul class="nav header-menu justify-content-center">
       <li class="nav-item">
-        <a class="nav-link text-light header-menu-item py-3" href="/repertoire">REPERTUAR</a>
+        <a class="nav-link text-light header-menu-item py-3" routerLink="/repertoire">REPERTUAR</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-light header-menu-item py-3" href="/pricelist">CENNIK</a>
+        <a class="nav-link text-light header-menu-item py-3" routerLink="/pricelist">CENNIK</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-light header-menu-item py-3" href="/news">AKTUALNOŚCI</a>
+        <a class="nav-link text-light header-menu-item py-3" routerLink="/news">AKTUALNOŚCI</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-light header-menu-item py-3" href="/recommended">POLECANE</a>
+        <a class="nav-link text-light header-menu-item py-3" routerLink="/recommended">POLECANE</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-light header-menu-item py-3" href="/announcements">ZAPOWIEDZI</a>
+        <a class="nav-link text-light header-menu-item py-3" routerLink="/announcements">ZAPOWIEDZI</a>
       </li>
     </ul>
   </div>

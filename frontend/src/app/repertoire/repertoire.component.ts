@@ -71,7 +71,7 @@ export class RepertoireComponent implements OnInit {
       if (found) {
         found.times.push(schedule.time);
         found.scheduleIds.push(schedule.id);
-        found.movieTypes.push(schedule.movie_type);
+        found.movieTypes.push(schedule.movie_type || 'Napisy');
       } else {
         grouped.push({
           movie: schedule.movie,
@@ -83,7 +83,11 @@ export class RepertoireComponent implements OnInit {
     });
 
     grouped.forEach(group => {
-      group.times.sort((a, b) => a.localeCompare(b));
+      const combined = group.times.map((t, i) => ({ time: t, id: group.scheduleIds[i], type: group.movieTypes[i] }));
+      combined.sort((a, b) => a.time.localeCompare(b.time));
+      group.times = combined.map(x => x.time);
+      group.scheduleIds = combined.map(x => x.id);
+      group.movieTypes = combined.map(x => x.type);
     });
 
     return grouped;

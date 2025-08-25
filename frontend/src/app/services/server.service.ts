@@ -11,6 +11,16 @@ export class ServerService {
 
   constructor(private http: HttpClient) {}
 
+  private authHeaders(): { headers?: HttpHeaders } {
+    try {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+      if (token) {
+        return { headers: new HttpHeaders({ 'Authorization': `Bearer ${token}` }) };
+      }
+    } catch {}
+    return {};
+  }
+
   getMovies(): Observable<any> {
     return this.http.get(`${this.baseUrl}/movie/movies`);
   }
@@ -40,7 +50,19 @@ export class ServerService {
   }
 
   getUserTickets(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.baseUrl}/user/tickets`);
+    return this.http.get<any[]>(`${this.baseUrl}/user/tickets`, this.authHeaders());
+  }
+
+  createTicket(ticket: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/user/tickets`, ticket, this.authHeaders());
+  }
+
+  createStripeCheckoutSession(payload: any): Observable<{ id: string; url: string }> {
+    return this.http.post<{ id: string; url: string }>(`${this.baseUrl}/payments/create-checkout-session`, payload, this.authHeaders());
+  }
+
+  confirmStripePayment(sessionId: string): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/payments/confirm`, { session_id: sessionId }, this.authHeaders());
   }
 
   getRepertoire(): Observable<any[]> {

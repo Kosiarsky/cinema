@@ -44,6 +44,7 @@ class Schedule(Base):
     time = Column(String, nullable=False)
     movie_type = Column(String, nullable=True) 
     movie_id = Column(Integer, ForeignKey('movies.id'))
+    hall = Column(String, nullable=True)
     seats: List[List[bool]] = []
 
     movie = relationship("Movie", back_populates="schedules")
@@ -67,6 +68,10 @@ class TicketSeat(Base):
     seat = Column(String, nullable=False)
     price = Column(Float, nullable=False)
     type = Column(String, nullable=False)
+    row_index = Column(Integer, nullable=True)
+    col_index = Column(Integer, nullable=True)
+    row_label = Column(String, nullable=True)
+    seat_number = Column(Integer, nullable=True)
 
     ticket = relationship("Ticket", back_populates="seats")
 
@@ -79,6 +84,7 @@ class Ticket(Base):
     hall = Column(String, nullable=True)
     purchase_date = Column(Date, default=date.today)
     total_price = Column(Float, nullable=False, default=0.0)
+    stripe_session_id = Column(String, unique=True, nullable=True)
 
     user = relationship("User")
     schedule = relationship("Schedule")
