@@ -8,27 +8,93 @@
         <p>Proszę czekać. Potwierdzamy płatność i zapisujemy bilet.</p>
         </div>
 
-        <div *ngSwitchCase="'success'" class="status success">
-        <h2>Sukces!</h2>
-        <p>{{ message }}</p>
+        <div *ngSwitchCase="'success'" class="status success w-100">
+          <div class="py-3 pb-1 bar-border">
+            <h2 class="red-border-bar-big text-center">
+                Sukces!
+            </h2>
+          </div>
+          <p class="text-center mb-3">
+            {{ message }} 
+          </p>
 
-        <div *ngIf="ticket" class="ticket">
-            <h3>Podsumowanie biletu</h3>
-            <p><strong>Nr biletu:</strong> {{ ticket.id }}</p>
-            <p><strong>Seans:</strong> {{ ticket.schedule_id }}</p>
-            <p><strong>Kwota:</strong> {{ ticket.total_price | number:'1.2-2' }} zł</p>
-            <div *ngIf="ticket.seats?.length">
-            <p><strong>Miejsca:</strong></p>
-            <ul>
-                <li *ngFor="let s of ticket.seats">{{ s.seat }} ({{ s.type }}) — {{ s.price | number:'1.2-2' }} zł</li>
-            </ul>
-            </div>
-        </div>
+          <div *ngIf="ticket" class="receipt-card mx-auto" style="max-width: 960px;">
+              <div class="receipt-header">
+                <!-- Replaced ticket id with unique ticket code -->
+                <h3 class="receipt-title">Kod biletu: {{ ticket.ticket_code }}</h3>
+              </div>
 
-        <div class="actions" style="margin-top: 16px; display: flex; gap: 12px;">
-            <a class="btn btn-primary" [routerLink]="['/tickets-history']">Moje bilety</a>
-            <a class="btn btn-secondary" [routerLink]="['/']">Strona główna</a>
-        </div>
+              <div class="summary-grid">
+                <div>
+                  <div class="info-line">
+                    {{ ticket.schedule?.movie?.title || 'Seans' }} •
+                    {{ ticket.schedule?.date | date:'dd.MM.yyyy' }} •
+                    {{ ticket.schedule?.time }} •
+                    Sala {{ ticket.hall || ticket.schedule?.hall }}
+                  </div>
+                  <table class="summary-table table table-dark table-striped align-middle screen-only">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Miejsce</th>
+                        <th>Typ</th>
+                        <th class="text-end">Cena</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let s of ticket.seats; let i = index">
+                        <td>{{ i + 1 }}</td>
+                        <td>{{ s.seat }}</td>
+                        <td>{{ s.type }}</td>
+                        <td class="text-end">{{ s.price | number:'1.2-2' }} zł</td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <th colspan="3" class="text-end">Razem:</th>
+                        <th class="text-end">{{ ticket.total_price | number:'1.2-2' }} zł</th>
+                      </tr>
+                    </tfoot>
+                  </table>
+
+                  <table class="summary-table table align-middle print-only">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Miejsce</th>
+                        <th>Typ</th>
+                        <th class="text-end">Cena</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let s of ticket.seats; let i = index">
+                        <td>{{ i + 1 }}</td>
+                        <td>{{ s.seat }}</td>
+                        <td>{{ s.type }}</td>
+                        <td class="text-end">{{ s.price | number:'1.2-2' }} zł</td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <th colspan="3" class="text-end">Razem:</th>
+                        <th class="text-end">{{ ticket.total_price | number:'1.2-2' }} zł</th>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+
+                <div class="qr-panel" *ngIf="ticket.qr_code_data_url">
+                  <img [src]="ticket.qr_code_data_url" alt="Kod QR biletu" style="width: 192px; height: 192px;" />
+                  <div class="qr-text">Zeskanuj kod QR przy wejściu na salę.</div>
+                </div>
+              </div>
+
+              <div class="actions">
+                  <a class="btn btn-primary" [routerLink]="['/user-profile']">Moje bilety</a>
+                  <button class="btn btn-primary" (click)="print()">Drukuj</button>
+                  <a class="btn btn-primary" [routerLink]="['/']">Strona główna</a>
+              </div>
+          </div>
         </div>
 
         <div *ngSwitchCase="'noSession'" class="status error">

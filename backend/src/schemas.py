@@ -85,6 +85,7 @@ class Ticket(Base):
     purchase_date = Column(Date, default=date.today)
     total_price = Column(Float, nullable=False, default=0.0)
     stripe_session_id = Column(String, unique=True, nullable=True)
+    ticket_code = Column(String, unique=True, nullable=True)
 
     user = relationship("User")
     schedule = relationship("Schedule")

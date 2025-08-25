@@ -101,8 +101,9 @@ def _attach_qr_code(ticket):
         import pyqrcode
         import base64
         import io
-        payload = {"ticket_id": ticket.id, "schedule_id": ticket.schedule_id}
-        data_str = json.dumps(payload, separators=(',', ':'))
+        # Use only the unique ticket code in the QR payload
+        code = getattr(ticket, 'ticket_code', None)
+        data_str = str(code) if code is not None else ''
         qr = pyqrcode.create(data_str, error='M')
         buf = io.BytesIO()
         qr.png(buf, scale=4)

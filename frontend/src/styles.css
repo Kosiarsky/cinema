@@ -837,3 +837,146 @@ input.form-control:hover {
   text-align: center;
   font-weight: bold;
 }
+
+.screen-only { display: table; }
+.print-only { display: none; }
+@media print {
+  .screen-only { display: none !important; }
+  .print-only { display: table !important; }
+  .print-only,
+  .print-only > :not(caption) > * > * {
+    --bs-table-bg: #ffffff !important;
+    --bs-table-accent-bg: #ffffff !important;
+    --bs-table-striped-bg: #ffffff !important;
+    --bs-table-striped-color: #000000 !important;
+    --bs-table-color: #000000 !important;
+    --bs-table-hover-bg: #ffffff !important;
+    --bs-table-hover-color: #000000 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  .print-only thead th,
+  .print-only tfoot th,
+  .print-only td,
+  .print-only th { border-color: #000000 !important; }
+}
+
+@media print {
+  .navbar,
+  app-footer,
+  footer,
+  .header-menu,
+  .header-nav-item,
+  .actions { display: none !important; }
+
+  body,
+  .second-container,
+  .receipt-card,
+  .summary-table { background: #ffffff !important; color: #000000 !important; }
+
+  .header { margin: 0 !important; padding: 0 !important; }
+  .header .container { padding: 0 !important; }
+  .header .container a { padding: 0 !important; margin: 0 !important; }
+  .p-5 { padding: 0 !important; }
+
+  .second-container .d-flex.justify-content-center.align-items-center { min-height: unset !important; }
+
+  .table,
+  .table > :not(caption) > * > * {
+    --bs-table-color: #000 !important;
+    --bs-table-bg: #fff !important;
+    --bs-table-striped-color: #000 !important;
+    --bs-table-striped-bg: #fff !important;
+    --bs-table-hover-color: #000 !important;
+    --bs-table-hover-bg: #fff !important;
+    color: #000 !important;
+    background-color: #fff !important;
+    background-image: none !important;
+  }
+  .table-dark,
+  .table-dark > :not(caption) > * > * { color: #000 !important; background-color: #fff !important; }
+  .table-striped > tbody > tr:nth-of-type(odd) > * { --bs-table-accent-bg: #fff !important; background-color: #fff !important; }
+
+  .summary-table { page-break-inside: avoid; }
+  .summary-table thead th,
+  .summary-table tfoot th,
+  .summary-table td,
+  .summary-table th { border-color: #000000 !important; }
+
+  .qr-panel { display: block !important; background: #ffffff !important; border: 1px solid #000 !important; }
+  .qr-text { color: #000 !important; }
+
+  .red-border-bar-big { border-color: #000000 !important; color: #000000 !important; }
+  .text-light { color: #000000 !important; }
+  a { color: #000000 !important; text-decoration: none !important; }
+
+  /* Stronger specificity to override Bootstrap table-dark/striped in print */
+  .summary-table.table.table-dark.table-striped,
+  .summary-table.table.table-dark.table-striped > thead > tr > th,
+  .summary-table.table.table-dark.table-striped > tbody > tr > td,
+  .summary-table.table.table-dark.table-striped > tfoot > tr > th,
+  .summary-table.table.table-dark.table-striped > thead > tr > td,
+  .summary-table.table.table-dark.table-striped > tfoot > tr > td {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+  .summary-table.table.table-dark.table-striped > tbody > tr:nth-of-type(odd) > * {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+  .summary-table.table.table-dark.table-striped,
+  .summary-table.table.table-dark.table-striped > :not(caption) > * > * {
+    --bs-table-accent-bg: #ffffff !important;
+    --bs-table-bg: #ffffff !important;
+    --bs-table-striped-bg: #ffffff !important;
+    --bs-table-striped-color: #000000 !important;
+    --bs-table-color: #000000 !important;
+    --bs-table-hover-bg: #ffffff !important;
+    --bs-table-hover-color: #000000 !important;
+  }
+
+  .summary-table,
+  .summary-table thead th,
+  .summary-table tbody td,
+  .summary-table tfoot th { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  .receipt-card .summary-table { --bs-table-bg: #ffffff !important; --bs-table-accent-bg: #ffffff !important; --bs-table-striped-bg: #ffffff !important; --bs-table-striped-color: #000000 !important; --bs-table-color: #000000 !important; --bs-table-hover-bg: #ffffff !important; --bs-table-hover-color: #000000 !important; }
+  .receipt-card .summary-table,
+  .receipt-card .summary-table thead,
+  .receipt-card .summary-table tbody,
+  .receipt-card .summary-table tfoot,
+  .receipt-card .summary-table tr,
+  .receipt-card .summary-table th,
+  .receipt-card .summary-table td { background: #ffffff !important; color: #000000 !important; border-color: #000000 !important; }
+  .receipt-card .summary-table.table-dark,
+  .receipt-card .summary-table.table-striped { background-image: none !important; }
+
+  .receipt-card .summary-table,
+  .receipt-card .summary-table * { background: #ffffff !important; background-color: #ffffff !important; color: #000000 !important; background-image: none !important; }
+  .receipt-card .summary-table thead th,
+  .receipt-card .summary-table tfoot th,
+  .receipt-card .summary-table td,
+  .receipt-card .summary-table th { border-color: #000000 !important; }
+  .receipt-card .summary-table tr:nth-of-type(odd) > * { background: #ffffff !important; }
+  .receipt-card .summary-table tr:hover > * { background: #ffffff !important; }
+
+  .print-plain,
+  .print-plain > :not(caption) > * > * {
+    --bs-table-bg: #ffffff !important;
+    --bs-table-accent-bg: #ffffff !important;
+    --bs-table-striped-bg: #ffffff !important;
+    --bs-table-striped-color: #000000 !important;
+    --bs-table-color: #000000 !important;
+    --bs-table-hover-bg: #ffffff !important;
+    --bs-table-hover-color: #000000 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    background-image: none !important;
+  }
+  .print-plain thead th,
+  .print-plain tfoot th,
+  .print-plain td,
+  .print-plain th { border-color: #000000 !important; }
+
+  @page { margin: 12mm; }
+}

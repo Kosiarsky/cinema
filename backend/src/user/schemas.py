@@ -101,5 +101,6 @@ class TicketResponse(BaseModel):
     seats: List[TicketSeatResponse]
     schedule: ScheduleResponse
     qr_code_data_url: Optional[str] = None
+    ticket_code: Optional[str] = None
     class Config:
         orm_mode = True

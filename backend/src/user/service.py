@@ -11,6 +11,7 @@ from fastapi.security import OAuth2PasswordBearer
 from get_db import get_db
 from jose.exceptions import ExpiredSignatureError
 from sqlalchemy import and_, or_
+import secrets
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/user/login")
 
@@ -150,12 +151,9 @@ def _attach_qr_code(ticket: Ticket):
         import pyqrcode
         import base64
         import io
-        import json as _json
-        payload = {
-            "ticket_id": ticket.id,
-            "schedule_id": ticket.schedule_id,
-        }
-        data_str = _json.dumps(payload, separators=(',', ':'))
+        # Use only the unique ticket code in the QR payload
+        code = getattr(ticket, 'ticket_code', None)
+        data_str = str(code) if code is not None else ''
         qr = pyqrcode.create(data_str, error='M')
         buf = io.BytesIO()
         qr.png(buf, scale=4)
@@ -191,10 +189,20 @@ def create_ticket(db: Session, user_id: int, ticket_data: dict):
         if conflict:
             raise HTTPException(status_code=409, detail=f"Seat already sold: {seat_txt or (r_label and seat_num and f'{r_label}-{seat_num}') or 'unknown'}")
 
+    code = None
+    for _ in range(5):
+        candidate = secrets.token_urlsafe(10)
+        if not db.query(Ticket).filter(Ticket.ticket_code == candidate).first():
+            code = candidate
+            break
+    if code is None:
+        raise HTTPException(status_code=500, detail="Nie udało się wygenerować kodu biletu")
+
     ticket = Ticket(
         user_id=user_id,
         schedule_id=schedule_id,
         hall=ticket_data.get('hall'),
+        ticket_code=code,
     )
     db.add(ticket)
     db.flush()
