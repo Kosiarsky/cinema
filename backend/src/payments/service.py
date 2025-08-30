@@ -2,7 +2,7 @@ import json
 import stripe
 from typing import Any, Dict, List, Tuple
 from fastapi import HTTPException, status
-from config import SECRET_KEY, STRIPE_SECRET_KEY
+from config import SECRET_KEY, STRIPE_SECRET_KEY, FRONTEND_BASE_URL
 from sqlalchemy.orm import Session
 
 
@@ -101,7 +101,6 @@ def _attach_qr_code(ticket):
         import pyqrcode
         import base64
         import io
-        # Use only the unique ticket code in the QR payload
         code = getattr(ticket, 'ticket_code', None)
         data_str = str(code) if code is not None else ''
         qr = pyqrcode.create(data_str, error='M')
@@ -113,12 +112,33 @@ def _attach_qr_code(ticket):
         setattr(ticket, 'qr_code_data_url', None)
 
 
+def _normalize_hall_value(h: Any) -> int | None:
+    if h is None:
+        return None
+    try:
+        s = str(h).strip()
+    except Exception:
+        return None
+    if not s:
+        return None
+    ls = s.lower()
+    if ls.startswith('sala'):
+        # remove possible prefix like 'Sala ' or 'sala-'
+        s = s.split(None, 1)[1] if ' ' in s else s[4:]
+        s = s.strip().lstrip('-').strip()
+    try:
+        return int(s)
+    except Exception:
+        return None
+
+
 def create_checkout_session(user_id: int, user_email: str, payload: Dict[str, Any]) -> Dict[str, Any]:
     _ensure_stripe_key()
 
     seats = payload.get('seats') or []
     schedule_id = payload.get('schedule_id')
-    hall = payload.get('hall')
+    hall_raw = payload.get('hall')
+    hall_num = _normalize_hall_value(hall_raw)
 
     line_items = []
     for s in seats:
@@ -137,12 +157,12 @@ def create_checkout_session(user_id: int, user_email: str, payload: Dict[str, An
 
     seats_compact = _encode_seats(seats)
 
-    success_url = payload.get('success_url') or 'http://localhost:4200/user-profile?paid=1&session_id={CHECKOUT_SESSION_ID}'
-    cancel_url = payload.get('cancel_url') or 'http://localhost:4200/repertoire?canceled=1'
+    success_url = payload.get('success_url') or f"{FRONTEND_BASE_URL}/user-profile?paid=1&session_id={{CHECKOUT_SESSION_ID}}"
+    cancel_url = payload.get('cancel_url') or f"{FRONTEND_BASE_URL}/repertoire?canceled=1"
 
     metadata: Dict[str, str] = {
         'sid': str(schedule_id),
-        'h': (str(hall) if hall is not None else ''),
+        'h': (str(hall_num) if hall_num is not None else ''),
         'user_id': str(user_id)
     }
     if len(seats_compact) <= 450:
@@ -188,7 +208,8 @@ def confirm_and_create_ticket(db, session_id: str, create_ticket_fn):
         raise HTTPException(status_code=400, detail='Brak danych użytkownika w płatności')
 
     schedule_id = meta.get('sid')
-    hall = meta.get('h')
+    hall_raw = meta.get('h')
+    hall_num = _normalize_hall_value(hall_raw)
     seats_str = meta.get('s')
     if not seats_str:
         pieces: List[Tuple[int, str]] = []
@@ -210,7 +231,7 @@ def confirm_and_create_ticket(db, session_id: str, create_ticket_fn):
 
     payload = {
         'schedule_id': int(schedule_id) if schedule_id is not None else None,
-        'hall': hall,
+        'hall': hall_num,
         'seats': seats,
     }
 

@@ -4,18 +4,22 @@ import { catchError, map, Observable, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { API_BASE_URL_TOKEN } from '../shared/tokens';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private baseUrl = 'http://localhost:8000/api/user';
+  private baseUrl: string;
 
   constructor(
     private http: HttpClient,
     private router: Router,
-    @Inject(PLATFORM_ID) private platformId: Object
-  ) {}
+    @Inject(PLATFORM_ID) private platformId: Object,
+    @Inject(API_BASE_URL_TOKEN) apiBase: string
+  ) {
+    this.baseUrl = `${apiBase}/api/user`;
+  }
 
   register(user: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/register`, user);

@@ -6,7 +6,7 @@
             <div class="col-md-3">
                 <div class="text-left py-5 pb-3 bar-border">
                     <h2 class="red-border-bar-profile">
-                        Witaj, {{user.first_name}}!
+                        Witaj, {{user?.first_name}}!
                     </h2>
                 </div>
                 <ul class="list-group profile-list-group">
@@ -33,7 +33,7 @@
                             <span *ngSwitchCase="'settings'">Zmień ustawienia konta</span>
                             <span *ngSwitchCase="'change-password'">Zmień hasło</span>
                             <span *ngSwitchCase="'tickets-history'">HISTORIA BILETÓW</span>
-                            <span *ngSwitchDefault>{{user.first_name}} {{user.last_name}}</span>
+                            <span *ngSwitchDefault>{{user?.first_name}} {{user?.last_name}}</span>
                         </ng-container>
                     </h2>
                 </div>

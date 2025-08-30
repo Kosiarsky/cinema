@@ -1,15 +1,18 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { API_BASE_URL_TOKEN } from '../shared/tokens';
 
 @Injectable({
     providedIn: 'root'
 })
 
 export class ServerService {
-  private baseUrl = 'http://localhost:8000/api'; 
+  private baseUrl: string;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, @Inject(API_BASE_URL_TOKEN) apiBase: string) {
+    this.baseUrl = `${apiBase}/api`;
+  }
 
   private authHeaders(): { headers?: HttpHeaders } {
     try {
@@ -21,6 +24,14 @@ export class ServerService {
     return {};
   }
 
+  getCategories(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/movie/categories`);
+  }
+
+  createCategory(name: string): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/movie/categories`, { name }, this.authHeaders());
+  }
+
   getMovies(): Observable<any> {
     return this.http.get(`${this.baseUrl}/movie/movies`);
   }
@@ -30,7 +41,15 @@ export class ServerService {
   }
 
   createMovie(movie: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/movie/movies`, movie);
+    return this.http.post(`${this.baseUrl}/movie/movies`, movie, this.authHeaders());
+  }
+
+  updateMovie(movieId: number, payload: any): Observable<any> {
+    return this.http.patch(`${this.baseUrl}/movie/movies/${movieId}`, payload, this.authHeaders());
+  }
+
+  deleteMovie(movieId: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/movie/movies/${movieId}`, this.authHeaders());
   }
 
   getSchedulesForMovie(movieId: number): Observable<any> {
@@ -38,7 +57,15 @@ export class ServerService {
   }
 
   createSchedule(schedule: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/movie/schedules`, schedule);
+    return this.http.post(`${this.baseUrl}/movie/schedules`, schedule, this.authHeaders());
+  }
+
+  updateSchedule(scheduleId: number, payload: any): Observable<any> {
+    return this.http.patch(`${this.baseUrl}/movie/schedules/${scheduleId}`, payload, this.authHeaders());
+  }
+
+  deleteSchedule(scheduleId: number): Observable<any> {
+    return this.http.delete(`${this.baseUrl}/movie/schedules/${scheduleId}`, this.authHeaders());
   }
 
   createActor(actor: any): Observable<any> {
@@ -98,5 +125,57 @@ export class ServerService {
     return this.http.get<{ blocked_seats: Array<[number, number]> }>(
       `${this.baseUrl}/movie/schedules/${scheduleId}/blocked-seats`
     );
+  }
+
+  // Admin stats
+  getAdminOverview(days: number = 30, from_date?: string, to_date?: string): Observable<any> {
+    let params = new HttpParams().set('days', days);
+    if (from_date && to_date) {
+      params = params.set('from_date', from_date).set('to_date', to_date);
+    }
+    return this.http.get<any>(`${this.baseUrl}/admin/stats/overview`, { params, ...(this.authHeaders()) });
+  }
+
+  getAdminTopMovies(days: number = 30, limit: number = 5, from_date?: string, to_date?: string): Observable<any[]> {
+    let params = new HttpParams().set('days', days).set('limit', limit);
+    if (from_date && to_date) {
+      params = params.set('from_date', from_date).set('to_date', to_date);
+    }
+    return this.http.get<any[]>(`${this.baseUrl}/admin/stats/top-movies`, { params, ...(this.authHeaders()) });
+  }
+
+  getAdminTopSessions(days: number = 30, limit: number = 5, from_date?: string, to_date?: string): Observable<any[]> {
+    let params = new HttpParams().set('days', days).set('limit', limit);
+    if (from_date && to_date) {
+      params = params.set('from_date', from_date).set('to_date', to_date);
+    }
+    return this.http.get<any[]>(`${this.baseUrl}/admin/stats/top-sessions`, { params, ...(this.authHeaders()) });
+  }
+
+  // Admin users
+  adminListUsers(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/admin/users`, this.authHeaders());
+  }
+
+  adminUpdateUser(userId: number, payload: any): Observable<any> {
+    return this.http.patch<any>(`${this.baseUrl}/admin/users/${userId}`, payload, this.authHeaders());
+  }
+
+  adminPromoteUser(userId: number): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/admin/users/${userId}/promote`, {}, this.authHeaders());
+  }
+
+  adminDemoteUser(userId: number): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/admin/users/${userId}/demote`, {}, this.authHeaders());
+  }
+
+  adminDeleteUser(userId: number): Observable<any> {
+    return this.http.delete<any>(`${this.baseUrl}/admin/users/${userId}`, this.authHeaders());
+  }
+
+  uploadImage(file: File): Observable<{ url: string }> {
+    const form = new FormData();
+    form.append('file', file);
+    return this.http.post<{ url: string }>(`${this.baseUrl}/movie/movies/upload-image`, form, this.authHeaders());
   }
 }

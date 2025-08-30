@@ -11,6 +11,16 @@
             <div class="text-left py-5 bar-border">
                 <h2 class="red-border-bar">REPERTUAR</h2>
             </div>
+
+
+            <div class="mb-3">
+                <div class="small mb-1">Filtruj po kategoriach:</div>
+                <div class="d-flex flex-wrap gap-2">
+                    <button type="button" class="btn btn-sm" [ngClass]="{ 'btn-secondary': selectedCategoryIds.length === 0, 'btn-outline-secondary': selectedCategoryIds.length > 0 }" (click)="clearCategories()">Wszystkie</button>
+                    <button type="button" class="btn btn-outline-light btn-sm" [class.active]="selectedCategoryIds.includes(c.id)" (click)="toggleCategory(c.id)" *ngFor="let c of categories">{{ c.name }}</button>
+                </div>
+            </div>
+
             <div class="nav-item-first">Wybierz dzień, który cie interesuje:</div>
             <ul class="nav nav-tabs" id="repertoireTabs" role="tablist">
                 <li class="nav-item" *ngFor="let day of days; let i = index">
@@ -43,7 +53,7 @@
                     <div class="row">
                         <div class="col-md-12" *ngFor="let group of getGroupedSchedulesForDay(day.date_numeric)">
                             <div class="card repertoire-card mb-4 d-flex flex-row">
-                                <img [src]="group.movie?.image" class="repertoire-card-img pointer" [alt]="group.movie?.title" routerLink="/movie/{{ group.movie?.id }}">
+                                <img [src]="toAbs(group.movie?.image)" class="repertoire-card-img pointer" [alt]="group.movie?.title" routerLink="/movie/{{ group.movie?.id }}">
                                 <div class="repertoire-card-body flex-grow-1">
                                 <div class="d-flex justify-content-between">
                                     <h3 class="repertoire-card-title pointer" routerLink="/movie/{{ group.movie?.id }}">{{ group.movie?.title }}</h3>

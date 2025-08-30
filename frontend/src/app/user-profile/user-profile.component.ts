@@ -9,8 +9,6 @@ import { SettingsComponent } from '../settings/settings.component';
 import { ChangePasswordComponent } from '../change-password/change-password.component';
 import { TicketsComponent } from '../tickets/tickets.component';
 import { TicketsHistoryComponent } from '../tickets-history/tickets-history.component';
-import { Observable } from 'rxjs/internal/Observable';
-import { of } from 'rxjs';
 
 
 @Component({
@@ -27,14 +25,25 @@ export class UserProfileComponent implements OnInit {
 
   selectedSection: string = 'tickets';
   user: any = null;
-  isLoggedIn: Observable<boolean> = of(false);
+  isLoggedIn: boolean = false;
 
   ngOnInit(): void {
-      this.isLoggedIn = this.authService.isLoggedIn();
-      if (!this.isLoggedIn) {
-        this.router.navigate(['/login']);
-        return;
-      }
-      this.user = this.authService.getUser();
+      this.authService.isLoggedIn().subscribe({
+        next: (loggedIn) => {
+          this.isLoggedIn = loggedIn;
+          if (!loggedIn) {
+            this.router.navigate(['/login']);
+            return;
+          }
+          this.authService.getUser().subscribe({
+            next: (user) => { this.user = user; },
+            error: () => { this.user = null; }
+          });
+        },
+        error: () => {
+          this.isLoggedIn = false;
+          this.router.navigate(['/login']);
+        }
+      });
   } 
 }

@@ -8,7 +8,7 @@
     <div class="row">
       <div class="col-md-2" *ngFor="let movie of recommendedMovies">
         <div class="card film-card text-light" routerLink="movie/{{ movie.id }}">
-          <img src="{{ movie.image }}" class="card-img-top" alt="{{ movie.title }}">
+          <img [src]="toAbs(movie.image)" class="card-img-top" alt="{{ movie.title }}">
           <div class="card-body">
             <h3 class="card-title">{{ movie.title }}</h3>
           </div>
@@ -49,7 +49,7 @@
     <div class="row">
       <div class="col-md-2" *ngFor="let movie of upcomingMovies">
         <div class="card film-card text-light" routerLink="movie/{{ movie.id }}">
-          <img src="{{ movie.image }}" class="card-img-top" alt="{{ movie.title }}">
+          <img [src]="toAbs(movie.image)" class="card-img-top" alt="{{ movie.title }}">
           <div class="card-body">
             <h3 class="card-title">{{ movie.title }}</h3>
           </div>

@@ -1,0 +1,45 @@
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class=" col-md-6 red-border-bar-profile mb-3">Użytkownicy</h2>
+    <input class="form-control form-control-sm w-auto" [(ngModel)]="search" placeholder="Szukaj..." />
+  </div>
+
+  <div *ngIf="loading" class="alert alert-info py-2">Ładowanie...</div>
+  <div *ngIf="error" class="alert alert-danger py-2">{{ error }}</div>
+
+  <div class="table-responsive" style="font-size: 0.9rem;">
+    <table class="table table-dark-body align-middle">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Imię</th>
+          <th>Nazwisko</th>
+          <th>Email</th>
+          <th>Telefon</th>
+          <th>Admin</th>
+          <th >Akcje</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let u of filtered()" style="font-size: 0.9rem;">
+          <td>{{u.id}}</td>
+          <td><input class="form-control form-control-sm text-light bg-dark" [(ngModel)]="u.first_name" (blur)="saveInline(u)" /></td>
+          <td><input class="form-control form-control-sm text-light bg-dark" [(ngModel)]="u.last_name" (blur)="saveInline(u)" /></td>
+          <td><input class="form-control form-control-sm text-light bg-dark" [(ngModel)]="u.email" (blur)="saveInline(u)" /></td>
+          <td><input class="form-control form-control-sm text-light bg-dark" [(ngModel)]="u.phone" (blur)="saveInline(u)" /></td>
+          <td>
+            <span class="badge bg-success" *ngIf="u.is_admin">TAK</span>
+            <span class="badge bg-secondary" *ngIf="!u.is_admin">NIE</span>
+          </td>
+          <td >
+            <button class="btn btn-sm btn-secondary btn-third me-2" (click)="toggleAdmin(u)" title="Promuj/Demotuj">
+              {{ u.is_admin ? 'Demotuj' : 'Promotuj' }}
+            </button>
+            <button class="btn btn-sm btn-secondary" (click)="delete(u)">
+              Usuń
+            </button>
+            
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>

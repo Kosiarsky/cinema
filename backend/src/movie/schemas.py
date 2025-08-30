@@ -9,7 +9,7 @@ class ScheduleBase(BaseModel):
     date: DateType
     time: str
     movie_type: Optional[str]
-    hall: Optional[str] = None
+    hall: Optional[int] = None
 
 class ScheduleCreate(ScheduleBase):
     movie_id: int
@@ -18,8 +18,15 @@ class ScheduleUpdate(BaseModel):
     date: Optional[DateType] = None
     time: Optional[str] = None
     movie_type: Optional[str] = None
-    hall: Optional[str] = None
+    hall: Optional[int] = None
 
+
+class CategoryBase(BaseModel):
+    id: Optional[int] = None
+    name: str
+
+    class Config:
+        orm_mode = True
 
 class MovieBase(BaseModel):
     id: Optional[int] = None
@@ -32,6 +39,7 @@ class MovieBase(BaseModel):
     big_image: Optional[str]
     trailer: Optional[str]
     cast: Optional[str]
+    categories: List[CategoryBase] = []
 
 class Schedule(ScheduleBase):
     id: int
@@ -42,7 +50,21 @@ class Schedule(ScheduleBase):
 
 
 class MovieCreate(MovieBase):
-    pass
+    # Accept category IDs when creating
+    category_ids: Optional[List[int]] = None
+
+class MovieUpdate(BaseModel):
+    # All fields optional for update
+    title: Optional[str] = None
+    genre: Optional[str] = None
+    duration: Optional[str] = None
+    rating: Optional[float] = None
+    description: Optional[str] = None
+    image: Optional[str] = None
+    big_image: Optional[str] = None
+    trailer: Optional[str] = None
+    cast: Optional[str] = None
+    category_ids: Optional[List[int]] = None
 
 
 class Movie(BaseModel):
@@ -56,6 +78,7 @@ class Movie(BaseModel):
     big_image: Optional[str]
     trailer: Optional[str]
     cast: Optional[str]
+    categories: List[CategoryBase] = []
     schedules: List[Schedule] = []
 
     class Config:

@@ -21,6 +21,12 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 def get_user_by_email(db: Session, email: str):
     return db.query(User).filter(User.email == email).first()
 
+def get_user_by_id(db: Session, user_id: int):
+    return db.query(User).get(user_id)
+
+def list_users(db: Session):
+    return db.query(User).order_by(User.id.asc()).all()
+
 def create_user(db: Session, user: UserCreate):
     hashed_password = pwd_context.hash(user.password)
     db_user = User(
@@ -77,6 +83,7 @@ def refresh_access_token(refresh_token: str):
         email: str = payload.get("sub")
         if email is None:
             raise HTTPException(status_code=401, detail="Invalid refresh token")
+        from get_db import get_db as _get_db  
         access_token = create_access_token({"sub": email})
         return {"access_token": access_token}
     except ExpiredSignatureError:
@@ -88,7 +95,6 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")
-        is_admin: int = payload.get("is_admin", 0)
         if email is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -100,7 +106,6 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="User not found"
             )
-        user.is_admin = is_admin  
         return user
     except ExpiredSignatureError:
             raise HTTPException(status_code=401, detail="Token expired")
@@ -130,6 +135,36 @@ def update_user(db: Session, user: User, user_update: dict):
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
 
+def admin_update_user(db: Session, user_id: int, updates: dict):
+    user = get_user_by_id(db, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="Użytkownik nie istnieje")
+    if 'first_name' in updates:
+        user.first_name = updates['first_name']
+    if 'last_name' in updates:
+        user.last_name = updates['last_name']
+    if 'email' in updates:
+        user.email = updates['email']
+    if 'phone' in updates:
+        user.phone = updates['phone']
+    if 'is_admin' in updates and updates['is_admin'] is not None:
+        user.is_admin = int(updates['is_admin'])
+    db.commit()
+    db.refresh(user)
+    return user
+
+def delete_user(db: Session, user_id: int):
+    user = get_user_by_id(db, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="Użytkownik nie istnieje")
+    tickets = db.query(Ticket).filter(Ticket.user_id == user_id).all()
+    for t in tickets:
+        db.query(TicketSeat).filter(TicketSeat.ticket_id == t.id).delete()
+        db.delete(t)
+    db.delete(user)
+    db.commit()
+    return {"status": "deleted"}
+
 def change_password(db: Session, user: User, old_password: str, new_password: str):
     try:
         if not pwd_context.verify(old_password, user.password):
@@ -151,7 +186,6 @@ def _attach_qr_code(ticket: Ticket):
         import pyqrcode
         import base64
         import io
-        # Use only the unique ticket code in the QR payload
         code = getattr(ticket, 'ticket_code', None)
         data_str = str(code) if code is not None else ''
         qr = pyqrcode.create(data_str, error='M')

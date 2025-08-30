@@ -20,6 +20,13 @@ class User(Base):
     password = Column(String, nullable=False)
     is_admin = Column(Integer, default=0)  
 
+movie_categories = Table(
+    'movie_categories',
+    Base.metadata,
+    Column('movie_id', Integer, ForeignKey('movies.id'), primary_key=True),
+    Column('category_id', Integer, ForeignKey('categories.id'), primary_key=True),
+)
+
 class Movie(Base):
     __tablename__ = 'movies'
 
@@ -35,6 +42,24 @@ class Movie(Base):
     cast = Column(String, nullable=True)
 
     schedules = relationship("Schedule", back_populates="movie")
+    categories = relationship(
+        "Category",
+        secondary=movie_categories,
+        back_populates="movies",
+        lazy='joined'
+    )
+
+class Category(Base):
+    __tablename__ = 'categories'
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False, unique=True, index=True)
+
+    movies = relationship(
+        "Movie",
+        secondary=movie_categories,
+        back_populates="categories"
+    )
 
 class Schedule(Base):
     __tablename__ = 'schedules'
@@ -44,7 +69,7 @@ class Schedule(Base):
     time = Column(String, nullable=False)
     movie_type = Column(String, nullable=True) 
     movie_id = Column(Integer, ForeignKey('movies.id'))
-    hall = Column(String, nullable=True)
+    hall = Column(Integer, nullable=True)
     seats: List[List[bool]] = []
 
     movie = relationship("Movie", back_populates="schedules")
@@ -81,7 +106,7 @@ class Ticket(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
     schedule_id = Column(Integer, ForeignKey('schedules.id'), nullable=False)
-    hall = Column(String, nullable=True)
+    hall = Column(Integer, nullable=True)
     purchase_date = Column(Date, default=date.today)
     total_price = Column(Float, nullable=False, default=0.0)
     stripe_session_id = Column(String, unique=True, nullable=True)

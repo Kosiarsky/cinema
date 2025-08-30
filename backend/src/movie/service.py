@@ -1,10 +1,26 @@
 from sqlalchemy.orm import Session
-from schemas import Movie, Schedule, Ticket, TicketSeat
-from movie.schemas import MovieCreate, ScheduleCreate, ScheduleUpdate
+from schemas import Movie, Schedule, Ticket, TicketSeat, Category
+from movie.schemas import MovieCreate, MovieUpdate, ScheduleCreate, ScheduleUpdate
 from datetime import datetime, timedelta
 from typing import List, Tuple, Set
 
 blocked_seats = {}
+
+def get_categories(db: Session):
+    return db.query(Category).order_by(Category.name.asc()).all()
+
+def create_category(db: Session, name: str):
+    name = (name or '').strip()
+    if not name:
+        return None
+    existing = db.query(Category).filter(Category.name.ilike(name)).first()
+    if existing:
+        return existing
+    cat = Category(name=name)
+    db.add(cat)
+    db.commit()
+    db.refresh(cat)
+    return cat
 
 def get_movies(db: Session):
     return db.query(Movie).all()
@@ -13,7 +29,28 @@ def get_movie_by_id(db: Session, movie_id: int):
     return db.query(Movie).filter(Movie.id == movie_id).first()
 
 def create_movie(db: Session, movie: MovieCreate):
-    db_movie = Movie(**movie.dict())
+    data = movie.dict(exclude={"category_ids", "categories"}, exclude_unset=True)
+    db_movie = Movie(**data)
+    db.add(db_movie)
+    cat_ids = (movie.category_ids or [])[:3]
+    if cat_ids:
+        cats = db.query(Category).filter(Category.id.in_(cat_ids)).all()
+        db_movie.categories = cats[:3]
+    db.commit()
+    db.refresh(db_movie)
+    return db_movie
+
+def update_movie(db: Session, db_movie: Movie, payload: MovieUpdate):
+    data = payload.dict(exclude={"category_ids"}, exclude_unset=True)
+    for k, v in data.items():
+        setattr(db_movie, k, v)
+    if payload.category_ids is not None:
+        cat_ids = (payload.category_ids or [])[:3]
+        if cat_ids:
+            cats = db.query(Category).filter(Category.id.in_(cat_ids)).all()
+            db_movie.categories = cats[:3]
+        else:
+            db_movie.categories = []
     db.add(db_movie)
     db.commit()
     db.refresh(db_movie)
@@ -28,6 +65,13 @@ def create_schedule(db: Session, schedule: ScheduleCreate):
     db.commit()
     db.refresh(db_schedule)
     return db_schedule
+
+def delete_schedule(db: Session, schedule_id: int) -> None:
+    sched = db.query(Schedule).filter(Schedule.id == schedule_id).first()
+    if not sched:
+        return
+    db.delete(sched)
+    db.commit()
 
 def get_all_schedules(db: Session):
     return db.query(Schedule).all()
@@ -170,3 +214,18 @@ def release_seats(schedule_id: int, seats: List[Tuple[int, int]]):
             del schedule_map[(row, col)]
             count += 1
     return count
+
+
+def delete_movie(db: Session, movie_id: int) -> None:
+    schedules = db.query(Schedule).filter(Schedule.movie_id == movie_id).all()
+    for sched in schedules:
+        tickets = db.query(Ticket).filter(Ticket.schedule_id == sched.id).all()
+        for t in tickets:
+            db.delete(t)  
+        db.delete(sched)
+
+    movie = db.query(Movie).filter(Movie.id == movie_id).first()
+    if movie:
+        db.delete(movie)
+
+    db.commit()

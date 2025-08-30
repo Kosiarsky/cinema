@@ -1,0 +1,164 @@
+<h2 class="red-border-bar-profile mb-3">Kopiowanie seansów</h2>
+
+<div *ngIf="success" class="alert alert-success">{{ success }}</div>
+<div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+<div class="row g-2 mb-3">
+  <div class="col-12 col-md-6">
+    <label class="form-label">Wybierz sale, z których chcesz skopiować seanse</label>
+    <div class="mt-1 d-flex flex-wrap gap-2 boxing">
+      <button type="button"
+              class="btn btn-outline-light btn-sm me-1"
+              [class.active]="!!copyHalls[h]"
+              (click)="toggleHall(h)"
+              *ngFor="let h of halls">
+        {{ h }}
+      </button>
+    </div>
+  </div>
+  <div class="col-12 col-md-6 d-flex align-items-end justify-content-md-end">
+    <div class="form-check form-switch">
+      <input class="form-check-input" type="checkbox" id="skipDup" [(ngModel)]="copySkipDuplicates" name="skipDup">
+      <label class="form-check-label" for="skipDup">Pomiń duplikaty (gdy istnieje seans o tej samej godzinie i sali)</label>
+    </div>
+  </div>
+</div>
+
+<div class="row g-2 mb-4">
+  <div class="col-12">
+    <label class="form-label">Wybierz daty na które chcesz skopiować seanse</label>
+
+    <div class="mt-2 d-flex flex-wrap gap-2 boxing">
+      <button type="button"
+              class="btn btn-outline-light btn-sm me-1"
+              [class.active]="copyTargets[d]"
+              (click)="toggleDay(d)"
+              *ngFor="let d of upcomingDays">
+        {{ labelForISO(d) }}
+      </button>
+    </div>
+  </div>
+</div>
+<div class="col-12 text-md-end">
+    <button class="btn btn btn-primary ms-auto mb-5" (click)="copyToSelectedDays()" [disabled]="copying || !hasAnyTargetSelected()" type="button">Kopiuj do zaznaczonych</button>
+</div>
+
+<h2 class="red-border-bar-profile mb-3">Plan dnia – seanse</h2>
+
+<div class="row g-2 align-items-end mb-3">
+  <div class="col-md-2">
+    <label class="form-label">Dzień</label>
+    <input class="form-control form-control-sm" type="date" [(ngModel)]="day" name="day" (change)="onDayChange()">
+  </div>
+  <div class="col-md-2">
+    <label class="form-label">Bufor sprzątania (min)</label>
+    <input class="form-control form-control-sm" type="number" min="0" [(ngModel)]="cleaningBufferMin" name="buffer" (change)="rebuildExistingBlocks()">
+  </div>
+  
+  <div class="col-md-8 text-md-end">
+    <button class="btn btn-primary me-2" (click)="savePlan()" [disabled]="saving || hasAnyConflicts()">
+      Zapisz plan dnia
+    </button>
+  </div>
+</div>
+
+<div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+<div class="row g-3">
+  <div class="col-lg-12">
+    <div class="planner-panel">
+      <h5 class="red-border-small-bar mb-3">Planowanie repertuaru</h5>
+      <div class="table-responsive">
+        <table class="table table-dark-body align-middle" style="font-size: 1rem;">
+          <thead>
+            <tr>
+              <th class="col-12 col-lg-1" style="min-width: 180px">Sala</th>
+              <th class="col-12 col-lg-5">Seanse</th>
+              <th class="col-12 col-lg-6"> Dodaj seans</th>
+            </tr>
+          </thead>
+          <tbody>
+        <tr *ngFor="let h of halls" class="row-divider" style="font-size: 1rem;">
+          <td style="width:160px">{{ h }}</td>
+          <td>
+            <div class="mb-2">
+              <ng-container *ngFor="let s of getExistingForHallSorted(h)">
+                <span class="badge bg-price me-1 align-items-center d-inline-flex mb-1 gap-2 w-100">
+                  <ng-container *ngIf="!editingExisting[s.id]; else editTpl">
+                    {{ existingEndLabel(s) }} {{ s.movie?.title || '' }}
+                    <button class="btn btn-xs btn-outline-light py-0 px-1 ms-auto" (click)="startEditExisting(s)">Edytuj</button>
+                    <button class="btn btn-xs btn-outline-danger py-0 px-1" (click)="deleteExisting(s)">Usuń</button>
+                  </ng-container>
+                  <ng-template #editTpl>
+                    <ng-container *ngIf="editingExisting[s.id] as ed">
+                      <div class="d-flex align-items-center gap-1">
+                        <select class="form-select form-select-sm text-white bg-dark" style="width:110px"
+                                [(ngModel)]="ed.time" name="e-time-{{s.id}}">
+                          <option *ngFor="let t of getAvailableTimesForExisting(ed.hall || s.hall, s.id, ed.time)" [ngValue]="t">{{ t }}</option>
+                        </select>
+                        <select class="form-select form-select-sm" style="width:110px" [(ngModel)]="ed.movie_type" name="e-type-{{s.id}}">
+                          <option value="napisy">napisy</option>
+                          <option value="dubbing">dubbing</option>
+                          <option value="lektor">lektor</option>
+                        </select>
+                        <select class="form-select form-select-sm" style="width:120px" [(ngModel)]="ed.hall" name="e-hall-{{s.id}}">
+                          <option *ngFor="let hh of halls" [ngValue]="hh">{{ hh }}</option>
+                        </select>
+                        <button class="btn btn-xs btn-primary py-0 px-2" [disabled]="isExistingEditConflicting(ed.hall || s.hall, s)" (click)="saveEditExisting(s)">Zapisz</button>
+                        <button class="btn btn-xs btn-secondary py-0 px-2" (click)="cancelEditExisting(s.id)">Anuluj</button>
+                        <span class="badge text-bg-danger" *ngIf="isExistingEditConflicting(ed.hall || s.hall, s)">Konflikt</span>
+                      </div>
+                    </ng-container>
+                  </ng-template>
+                </span>
+              </ng-container>
+              <span *ngIf="!getExistingForHall(h)?.length" class="text-white">Brak istniejących seansów</span>
+            </div>
+        </td>
+        <td>
+
+            <div *ngFor="let row of getPlan(h); let i = index" class="a-rep-border p-2 mb-2 text-white"
+                 draggable="true" (dragstart)="onDragStart(h, i, $event)" (dragover)="onDragOver($event)" (drop)="onDrop(h, i, $event)">
+              <div class="row g-2 align-items-center">
+                <div class="col-4">
+                  <select class="form-select form-select-sm text-white bg-dark" [(ngModel)]="row.time" name="time-{{h}}-{{i}}" (change)="onRowChange(h)">
+                    <option [ngValue]="''">— godzina —</option>
+                    <option *ngFor="let t of getAvailableTimes(h, i, row.time)" [ngValue]="t">{{ t }}</option>
+                  </select>
+                  <small class="text-white" *ngIf="getEndTimeLabel(row)">{{ getEndTimeLabel(row) }}</small>
+                </div>
+                <div class="col-5">
+                  <select class="form-select form-select-sm text-white bg-dark" [(ngModel)]="row.movie_id" name="movie-{{h}}-{{i}}" (change)="onRowChange(h)">
+                    <option [ngValue]="null">— film —</option>
+                    <option *ngFor="let m of movies" [ngValue]="m.id">{{ m.title }}</option>
+                  </select>
+                </div>
+                <div class="col-3">
+                  <select class="form-select form-select-sm text-white bg-dark" [(ngModel)]="row.movie_type" name="type-{{h}}-{{i}}">
+                    <option value="napisy">napisy</option>
+                    <option value="dubbing">dubbing</option>
+                    <option value="lektor">lektor</option>
+                  </select>
+                </div>
+              </div>
+              <div class="mt-2 d-flex justify-content-between align-items-center">
+                <div>
+                  <span class="badge text-bg-danger me-1" *ngIf="isRowConflictingWithinPlan(h, i)">Konflikt w sali</span>
+                  <span class="badge text-bg-warning text-dark" *ngIf="isRowConflictingWithExisting(h, i)">Nakłada się na istniejący seans</span>
+                </div>
+                <button class="btn btn-sm btn-outline-danger" (click)="removeRow(h, i)">Usuń</button>
+              </div>
+            </div>
+            <button class="btn btn-sm btn-outline-primary" (click)="addRow(h)">Dodaj seans</button>
+          </td>
+        </tr>
+      </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<form class="row g-2 mb-4 d-none" (ngSubmit)="createSchedule()">
+</form>

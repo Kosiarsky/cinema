@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ServerService } from '../services/server.service';
 import { Router } from '@angular/router';
 import { RouterLink } from '@angular/router';
+import { toAbs as toAbsHelper } from '../shared/env';
 
 @Component({
   selector: 'app-tickets',
@@ -43,5 +44,9 @@ export class TicketsComponent  implements OnInit  {
         this.tickets = [];
       }
     });
+  }
+
+  toAbs(url?: string): string {
+    return (toAbsHelper(url) || '') as string;
   }
 }

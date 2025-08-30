@@ -4,6 +4,7 @@ import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
 import { RouterLink } from '@angular/router';
 import { ServerService } from '../services/server.service';
+import { toAbs as toAbsHelper } from '../shared/env';
 
 @Component({
   selector: 'app-repertoire',
@@ -16,6 +17,8 @@ export class RepertoireComponent implements OnInit {
   repertoire: any[] = [];
   isLoading = true;
   days: { id: string, date_numeric: string, date: string, day: string }[] = [];
+  categories: any[] = [];
+  selectedCategoryIds: number[] = [];
 
   constructor(private serverService: ServerService) {}
 
@@ -32,6 +35,7 @@ export class RepertoireComponent implements OnInit {
         this.isLoading = false;
       }
     });
+    this.serverService.getCategories().subscribe({ next: (cats) => this.categories = cats || [] });
   }
 
   generateDays() {
@@ -55,19 +59,74 @@ export class RepertoireComponent implements OnInit {
     }
   }
 
+  toggleCategory(catId: number) {
+    const idx = this.selectedCategoryIds.indexOf(catId);
+    if (idx >= 0) this.selectedCategoryIds.splice(idx, 1);
+    else this.selectedCategoryIds.push(catId);
+  }
+
+  clearCategories() {
+    this.selectedCategoryIds = [];
+  }
+
+  private filterByCategories(schedules: any[]): any[] {
+    if (!this.selectedCategoryIds.length) return schedules;
+    const sel = new Set(this.selectedCategoryIds);
+    return schedules.filter(s => {
+      const cats = (s.movie?.categories || []) as Array<{ id: number }>;
+
+      return cats.some(c => sel.has(c.id));
+    });
+  }
+
   getSchedulesForDay(day: string) {
-    return this.repertoire.filter(schedule => schedule.date === day);
+    let schedules = this.repertoire.filter(schedule => schedule.date === day);
+    schedules = this.filterByCategories(schedules);
+
+    const todayStr = formatDate(new Date(), 'yyyy-MM-dd', 'en-US');
+    if (day === todayStr) {
+      const now = new Date();
+      const nowMinutes = now.getHours() * 60 + now.getMinutes();
+      schedules = schedules.filter(schedule => {
+        const time: string = schedule.time || '';
+        const [hStr, mStr] = time.split(':');
+        const h = parseInt(hStr, 10);
+        const m = parseInt((mStr ?? '0'), 10);
+        if (isNaN(h) || isNaN(m)) {
+          return true;
+        }
+        return (h * 60 + m) >= nowMinutes;
+      });
+    }
+
+    return schedules;
   }
 
   getGroupedSchedulesForDay(day: string) {
-    const schedules = this.repertoire.filter(schedule => schedule.date === day);
+    let schedules = this.repertoire.filter(schedule => schedule.date === day);
+
+    schedules = this.filterByCategories(schedules);
+
+    const todayStr = formatDate(new Date(), 'yyyy-MM-dd', 'en-US');
+    if (day === todayStr) {
+      const now = new Date();
+      const nowMinutes = now.getHours() * 60 + now.getMinutes();
+      schedules = schedules.filter(schedule => {
+        const time: string = schedule.time || '';
+        const [hStr, mStr] = time.split(':');
+        const h = parseInt(hStr, 10);
+        const m = parseInt((mStr ?? '0'), 10);
+        if (isNaN(h) || isNaN(m)) {
+          return true;
+        }
+        return (h * 60 + m) >= nowMinutes;
+      });
+    }
 
     const grouped: { movie: any, times: string[], scheduleIds: number[], movieTypes: string[] }[] = [];
 
     schedules.forEach(schedule => {
-      const found = grouped.find(
-        g => g.movie.title === schedule.movie.title
-      );
+      const found = grouped.find(g => g.movie.title === schedule.movie.title);
       if (found) {
         found.times.push(schedule.time);
         found.scheduleIds.push(schedule.id);
@@ -77,7 +136,7 @@ export class RepertoireComponent implements OnInit {
           movie: schedule.movie,
           times: [schedule.time],
           scheduleIds: [schedule.id],
-          movieTypes: [schedule.movie_type || 'Napisy'],
+          movieTypes: [schedule.movie_type || 'Napisy']
         });
       }
     });
@@ -91,5 +150,9 @@ export class RepertoireComponent implements OnInit {
     });
 
     return grouped;
+  }
+
+  toAbs(url?: string): string {
+    return (toAbsHelper(url) || '') as string;
   }
 }

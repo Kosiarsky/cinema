@@ -8,7 +8,7 @@
 <div *ngIf="!isLoading">
     <ng-container *ngIf="movie">
         <div class="fourth-container" style="background: linear-gradient(to top, #03060aff, #03060a00 40%), 
-                    url('{{ movie.big_image }}') no-repeat center center fixed;">
+                    url('{{ toAbs(movie.big_image) }}') no-repeat left center fixed; background-size: cover;">
             <div class="container mt-4 text-light">
                 <div class="row">
                     <div class="col-md-3">
@@ -24,7 +24,7 @@
         <div class="container mt-5 mb-5 text-light">
             <div class="row">
                 <div class="col-md-3">
-                    <img src="{{ movie.image }}" alt="{{ movie.title }}" class="img-fluid rounded movie-poster movie-card-img mb-4">
+                    <img [src]="toAbs(movie.image)" alt="{{ movie.title }}" class="img-fluid rounded movie-poster movie-card-img mb-4">
                     <p class="movie-genre"><strong>Gatunek:</strong><br> {{ movie.genre }}</p>
                     <p class="movie-duration"><strong>Czas trwania:</strong><br> {{ movie.duration }}</p>
                     <p class="movie-cast"><strong>Obsada:</strong><br> {{ movie.cast }}</p>
@@ -39,15 +39,33 @@
                         <div class="col-12 mt-2" *ngIf="groupedSchedules">
                             <h4 class="red-border-small-bar pl-0">Seanse</h4>
                         
-                            <div *ngFor="let date of getScheduleDates()">
-                            <h6 class="uppercase mt-3">{{ getFormattedDate(date) }}</h6>
-                            <div class="d-flex flex-wrap">
-                                <button
-                                *ngFor="let schedule of groupedSchedules[date]"
-                                class="btn btn-outline-primary me-2 mb-2">
-                                {{ schedule.time }}
-                                </button>
-                            </div>
+                            <ng-container *ngIf="getScheduleDates().length > 0; else noSchedules">
+                                <div *ngFor="let date of getScheduleDates()">
+                                    <h6 class="uppercase mt-3">{{ getFormattedDate(date) }}</h6>
+                                    <div class="d-flex flex-wrap">
+                                        <button
+                                            *ngFor="let schedule of groupedSchedules[date]"
+                                            class="btn btn-outline-primary me-2 mb-2">
+                                            {{ schedule.time }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </ng-container>
+                            <ng-template #noSchedules>
+                                <div class=" mt-2">Brak zaplanowanych seansów.</div>
+                            </ng-template>
+                        </div>
+                        <div class="col-12 mt-4" *ngIf="trailerUrl">
+                            <h4 class="red-border-small-bar pl-0">Zwiastun</h4>
+                            <div class="ratio ratio-16x9" style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:8px;">
+                                <iframe
+                                    [src]="trailerUrl"
+                                    title="Zwiastun YouTube"
+                                    style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;"
+                                    frameborder="0"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                    allowfullscreen>
+                                </iframe>
                             </div>
                         </div>
                     </div>

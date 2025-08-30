@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
 import { RouterLink } from '@angular/router';
+import { toAbs as toAbsHelper } from '../shared/env';
 
 @Component({
   selector: 'app-recommended',
@@ -41,4 +42,8 @@ export class RecommendedComponent {
       content: 'Poruszający dramat o pasji i wytrwałości w dążeniu do celu. Film, który inspiruje i skłania do refleksji.',
     },
   ];
+
+  toAbs(url?: string): string {
+    return (toAbsHelper(url) || '') as string;
+  }
 }

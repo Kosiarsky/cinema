@@ -32,6 +32,12 @@ class UserUpdate(BaseModel):
     email: Optional[str]
     phone: Optional[str]
 
+class AdminUserResponse(UserResponse):
+    phone: Optional[str] = None
+
+class AdminUserUpdate(UserUpdate):
+    is_admin: Optional[int] = None
+
 class PasswordChange(BaseModel):
     old_password: str
     new_password: str
@@ -68,7 +74,7 @@ class TicketBase(BaseModel):
     seat: Optional[str] = None
     purchase_date: date
     price: float
-    hall: Optional[str] = None
+    hall: Optional[int] = None
 
 class TicketSeatBase(BaseModel):
     seat: str
@@ -89,13 +95,13 @@ class TicketSeatResponse(TicketSeatBase):
 
 class TicketCreate(BaseModel):
     schedule_id: int
-    hall: Optional[str]
+    hall: Optional[int]
     seats: List[TicketSeatCreate]
 
 class TicketResponse(BaseModel):
     id: int
     schedule_id: int
-    hall: Optional[str]
+    hall: Optional[int]
     purchase_date: date
     total_price: float
     seats: List[TicketSeatResponse]

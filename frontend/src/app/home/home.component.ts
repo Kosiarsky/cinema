@@ -4,6 +4,7 @@ import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
 import { SliderComponent } from '../slider/slider.component';
 import { RouterLink } from '@angular/router';
+import { toAbs as toAbsHelper } from '../shared/env';
 
 @Component({
   selector: 'app-home',
@@ -84,4 +85,9 @@ export class HomeComponent {
       description: 'Historia pełna emocji i niespodziewanych zwrotów akcji.'
     }
   ];
+
+
+  toAbs(url?: string): string {
+    return (toAbsHelper(url) || '') as string;
+  }
 }

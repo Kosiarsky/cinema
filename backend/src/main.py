@@ -1,16 +1,27 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from user import router as user_router
 from admin import router as admin_router
 from movie import router as movie_router
 from general import router as general_router
 from payments import router as payments_router
+import os
+from config import CORS_ALLOW_ORIGINS
 
 app = FastAPI(root_path='/api')
 
+static_dir = os.path.join(os.path.dirname(__file__), 'static')
+if not os.path.isdir(static_dir):
+    try:
+        os.makedirs(static_dir, exist_ok=True)
+    except Exception:
+        pass
+app.mount('/static', StaticFiles(directory=static_dir), name='static')
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:4200", "http://localhost:3000", "*"], 
+    allow_origins=CORS_ALLOW_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

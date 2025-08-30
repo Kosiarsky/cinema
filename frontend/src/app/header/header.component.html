@@ -7,6 +7,7 @@
           Witaj, <b>{{user?.first_name}} {{user?.last_name}}</b>!
         </div>
         <a routerLink="/user-profile" class="text-white text-decoration-none"><div class="header-nav-item py-2 px-4">TWÓJ PROFIL</div></a>
+        <a *ngIf="user?.is_admin" routerLink="/admin" class="text-white text-decoration-none"><div class="header-nav-item py-2 px-4">ADMIN</div></a>
         <a class="text-white text-decoration-none" (click)="logout()" style="cursor: pointer;"><div class="header-nav-item py-2 px-4">WYLOGUJ</div></a>
       </ng-container>
       <ng-template #loggedOut>

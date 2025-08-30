@@ -8,12 +8,25 @@ import { AuthService } from './services/auth.service';
 import { HttpRequest, HttpHandlerFn, HttpEvent, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
+import { API_BASE_URL_TOKEN, FRONTEND_BASE_URL_TOKEN } from './shared/tokens';
+
+const resolveApiBase = () =>
+  (typeof window !== 'undefined' && (window as any).__API_BASE_URL__) ||
+  (typeof process !== 'undefined' && (process as any).env && (process as any).env.API_BASE_URL) ||
+  'http://localhost:8000';
+
+const resolveFrontendBase = () =>
+  (typeof window !== 'undefined' && (window as any).__FRONTEND_BASE_URL__) ||
+  (typeof process !== 'undefined' && (process as any).env && (process as any).env.FRONTEND_BASE_URL) ||
+  'http://localhost:4200';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     provideClientHydration(),
     provideAnimations(),
+    { provide: API_BASE_URL_TOKEN, useFactory: resolveApiBase },
+    { provide: FRONTEND_BASE_URL_TOKEN, useFactory: resolveFrontendBase },
     provideHttpClient(
       withFetch(),
       withInterceptors([

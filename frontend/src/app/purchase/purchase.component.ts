@@ -7,6 +7,8 @@ import { FooterComponent } from '../footer/footer.component';
 import { ServerService } from '../services/server.service';
 import { PLATFORM_ID } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { toAbs as toAbsHelper } from '../shared/env';
+import { FRONTEND_BASE_URL_TOKEN } from '../shared/tokens';
 
 @Component({
   selector: 'app-purchase',
@@ -53,12 +55,14 @@ export class PurchaseComponent implements OnInit, OnDestroy {
   paymentError: string | null = null;
   isPaying = false;
   paymentCanceled = false;
+  showStarted = false;
 
   constructor(
     private route: ActivatedRoute,
     private serverService: ServerService,
     private router: Router,
-    @Inject(PLATFORM_ID) platformId: Object
+    @Inject(PLATFORM_ID) platformId: Object,
+    @Inject(FRONTEND_BASE_URL_TOKEN) private frontendBaseUrl: string
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
   }
@@ -72,6 +76,9 @@ export class PurchaseComponent implements OnInit, OnDestroy {
     this.serverService.getScheduleById(id).subscribe({
       next: (schedule) => {
         this.schedule = schedule;
+        // Compute if show already started
+        const dt = this.getScheduleDateTime();
+        this.showStarted = !!dt && dt.getTime() <= Date.now();
         this.missingHall = !schedule?.hall;
         if (Array.isArray(schedule?.seats) && schedule.seats.length) {
           this.seatMatrix = schedule.seats;
@@ -115,12 +122,26 @@ export class PurchaseComponent implements OnInit, OnDestroy {
     return this.blockedSeats.has(this.key(r,c));
   }
 
+  private getScheduleDateTime(): Date | undefined {
+    try {
+      const dateStr: string = this.schedule?.date;
+      const timeStr: string = this.schedule?.time || '00:00';
+      const [hh, mm] = (timeStr || '00:00').split(':').map((v: string) => parseInt(v, 10) || 0);
+      const d = new Date(dateStr);
+      if (!isNaN(hh)) d.setHours(hh, isNaN(mm) ? 0 : mm, 0, 0);
+      return isNaN(d.getTime()) ? undefined : d;
+    } catch {
+      return undefined;
+    }
+  }
+
   isSeatAvailable(r: number, c: number) {
     const withinMatrix = this.seatMatrix?.[r]?.[c] === true;
-    return withinMatrix && !this.isSeatBlocked(r,c);
+    return withinMatrix && !this.isSeatBlocked(r,c) && !this.showStarted;
   }
 
   toggleSeat(r: number, c: number) {
+    if (this.showStarted) return;
     if (!this.isSeatAvailable(r,c) && !this.selectedSeats.has(this.key(r,c))) return;
     const k = this.key(r,c);
     if (this.selectedSeats.has(k)) {
@@ -240,6 +261,10 @@ export class PurchaseComponent implements OnInit, OnDestroy {
   get selectedCount() { return this.selectedSeats.size; }
 
   proceedToPayment() {
+    if (this.showStarted) {
+      this.paymentError = 'Seans już się rozpoczął. Zakup biletów jest niedostępny.';
+      return;
+    }
     if (this.selectedSeats.size === 0 || this.sessionExpired) return;
     if (this.missingHall || !this.schedule?.hall) {
       this.paymentError = 'Tego seansu nie można zarezerwować ani opłacić, ponieważ nie ma przypisanej sali.';
@@ -340,9 +365,10 @@ export class PurchaseComponent implements OnInit, OnDestroy {
       seat: `${i.rowLabel}-${i.seatNumber}`
     }));
 
-    const origin = this.isBrowser ? window.location.origin : 'http://localhost:4200';
-    const success_url = `${origin}/payment-success?session_id={CHECKOUT_SESSION_ID}`;
-    const cancel_url = `${origin}/purchase/${scheduleId}?canceled=1`;
+    const origin = this.isBrowser ? window.location.origin : undefined;
+    const base = origin || this.frontendBaseUrl;
+    const success_url = `${base}/payment-success?session_id={CHECKOUT_SESSION_ID}`;
+    const cancel_url = `${base}/purchase/${scheduleId}?canceled=1`;
 
     this.serverService.createStripeCheckoutSession({
       schedule_id: scheduleId,

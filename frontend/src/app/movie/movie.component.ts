@@ -5,6 +5,8 @@ import { RouterLink } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
 import { ServerService } from '../services/server.service';
+import { toAbs as toAbsHelper } from '../shared/env';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-movie',
@@ -18,11 +20,13 @@ export class MovieComponent implements OnInit {
   groupedSchedules: { [date: string]: any[] } = {};
   isLoading = true;
   notFound = false;
+  trailerUrl: SafeResourceUrl | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private serverService: ServerService
+    private serverService: ServerService,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
@@ -36,6 +40,7 @@ export class MovieComponent implements OnInit {
       next: (result: any) => {
         this.movie = result;
         this.groupSchedulesByDate(result.schedules);
+        this.trailerUrl = this.buildTrailerUrl(result?.trailer);
         this.notFound = false;
         this.isLoading = false;
       },
@@ -44,6 +49,39 @@ export class MovieComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  private buildTrailerUrl(raw?: string): SafeResourceUrl | null {
+    const id = this.extractYouTubeId(raw || '');
+    if (!id) return null;
+    const embed = `https://www.youtube.com/embed/${id}`;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(embed);
+  }
+
+  private extractYouTubeId(url: string): string | null {
+    if (!url) return null;
+    try {
+      // Support youtu.be/<id>, youtube.com/watch?v=<id>, youtube.com/embed/<id>, plus additional params
+      const u = new URL(url);
+      if (u.hostname.includes('youtu.be')) {
+        const p = u.pathname.split('/').filter(Boolean);
+        return p[0] || null;
+      }
+      if (u.searchParams.has('v')) {
+        return u.searchParams.get('v');
+      }
+      const path = u.pathname.split('/').filter(Boolean);
+      const embedIdx = path.indexOf('embed');
+      if (embedIdx >= 0 && path[embedIdx + 1]) {
+        return path[embedIdx + 1];
+      }
+      // Shorts format: /shorts/<id>
+      const shortsIdx = path.indexOf('shorts');
+      if (shortsIdx >= 0 && path[shortsIdx + 1]) {
+        return path[shortsIdx + 1];
+      }
+    } catch {}
+    return null;
   }
 
   groupSchedulesByDate(schedules: any[]): void {
@@ -68,5 +106,9 @@ export class MovieComponent implements OnInit {
       month: 'long',
       year: 'numeric',
     });
+  }
+
+  toAbs(url?: string): string {
+    return (toAbsHelper(url) || '') as string;
   }
 }

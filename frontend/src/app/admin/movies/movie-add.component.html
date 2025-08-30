@@ -1,0 +1,65 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="red-border-bar-profile m-0">Dodawanie filmu</h2>
+  <a routerLink="/admin/movies" class="btn btn-sm btn-secondary">Powrót do listy</a>
+</div>
+
+<form class="row g-1 mb-3" #f="ngForm" (ngSubmit)="createMovie(f)">
+  <div class="col-md-4">
+    <input class="form-control form-control-sm" [(ngModel)]="form.title" name="title" placeholder="Tytuł" required>
+  </div>
+  <div class="col-md-4">
+    <input type="number" class="form-control form-control-sm" [(ngModel)]="form.durationMinutes" name="durationMinutes" placeholder="Czas trwania (minuty)" min="1" required>
+    <small *ngIf="form.durationMinutes">Zostanie zapisane jako: {{ formatDurationPreview(form.durationMinutes) }}</small>
+  </div>
+  <div class="col-md-4">
+    <input class="form-control form-control-sm" [(ngModel)]="form.cast" name="cast" placeholder="Obsada (lista, przecinkami)" required>
+  </div>
+
+  <div class="col-12">
+    <textarea class="form-control form-control-sm" rows="3" [(ngModel)]="form.description" name="description" placeholder="Opis" required></textarea>
+  </div>
+
+  <div class="col-12 mb-2 pb-2 d-flex flex-wrap gap-3">
+    <div class="col-12 red-border-bar-small mb-2">Obrazy i zwiastun</div>
+  </div>
+
+  <div class="col-12 col-md-4">
+    <input type="file" class="form-control form-control-sm" accept="image/png,image/jpeg" (change)="onFileSelectedSmall($event)" />
+    <small>Mały plakat (PNG/JPG)</small>
+    <div *ngIf="form.image" class="mt-1">
+      <a [href]="form.image" target="_blank" class="badge bg-tickets">podgląd</a>
+    </div>
+  </div>
+
+  <div class="col-12 col-md-4">
+    <input type="file" class="form-control form-control-sm" accept="image/png,image/jpeg" (change)="onFileSelectedBig($event)" />
+    <small>Duży obraz (PNG/JPG)</small>
+    <div *ngIf="form.big_image" class="mt-1">
+      <a [href]="form.big_image" target="_blank" class="badge bg-tickets">podgląd</a>
+    </div>
+  </div>
+
+  <div class="col-12 col-md-4">
+    <input class="form-control form-control-sm" [(ngModel)]="form.trailer" name="trailer" placeholder="URL trailera (YouTube)" required>
+  </div>
+
+  <div class="col-12 mb-2 pb-2">
+    <div class="red-border-bar-small mb-2">Wybierz kategorie (max 3):</div>
+    <div class="mt-2 d-flex gap-2 align-items-center boxing">
+      <div class="col-12 col-lg-9">
+        <button type="button" class="btn btn-outline-light btn-sm me-1" [class.active]="isSelected(c.id)" (click)="toggleCategory(c.id)" *ngFor="let c of categories">{{ c.name }}</button>
+      </div>
+      <div class="col-12 col-lg-3 d-flex gap-2 justify-content-lg-end">
+        <input class="form-control form-control-sm w-auto" [(ngModel)]="newCategoryName" name="newCategoryName" placeholder="Nowa kategoria" />
+        <button type="button" class="btn btn-sm btn-primary" (click)="addCategory()">Dodaj kategorię</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 d-flex justify-content-center">
+    <button class="btn btn-success me-2" type="submit" [disabled]="saving || !f.valid">Dodaj film</button>
+    <a routerLink="/admin/movies" class="btn btn-secondary">Anuluj</a>
+  </div>
+</form>
+
+<div *ngIf="error" class="alert alert-danger">{{ error }}</div>

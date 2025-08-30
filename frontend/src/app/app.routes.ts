@@ -16,6 +16,13 @@ import { inject } from '@angular/core';
 import { AuthService } from './services/auth.service';
 import { Router } from '@angular/router';
 import { Observable, map } from 'rxjs';
+import { adminGuard } from './admin/admin.guard';
+import { AdminComponent } from './admin/admin.component';
+import { MoviesAdminComponent } from './admin/movies/movies-admin.component';
+import { SchedulesAdminComponent } from './admin/schedules/schedules-admin.component';
+import { AdminDashboardComponent } from './admin/dashboard/admin-dashboard.component';
+import { UsersAdminComponent } from './admin/users/users-admin.component';
+import { MovieAddComponent } from './admin/movies/movie-add.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -23,8 +30,20 @@ export const routes: Routes = [
     { path: 'announcements', component: AnnouncementsComponent },
     { path: 'news', component: NewsComponent },
     { path: 'recommended', component: RecommendedComponent },
-    { path: 'login', component: LoginComponent },
-    { path: 'register', component: RegisterComponent },
+    { path: 'login', component: LoginComponent, canActivate: [() => {
+        const auth = inject(AuthService);
+        const router = inject(Router);
+        return auth.isLoggedIn().pipe(
+          map(ok => ok ? router.createUrlTree(['/']) : true)
+        );
+    }] },
+    { path: 'register', component: RegisterComponent, canActivate: [() => {
+        const auth = inject(AuthService);
+        const router = inject(Router);
+        return auth.isLoggedIn().pipe(
+          map(ok => ok ? router.createUrlTree(['/']) : true)
+        );
+    }] },
     { path: 'pricelist', component: PricelistComponent },
     { path: 'movie', component: MovieComponent },
     { path: 'movie/:id', component: MovieComponent },
@@ -44,5 +63,12 @@ export const routes: Routes = [
           map(ok => ok ? true : router.createUrlTree(['/login']))
         );
     }] },
+    { path: 'admin', component: AdminComponent, canActivate: [adminGuard], children: [
+      { path: '', component: AdminDashboardComponent },
+      { path: 'movies/add', component: MovieAddComponent },
+      { path: 'movies', component: MoviesAdminComponent },
+      { path: 'schedules', component: SchedulesAdminComponent },
+      { path: 'users', component: UsersAdminComponent },
+    ] },
     { path: '**', redirectTo: 'not-found' }
 ];

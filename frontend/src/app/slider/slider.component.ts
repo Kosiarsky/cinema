@@ -2,6 +2,7 @@ import { Component, ChangeDetectorRef  } from '@angular/core';
 import { CarouselModule } from 'ngx-owl-carousel-o';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { toAbs as toAbsHelper } from '../shared/env';
 
 @Component({
   selector: 'app-slider',
@@ -54,4 +55,8 @@ export class SliderComponent {
   };
 
   constructor(private cdr: ChangeDetectorRef) {}
+
+  toAbs(url?: string): string {
+    return (toAbsHelper(url) || '') as string;
+  }
 }
