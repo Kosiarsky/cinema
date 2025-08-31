@@ -3,13 +3,13 @@ import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
 import { SliderComponent } from '../slider/slider.component';
-import { RouterLink } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { toAbs as toAbsHelper } from '../shared/env';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [ CommonModule, HeaderComponent, FooterComponent, SliderComponent, RouterLink ],
+  imports: [ CommonModule, HeaderComponent, FooterComponent, SliderComponent, RouterModule ],
   templateUrl: './home.component.html',
   styles: ``
 })

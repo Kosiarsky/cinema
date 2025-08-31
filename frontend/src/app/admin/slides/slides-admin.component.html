@@ -1,0 +1,99 @@
+<h2 class="red-border-bar-profile mb-3">Slider - Dodaj nowy slajd</h2>
+
+      <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+      <div *ngIf="success" class="alert alert-success">{{ success }}</div>
+          <div class="row g-2">
+            <div class="col-12 col-md-4">
+              <input class="form-control form-control-sm" [(ngModel)]="form.title" placeholder="Wprowadź tytuł" />
+            </div>
+            <div class="col-12 col-md-4">
+              <select class="form-select form-select-sm" [(ngModel)]="form.movie_id">
+                <option [ngValue]="null">Wybierz powiązany film</option>
+                <option *ngFor="let m of movies" [ngValue]="m.id">{{ m.title }}</option>
+              </select>
+            </div>
+            <div class="col-12 col-md-4">
+              <input type="file" class="form-control form-control-sm" accept="image/png,image/jpeg" (change)="onCreateFileChange($event)" />
+              <small>Wgraj plik (PNG/JPG)</small>
+              <div class="mt-1" *ngIf="form.image">
+                <a [href]="form.image" target="_blank" class="badge bg-tickets">podgląd</a>
+              </div>
+            </div>
+            <div class="col-12 col-md-12">
+              <textarea class="form-control form-control-sm" rows="2" [(ngModel)]="form.description" placeholder="Wprowadź opis"></textarea>
+            </div>
+            <div class="col-12 col-md-12 d-flex justify-content-center align-items-center flex-column">
+              <label class="form-label d-block">{{ form.is_public ? 'Odznacz jeśli nie chcesz publikować w tym momencie' : 'Zaznacz, aby opublikować' }}</label>
+              <button type="button" class="btn btn-outline-light btn-sm" [class.active]="form.is_public" (click)="form.is_public = !form.is_public">
+                {{ form.is_public ? 'Opublikowany' : 'Ukryty' }}
+              </button>
+            </div>
+          </div>
+          <div class="col-12 col-md-12  d-flex  justify-content-center">
+              <button class="btn btn-primary mt-3 mb-3" (click)="create()">Dodaj nowy slajd</button>
+            </div>
+
+
+      <h2 class="red-border-bar-profile mb-3">Slider - Lista slajdów</h2>
+      <div class="card bg-dark-blue text-light">
+        <div class="card-body">
+            Przeciągnij i upuść, aby zmienić kolejność slajdów.
+            <br/> <br/>
+          <div *ngFor="let s of slides" class="rounded border-dark2 p-3 mb-3 w-100" draggable="true"
+               (dragstart)="onDragStart(s.id)" (dragover)="onDragOver($event)" (drop)="onDrop(s.id)">
+            <div *ngIf="!editing[s.id]">
+              <div class="d-flex align-items-center mb-2">
+                <img [src]="s.image" style="width: 180px; height: 72px; object-fit: cover; border: 1px solid #11213b;" class="me-3 rounded" />
+                <div class="flex-grow-1">
+                  <div class="fw-bold">{{ s.title }} <span class="badge" [class.bg-success]="s.is_public" [class.bg-secondary]="!s.is_public">{{ s.is_public ? 'Publiczny' : 'Ukryty' }}</span></div>
+                  <div class="text-muted2">{{ s.description }}</div>
+                  <div class="small">Film: <span *ngIf="s.movie_id; else brak">#{{ s.movie_id }}</span><ng-template #brak>—</ng-template> • Kolejność: {{ s.sort_order }}</div>
+                </div>
+                <div>
+                  <button class="btn btn-sm btn-outline-primary me-2 mb-2" (click)="startEdit(s)">Edytuj</button>
+                  <button class="btn btn-sm btn-outline-danger" (click)="remove(s.id)">Usuń</button>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="editing[s.id]">
+              <div class="row g-2">
+                <div class="col-12 col-md-4">
+                  <label class="form-label">Tytuł</label>
+                  <input class="form-control form-control-sm" [(ngModel)]="editing[s.id].title" />
+                </div>
+                <div class="col-12 col-md-4">
+                  <label class="form-label">Obraz</label>
+                  <input type="file" class="form-control form-control-sm" accept="image/png,image/jpeg" (change)="onEditFileChange(s.id, $event)" />
+                  <small>Wgraj plik (PNG/JPG)</small>
+                  <div class="mt-1" *ngIf="editing[s.id].image">
+                    <a [href]="editing[s.id].image" target="_blank" class="badge bg-tickets">podgląd</a>
+                  </div>
+                </div>
+                
+                <div class="col-12 col-md-4">
+                  <label class="form-label">Film</label>
+                  <select class="form-select form-select-sm" [(ngModel)]="editing[s.id].movie_id">
+                    <option [ngValue]="null">— brak —</option>
+                    <option *ngFor="let m of movies" [ngValue]="m.id">{{ m.title }}</option>
+                  </select>
+                </div>
+                <div class="col-12 col-md-12">
+                  <label class="form-label">Opis</label>
+                  <textarea class="form-control form-control-sm" rows="2" [(ngModel)]="editing[s.id].description"></textarea>
+                </div>
+                
+                <div class="col-12 col-md-12 d-flex justify-content-center align-items-center flex-column">
+                    <label class="form-label d-block">{{ editing[s.id].is_public ? 'Odznacz, aby przestał być widoczny' : 'Zaznacz, aby był widoczny' }}</label>
+                    <button type="button" class="btn btn-outline-light btn-sm" [class.active]="editing[s.id].is_public" (click)="editing[s.id].is_public = !editing[s.id].is_public">
+                        {{ editing[s.id].is_public ? 'Opublikowany' : 'Ukryty' }}
+                    </button>
+                </div>
+                <div class="col-12 d-flex justify-content-end">
+                  <button class="btn btn-success me-2" (click)="save(s.id)">Zapisz</button>
+                  <button class="btn btn-secondary" (click)="cancelEdit(s.id)">Anuluj</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>

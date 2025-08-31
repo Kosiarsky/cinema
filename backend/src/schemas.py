@@ -115,3 +115,18 @@ class Ticket(Base):
     user = relationship("User")
     schedule = relationship("Schedule")
     seats = relationship("TicketSeat", back_populates="ticket", cascade="all, delete-orphan")
+
+class Slide(Base):
+    __tablename__ = 'slides'
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, nullable=False)
+    description = Column(String, nullable=True)
+    image = Column(String, nullable=False)
+    movie_id = Column(Integer, ForeignKey('movies.id'), nullable=True)
+    # New fields
+    sort_order = Column(Integer, nullable=False, default=0)
+    is_public = Column(Integer, nullable=False, default=1)
+
+    # Optional relationship to Movie for future joins
+    movie = relationship("Movie", lazy='joined')

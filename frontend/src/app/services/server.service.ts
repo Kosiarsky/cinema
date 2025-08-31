@@ -76,6 +76,25 @@ export class ServerService {
     return this.http.get<any[]>(`${this.baseUrl}/general/ticket-prices`);
   }
 
+  // Slides public
+  getSlides(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/general/public/slides`);
+  }
+
+  // Slides admin
+  adminListSlides(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/admin/slides`, this.authHeaders());
+  }
+  adminCreateSlide(payload: { title: string; description?: string | null; image: string; movie_id?: number | null; sort_order?: number | null; is_public?: boolean }): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/admin/slides`, payload, this.authHeaders());
+  }
+  adminUpdateSlide(id: number, payload: { title?: string; description?: string | null; image?: string; movie_id?: number | null; sort_order?: number | null; is_public?: boolean }): Observable<any> {
+    return this.http.patch<any>(`${this.baseUrl}/admin/slides/${id}`, payload, this.authHeaders());
+  }
+  adminDeleteSlide(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.baseUrl}/admin/slides/${id}`, this.authHeaders());
+  }
+
   getUserTickets(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/user/tickets`, this.authHeaders());
   }

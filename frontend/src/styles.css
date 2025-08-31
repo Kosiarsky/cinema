@@ -619,6 +619,7 @@ select.form-select.form-select-sm,
   padding: 0.25rem 1.5rem 0.25rem 0.5rem !important;
   font-size: 0.85rem !important;
   line-height: 1.2 !important;
+  color: #eaeaea !important;
   border-radius: 0.2rem !important;
   min-height: calc(1.2em + 0.5rem + 2px) !important;
   background-size: 12px 9px !important;
@@ -1285,4 +1286,13 @@ select.form-select.form-select-sm,
   background-color: #470000 !important;
   border-color: #cc0000 !important;
   color: #ffffff !important;
+}
+
+.text-muted2 {
+  color: #b3b3b3 !important;
+}
+
+.border-dark2 {
+   border: 1px solid ;
+   border-color: #11213b !important;
 }

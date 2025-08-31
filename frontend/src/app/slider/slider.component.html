@@ -1,10 +1,11 @@
 <div class="pb-5">
   <div class="carousel-wrapper">
-    <owl-carousel-o [options]="carouselOptions">
+    <div *ngIf="loading" class="w-100" style="height: 300px; background: #eee; border-radius: 8px;"></div>
+    <owl-carousel-o *ngIf="!loading" [options]="carouselOptions">
       <ng-container *ngFor="let slide of slides">
         <ng-template carouselSlide>
-          <div class="slide-content pointer"  routerLink="/movie/{{ slide.filmId }}">
-            <img [src]="toAbs(slide.image)" [alt]="slide.title" />
+          <div class="slide-content" [class.pointer]="!!slide.movie_id" (click)="goTo(slide.movie_id)">
+            <img [src]="toAbs(slide.image)" [alt]="slide.title" loading="lazy" (error)="onImgError($event)" />
             <div class="slide-caption">
               <h4>{{ slide.title }}</h4>
               <p>{{ slide.description }}</p>

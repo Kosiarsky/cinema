@@ -34,6 +34,28 @@ export class MovieComponent implements OnInit {
     this.loadMovieById(id);
   }
 
+  // Helpers for date/time handling
+  private toISO(d: Date): string {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
+  private addDays(d: Date, days: number): Date {
+    const nd = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    nd.setDate(nd.getDate() + days);
+    return nd;
+  }
+  private timeToMin(hhmm: string | undefined | null): number {
+    if (!hhmm) return Number.NaN;
+    const m = /^\s*(\d{1,2}):(\d{2})\s*$/.exec(hhmm);
+    if (!m) return Number.NaN;
+    const h = parseInt(m[1], 10);
+    const mi = parseInt(m[2], 10);
+    if (isNaN(h) || isNaN(mi)) return Number.NaN;
+    return h * 60 + mi;
+  }
+
   loadMovieById(id: number): void {
     this.isLoading = true;
     this.serverService.getMovieById(id).subscribe({
@@ -85,17 +107,37 @@ export class MovieComponent implements OnInit {
   }
 
   groupSchedulesByDate(schedules: any[]): void {
-    this.groupedSchedules = schedules.reduce((acc, schedule) => {
-      if (!acc[schedule.date]) {
-        acc[schedule.date] = [];
+    const now = new Date();
+    const todayISO = this.toISO(now);
+    const endISO = this.toISO(this.addDays(now, 6)); // today + 6 days = 7 days total
+    const nowMin = now.getHours() * 60 + now.getMinutes();
+
+    const grouped: { [date: string]: any[] } = {};
+    for (const s of (schedules || [])) {
+      const date: string = s?.date;
+      if (!date) continue;
+      // Limit to [today .. today+6]
+      if (date < todayISO || date > endISO) continue;
+      // For today, hide past times
+      if (date === todayISO) {
+        const tmin = this.timeToMin(s?.time);
+        if (isNaN(tmin) || tmin < nowMin) continue;
       }
-      acc[schedule.date].push(schedule);
-      return acc;
-    }, {} as { [date: string]: any[] });
+      if (!grouped[date]) grouped[date] = [];
+      grouped[date].push(s);
+    }
+
+    // Sort times within each date and drop empty dates (just in case)
+    for (const d of Object.keys(grouped)) {
+      grouped[d].sort((a, b) => this.timeToMin(a?.time) - this.timeToMin(b?.time));
+      if (!grouped[d].length) delete grouped[d];
+    }
+
+    this.groupedSchedules = grouped;
   }
 
   getScheduleDates(): string[] {
-    return Object.keys(this.groupedSchedules);
+    return Object.keys(this.groupedSchedules).sort();
   }
 
   getFormattedDate(dateString: string): string {

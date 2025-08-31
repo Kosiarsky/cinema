@@ -13,3 +13,15 @@ class TicketPriceResponse(BaseModel):
 
     class Config:
         orm_mode = True
+
+class SlideResponse(BaseModel):
+    id: int
+    title: str
+    description: str | None = None
+    image: str
+    movie_id: int | None = None
+    sort_order: int
+    is_public: bool
+
+    class Config:
+        orm_mode = True

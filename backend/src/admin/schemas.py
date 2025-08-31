@@ -18,3 +18,19 @@ class UserResponse(UserBase):
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
+
+class SlideCreate(BaseModel):
+    title: str
+    description: Optional[str] = None
+    image: str
+    movie_id: Optional[int] = None
+    sort_order: Optional[int] = None
+    is_public: Optional[bool] = True
+
+class SlideUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    image: Optional[str] = None
+    movie_id: Optional[int] = None
+    sort_order: Optional[int] = None
+    is_public: Optional[bool] = None

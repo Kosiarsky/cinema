@@ -45,8 +45,12 @@
                                     <div class="d-flex flex-wrap">
                                         <button
                                             *ngFor="let schedule of groupedSchedules[date]"
-                                            class="btn btn-outline-primary me-2 mb-2">
-                                            {{ schedule.time }}
+                                            class="btn btn-outline-primary me-2 mb-2"
+                                            [routerLink]="'/purchase/' + schedule.id">
+                                            <div class="d-flex flex-column">
+                                                <div style="margin-bottom: -10px;"><b>{{ schedule.time }}</b></div>
+                                                <div><small *ngIf="schedule.movie_type">{{ schedule.movie_type }}</small></div>
+                                            </div>
                                         </button>
                                     </div>
                                 </div>

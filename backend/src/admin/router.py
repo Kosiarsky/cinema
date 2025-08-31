@@ -5,9 +5,10 @@ from user import service
 from user.schemas import UserCreate, UserResponse, UserLogin
 from user.service import admin_required
 from sqlalchemy import func
-from schemas import Ticket, TicketSeat, Schedule, Movie
+from schemas import Ticket, TicketSeat, Schedule, Movie, Slide
 from datetime import date, timedelta
 from typing import Optional
+from admin.schemas import SlideCreate, SlideUpdate
 
 router = APIRouter()
 
@@ -222,3 +223,53 @@ def stats_top_sessions(days: int = 30, limit: int = 5, from_date: Optional[date]
         ]
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+# --- Slides CRUD ---
+@router.get('/slides')
+def admin_list_slides(db: Session = Depends(get_db), current_user = Depends(admin_required)):
+    return db.query(Slide).order_by(Slide.sort_order.asc(), Slide.id.desc()).all()
+
+@router.post('/slides')
+def admin_create_slide(payload: SlideCreate, db: Session = Depends(get_db), current_user = Depends(admin_required)):
+    slide = Slide(
+        title=payload.title,
+        description=payload.description,
+        image=payload.image,
+        movie_id=payload.movie_id,
+        sort_order=payload.sort_order if payload.sort_order is not None else 0,
+        is_public=1 if (payload.is_public is None or payload.is_public) else 0,
+    )
+    db.add(slide)
+    db.commit()
+    db.refresh(slide)
+    return slide
+
+@router.patch('/slides/{slide_id}')
+def admin_update_slide(slide_id: int, payload: SlideUpdate, db: Session = Depends(get_db), current_user = Depends(admin_required)):
+    slide = db.query(Slide).filter(Slide.id == slide_id).first()
+    if not slide:
+        raise HTTPException(status_code=404, detail='Slide not found')
+    if payload.title is not None:
+        slide.title = payload.title
+    if payload.description is not None:
+        slide.description = payload.description
+    if payload.image is not None:
+        slide.image = payload.image
+    if payload.movie_id is not None:
+        slide.movie_id = payload.movie_id
+    if payload.sort_order is not None:
+        slide.sort_order = payload.sort_order
+    if payload.is_public is not None:
+        slide.is_public = 1 if payload.is_public else 0
+    db.commit()
+    db.refresh(slide)
+    return slide
+
+@router.delete('/slides/{slide_id}')
+def admin_delete_slide(slide_id: int, db: Session = Depends(get_db), current_user = Depends(admin_required)):
+    slide = db.query(Slide).filter(Slide.id == slide_id).first()
+    if not slide:
+        raise HTTPException(status_code=404, detail='Slide not found')
+    db.delete(slide)
+    db.commit()
+    return { 'status': 'ok' }

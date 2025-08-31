@@ -23,6 +23,7 @@ import { SchedulesAdminComponent } from './admin/schedules/schedules-admin.compo
 import { AdminDashboardComponent } from './admin/dashboard/admin-dashboard.component';
 import { UsersAdminComponent } from './admin/users/users-admin.component';
 import { MovieAddComponent } from './admin/movies/movie-add.component';
+import { SlidesAdminComponent } from './admin/slides/slides-admin.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -69,6 +70,7 @@ export const routes: Routes = [
       { path: 'movies', component: MoviesAdminComponent },
       { path: 'schedules', component: SchedulesAdminComponent },
       { path: 'users', component: UsersAdminComponent },
+      { path: 'slides', component: SlidesAdminComponent },
     ] },
     { path: '**', redirectTo: 'not-found' }
 ];
