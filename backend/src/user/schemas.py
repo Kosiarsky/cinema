@@ -25,6 +25,7 @@ class UserResponse(UserBase):
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
+    otp_code: Optional[str] = None  
 
 class UserUpdate(BaseModel):
     first_name: Optional[str]
@@ -130,3 +131,14 @@ class ReviewResponse(BaseModel):
 
     class Config:
         orm_mode = True
+
+class TwoFactorSetupResponse(BaseModel):
+    secret: str
+    otpauth_url: str
+    qr_data_url: str
+
+class TwoFactorCode(BaseModel):
+    code: str
+
+class TwoFactorStatus(BaseModel):
+    enabled: bool

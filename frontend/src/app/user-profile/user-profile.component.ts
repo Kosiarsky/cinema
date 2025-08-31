@@ -9,12 +9,13 @@ import { SettingsComponent } from '../settings/settings.component';
 import { ChangePasswordComponent } from '../change-password/change-password.component';
 import { TicketsComponent } from '../tickets/tickets.component';
 import { TicketsHistoryComponent } from '../tickets-history/tickets-history.component';
+import { TwoFactorAuthComponent } from '../two-factor-auth/two-factor-auth.component';
 
 
 @Component({
   selector: 'app-user-profile',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, HeaderComponent, FooterComponent, SettingsComponent, ChangePasswordComponent, TicketsComponent, TicketsHistoryComponent],
+  imports: [ReactiveFormsModule, CommonModule, HeaderComponent, FooterComponent, SettingsComponent, ChangePasswordComponent, TicketsComponent, TicketsHistoryComponent, TwoFactorAuthComponent],
   templateUrl: './user-profile.component.html',
   styles: ``
 })

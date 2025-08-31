@@ -16,6 +16,9 @@
                     <li class="list-group-item" [class.active]="selectedSection === 'tickets-history'" (click)="selectedSection = 'tickets-history'">
                         HISTORIA BILETÓW
                     </li>
+                    <li class="list-group-item" [class.active]="selectedSection === '2fa'" (click)="selectedSection = '2fa'">
+                        WERYFIKACJA DWUSKŁADNIKOWA
+                    </li>
                     <li class="list-group-item" [class.active]="selectedSection === 'settings'" (click)="selectedSection = 'settings'">
                         ZMIEŃ USTAWIENIA
                     </li>
@@ -32,7 +35,8 @@
                             <span *ngSwitchCase="'tickets'">Twoje bilety</span>
                             <span *ngSwitchCase="'settings'">Zmień ustawienia konta</span>
                             <span *ngSwitchCase="'change-password'">Zmień hasło</span>
-                            <span *ngSwitchCase="'tickets-history'">HISTORIA BILETÓW</span>
+                            <span *ngSwitchCase="'2fa'">Weryfikacja dwuskładnikowa (2FA)</span>
+                            <span *ngSwitchCase="'tickets-history'">Historia biletów</span>
                             <span *ngSwitchDefault>{{user?.first_name}} {{user?.last_name}}</span>
                         </ng-container>
                     </h2>
@@ -43,6 +47,9 @@
                     </div>
                     <div *ngSwitchCase="'settings'" class="profile-card-body p-4">
                         <app-settings></app-settings>
+                    </div>
+                    <div *ngSwitchCase="'2fa'" class="profile-card-body p-4">
+                        <app-two-factor-auth></app-two-factor-auth>
                     </div>
                     <div *ngSwitchCase="'change-password'" class="profile-card-body p-4">
                         <app-change-password></app-change-password>

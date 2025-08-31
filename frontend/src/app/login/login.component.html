@@ -9,7 +9,10 @@
             <div *ngIf="errorMessage" id="errorMessage" class="text-danger mb-3">
               {{ errorMessage }}
             </div>
-            <div class="mb-3">
+            <div *ngIf="isLocked" class="errorMessage text-danger mb-3">
+              Zbyt wiele prób. Spróbuj ponownie za {{ lockSecondsLeft }}s.
+            </div>
+            <div class="mb-3" *ngIf="!needOtp">
               <label for="email" class="form-label">Email</label>
               <input
                 type="email"
@@ -18,11 +21,12 @@
                 formControlName="email"
                 placeholder="Wprowadź email"
               />
+              
               <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="text-danger">
                 Podaj poprawny adres email.
               </div>
             </div>
-            <div class="mb-3">
+            <div class="mb-3" *ngIf="!needOtp">
               <label for="password" class="form-label">Hasło</label>
               <input
                 type="password"
@@ -35,8 +39,29 @@
                 Hasło jest wymagane.
               </div>
             </div>
+            <div class="mb-3" *ngIf="showCaptcha && !needOtp">
+              <label for="captcha" class="form-label">Zabezpieczenie</label>
+              <div class="input-group">
+                <span class="input-group-text text-white">{{ captchaQuestion }}</span>
+                <input type="text" id="captcha" class="form-control2" formControlName="captcha" placeholder="Odpowiedź" />
+                <button class="btn btn-primary" type="button" (click)="generateCaptcha()">Odśwież</button>
+              </div>
+            </div>
+            <div class="mb-3" *ngIf="needOtp">
+              <label for="otp_code" class="form-label">Kod 2FA</label>
+              <input
+                type="text"
+                id="otp_code"
+                class="form-control"
+                formControlName="otp_code"
+                placeholder="Wprowadź kod z aplikacji"
+                inputmode="numeric"
+                autocomplete="one-time-code"
+              />
+            </div>
             <div class="d-flex justify-content-between flex-column">
-              <button type="submit" class="btn btn-primary apl-button" [disabled]="loginForm.invalid">Zaloguj</button>
+              <button type="submit" class="btn btn-primary apl-button" [disabled]="(!needOtp && (loginForm.invalid || isLocked)) || isLocked">Zaloguj</button>
+              <button type="button" class="btn btn-sm btn-secondary px-0 mt-2" *ngIf="needOtp" (click)="cancelOtp()">ZREZYGNUJ</button>
               <p class="pt-4 pb-0">Nie masz konta? Zarejestruj się!</p>
               <button type="button" class="btn btn-secondary apl-button" routerLink="/register">Zarejestruj się</button>
             </div>

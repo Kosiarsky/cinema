@@ -14,11 +14,68 @@ from sqlalchemy import and_, or_
 import secrets
 from sqlalchemy import func
 from schemas import Movie, Category, movie_categories
+from collections import deque
+import pyotp
+import base64
+import io
+try:
+    import pyqrcode
+except Exception:
+    pyqrcode = None
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/user/login")
 oauth2_scheme_optional = OAuth2PasswordBearer(tokenUrl="/api/user/login", auto_error=False)
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+LOGIN_WINDOW_SECONDS = 15 * 60  
+LOGIN_MAX_ATTEMPTS = 5 
+_failed_attempts: dict[str, deque[datetime]] = {}
+
+def _key_email(email: str | None) -> str | None:
+    return f"email:{email.lower()}" if email else None
+
+def _key_ip(ip: str | None) -> str | None:
+    return f"ip:{ip}" if ip else None
+
+def _get_bucket(key: str) -> deque[datetime]:
+    d = _failed_attempts.get(key)
+    if d is None:
+        d = deque()
+        _failed_attempts[key] = d
+    return d
+
+def _prune(bucket: deque[datetime], now: datetime):
+    cutoff = timedelta(seconds=LOGIN_WINDOW_SECONDS)
+    while bucket and (now - bucket[0]) > cutoff:
+        bucket.popleft()
+
+def _is_limited(key: str | None, now: datetime) -> bool:
+    if not key:
+        return False
+    bucket = _get_bucket(key)
+    _prune(bucket, now)
+    return len(bucket) >= LOGIN_MAX_ATTEMPTS
+
+def check_bruteforce(email: str | None, ip: str | None):
+    now = datetime.utcnow()
+    if _is_limited(_key_ip(ip), now) or _is_limited(_key_email(email), now):
+        raise HTTPException(status_code=429, detail="Zbyt wiele prób logowania. Spróbuj ponownie później.")
+
+def record_login_failure(email: str | None, ip: str | None):
+    now = datetime.utcnow()
+    for key in (_key_ip(ip), _key_email(email)):
+        if not key:
+            continue
+        bucket = _get_bucket(key)
+        _prune(bucket, now)
+        bucket.append(now)
+
+def record_login_success(email: str | None, ip: str | None):
+    key = _key_email(email)
+    if key and key in _failed_attempts:
+        _failed_attempts[key].clear()
+
 
 def get_user_by_email(db: Session, email: str):
     return db.query(User).filter(User.email == email).first()
@@ -48,6 +105,28 @@ def authenticate_user(db: Session, email: str, password: str):
     if not user or not pwd_context.verify(password, user.password):
         return None
     return user
+
+
+def generate_2fa_secret() -> str:
+    return pyotp.random_base32()
+
+def build_otpauth_url(email: str, secret: str, issuer: str = "Apollo Cinema") -> str:
+    return pyotp.totp.TOTP(secret).provisioning_uri(name=email, issuer_name=issuer)
+
+def build_qr_data_url(otpauth_url: str) -> str:
+    if pyqrcode is None:
+        return ""
+    qr = pyqrcode.create(otpauth_url)
+    buf = io.BytesIO()
+    qr.png(buf, scale=4)
+    return f"data:image/png;base64,{base64.b64encode(buf.getvalue()).decode('ascii')}"
+
+def verify_totp_code(secret: str, code: str) -> bool:
+    try:
+        totp = pyotp.TOTP(secret)
+        return bool(totp.verify(code, valid_window=1))
+    except Exception:
+        return False
 
 def create_access_token(data: dict):
     to_encode = data.copy()
@@ -490,3 +569,38 @@ def recommend_movies(db: Session, user_id: int | None, limit: int = 10, _fallbac
             'categories': cat_names,
         })
     return out
+
+def setup_two_factor(db: Session, user: User):
+    secret = generate_2fa_secret()
+    user.two_factor_secret = secret
+    db.commit()
+    db.refresh(user)
+    otpauth = build_otpauth_url(user.email, secret)
+    qr_data_url = build_qr_data_url(otpauth)
+    return { 'secret': secret, 'otpauth_url': otpauth, 'qr_data_url': qr_data_url }
+
+
+def enable_two_factor(db: Session, user: User, code: str):
+    if not user.two_factor_secret:
+        raise HTTPException(status_code=400, detail="2FA not initialized")
+    if not verify_totp_code(user.two_factor_secret, code):
+        raise HTTPException(status_code=400, detail="Nieprawidłowy kod 2FA")
+    user.two_factor_enabled = 1
+    db.commit()
+    db.refresh(user)
+    return { 'enabled': True }
+
+
+def disable_two_factor(db: Session, user: User, code: str | None = None):
+    if user.two_factor_enabled and user.two_factor_secret:
+        if code and not verify_totp_code(user.two_factor_secret, code):
+            raise HTTPException(status_code=400, detail="Nieprawidłowy kod 2FA")
+    user.two_factor_enabled = 0
+    user.two_factor_secret = None
+    db.commit()
+    db.refresh(user)
+    return { 'enabled': False }
+
+
+def two_factor_status(user: User):
+    return { 'enabled': bool(getattr(user, 'two_factor_enabled', 0)) }

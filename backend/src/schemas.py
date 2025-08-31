@@ -19,6 +19,8 @@ class User(Base):
     phone: str = Column(String, nullable=True)
     password = Column(String, nullable=False)
     is_admin = Column(Integer, default=0)  
+    two_factor_enabled = Column(Integer, nullable=False, default=0)
+    two_factor_secret = Column(String, nullable=True)
 
 movie_categories = Table(
     'movie_categories',

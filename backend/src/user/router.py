@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from get_db import get_db
 from user import service
 from user.schemas import UserCreate, UserResponse, UserLogin, UserUpdate, PasswordChange, RefreshTokenRequest, TicketCreate, TicketResponse, ReviewCreate, ReviewResponse
 from user.service import get_current_user, admin_required, update_user, change_password
 from schemas import User 
+from user.schemas import TwoFactorSetupResponse, TwoFactorCode, TwoFactorStatus
 
 router = APIRouter()
 
@@ -21,13 +22,27 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
     return {"access_token": access_token, "token_type": "bearer"}
 
 @router.post("/login")
-def login_user(user: UserLogin, db: Session = Depends(get_db)):
+def login_user(user: UserLogin, request: Request, db: Session = Depends(get_db)):
+    client_ip = request.client.host if request and request.client else None
+    service.check_bruteforce(user.email, client_ip)
+
     authenticated_user = service.authenticate_user(db, user.email, user.password)
     if not authenticated_user:
+        service.record_login_failure(user.email, client_ip)
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Nieprawidłowy email lub hasło!",
         )
+    
+    if getattr(authenticated_user, 'two_factor_enabled', 0):
+        if not user.otp_code:
+            raise HTTPException(status_code=206, detail="Wymagany kod 2FA", headers={"X-2FA-Required": "1"})
+        if not service.verify_totp_code(authenticated_user.two_factor_secret or "", user.otp_code):
+            service.record_login_failure(user.email, client_ip)
+            raise HTTPException(status_code=401, detail="Nieprawidłowy kod 2FA")
+
+    service.record_login_success(user.email, client_ip)
+
     access_token = service.create_access_token({
         "sub": authenticated_user.email,
         "is_admin": authenticated_user.is_admin
@@ -93,3 +108,20 @@ def my_reviews(db: Session = Depends(get_db), current_user: User = Depends(get_c
 def recommended_movies(limit: int = 10, db: Session = Depends(get_db), current_user: User | None = Depends(service.get_current_user_optional)):
     user_id = current_user.id if current_user else None
     return service.recommend_movies(db, user_id, limit)
+
+@router.post('/2fa/setup', response_model=TwoFactorSetupResponse)
+def twofa_setup(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    return service.setup_two_factor(db, current_user)
+
+@router.post('/2fa/enable')
+def twofa_enable(payload: TwoFactorCode, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    return service.enable_two_factor(db, current_user, payload.code)
+
+@router.post('/2fa/disable')
+def twofa_disable(payload: TwoFactorCode | None = None, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    code = payload.code if payload else None
+    return service.disable_two_factor(db, current_user, code)
+
+@router.get('/2fa/status', response_model=TwoFactorStatus)
+def twofa_status(current_user: User = Depends(get_current_user)):
+    return service.two_factor_status(current_user)

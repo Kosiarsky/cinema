@@ -599,6 +599,43 @@ input.form-control:hover {
   transition: background-color 0.3s ease, border 0.3s ease;
 }
 
+input.form-control2 {
+  background-color: #111f38 !important;
+  border-bottom: 2px solid #111f38 !important;
+  color: white !important;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  font-size: 1rem;
+  text-align: center;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+input.form-control2:focus {
+  background-color: #0056b3;
+  border-color: #cc0000 !important;
+  outline: none;
+  transition: background-color 0.3s ease, border 0.3s ease;
+}
+
+input.form-control2:hover {
+  background-color: #0056b3;
+  border-color: #cc0000 !important;
+  cursor: pointer;
+  transition: background-color 0.3s ease, border 0.3s ease;
+}
+
+.input-group-text {
+  background-color: #050A11 !important;
+  border: none;
+  border: 2px solid #111f38 !important;
+  color: white !important;
+  border-radius: 5px 0 0 5px !important;
+  padding: 10px 15px 10px 12px;
+  font-size: 1rem;
+  text-align: center;
+}
+
 textarea.form-control.form-control-sm {
   background-color: #111f38 !important;
   border: 0;
@@ -984,7 +1021,7 @@ select.form-select.form-select-sm,
   cursor: pointer;
 }
 
-#errorMessage, #passwordErrorMessage {
+#errorMessage, #passwordErrorMessage, .errorMessage {
   background-color: #0b1425 !important;
   border-bottom: 2px solid #cc0000 !important;
   color: #cc0000 !important;
