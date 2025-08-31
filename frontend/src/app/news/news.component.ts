@@ -4,6 +4,8 @@ import { RouterLink } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
 import { FooterComponent } from '../footer/footer.component';
 import { toAbs as toAbsHelper } from '../shared/env';
+import { ServerService } from '../services/server.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-news',
@@ -13,29 +15,46 @@ import { toAbs as toAbsHelper } from '../shared/env';
   styles: ``,
 })
 export class NewsComponent {
-  newsList = [
-    {
-      title: 'Oszukać przeznaczenie: Wieże krwi',
-      image: 'https://fwcdn.pl/fpo/94/80/10009480/8166856.8.webp',
-      date: '2025-05-01',
-      content:
-        'Film opowiada o walce z przeznaczeniem i tajemniczymi wydarzeniami. To pełna emocji historia, która trzyma w napięciu do samego końca.',
-    },
-    {
-      title: 'Hurry Up Tomorrow',
-      image: 'https://fwcdn.pl/fpo/88/48/10068848/8173706.8.webp',
-      date: '2025-04-25',
-      content:
-        'Historia pełna emocji i niespodziewanych zwrotów akcji. Film, który z pewnością poruszy serca widzów.',
-    },
-    {
-      title: 'Amator',
-      image: 'https://fwcdn.pl/fpo/15/75/10031575/8171655.8.webp',
-      date: '2025-04-20',
-      content:
-        'Poruszający dramat o pasji i wytrwałości w dążeniu do celu. Film, który inspiruje i skłania do refleksji.',
-    },
-  ];
+  newsList: any[] = [];
+  loading = true;
+  error: string | null = null;
+
+  constructor(private api: ServerService) {
+    this.load();
+  }
+
+  load() {
+    this.loading = true;
+    this.error = null;
+    this.api.getNews().subscribe({
+      next: (rows) => {
+        this.newsList = rows || [];
+        this.loading = false;
+        this.enrichLinkedMovies();
+      },
+      error: () => {
+        this.error = 'Nie udało się pobrać aktualności';
+        this.loading = false;
+      },
+    });
+  }
+
+  private enrichLinkedMovies() {
+    const needs = (this.newsList || [])
+      .map((n, i) => ({ n, i }))
+      .filter(x => !!x.n?.movie_id && !x.n?.movie);
+    if (!needs.length) return;
+
+    forkJoin(needs.map(x => this.api.getMovieById(x.n.movie_id))).subscribe({
+      next: (movies) => {
+        movies.forEach((movie, idx) => {
+          const i = needs[idx].i;
+          this.newsList[i] = { ...this.newsList[i], movie };
+        });
+      },
+      error: () => { /* ignoruj błąd uzupełniania */ }
+    });
+  }
 
   toAbs(url?: string): string {
     return (toAbsHelper(url) || '') as string;

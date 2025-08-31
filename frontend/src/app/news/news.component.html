@@ -4,14 +4,25 @@
     <div class="text-left py-5 bar-border">
       <h2 class="red-border-bar">WSZYSTKIE AKTUALNOŚCI</h2>
     </div>
-    <div class="row">
+    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+    <div class="row" *ngIf="!error">
       <div class="col-md-12" *ngFor="let news of newsList">
         <div class="card announcements-card mb-4 d-flex flex-row">
-          <img [src]="toAbs(news.image)" class="announcements-card-img" alt="{{ news.title }}">
           <div class="announcements-card-body flex-grow-1">
-            <h3 class="announcements-card-title">{{ news.title }}</h3>
+            <h3 class="announcements-card-title">
+              <a [routerLink]="['/news', news.id]" class="text-decoration-none text-light">
+                {{ news.title }}
+              </a>
+            </h3>
             <p class="announcements-card-date">Data publikacji: {{ news.date }}</p>
-            <p class="announcements-card-text">{{ news.content }}</p>
+
+            <p class="announcements-card-text" [style.white-space]="'pre-line'">
+              {{ (news.content || '') | slice:0:240 }}<ng-container *ngIf="news.content && news.content.length > 240">...</ng-container>
+            </p>
+
+            <div class="mt-2">
+              <a [routerLink]="['/news', news.id]" class="btn btn-outline-light btn-sm">Czytaj więcej</a>
+            </div>
           </div>
         </div>
       </div>

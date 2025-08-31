@@ -5,10 +5,10 @@ from user import service
 from user.schemas import UserCreate, UserResponse, UserLogin
 from user.service import admin_required
 from sqlalchemy import func
-from schemas import Ticket, TicketSeat, Schedule, Movie, Slide
-from datetime import date, timedelta
+from schemas import Ticket, TicketSeat, Schedule, Movie, Slide, News
+from datetime import date, timedelta, datetime
 from typing import Optional
-from admin.schemas import SlideCreate, SlideUpdate
+from admin.schemas import SlideCreate, SlideUpdate, NewsCreate, NewsUpdate
 
 router = APIRouter()
 
@@ -271,5 +271,58 @@ def admin_delete_slide(slide_id: int, db: Session = Depends(get_db), current_use
     if not slide:
         raise HTTPException(status_code=404, detail='Slide not found')
     db.delete(slide)
+    db.commit()
+    return { 'status': 'ok' }
+
+# --- News CRUD ---
+@router.get('/news')
+def admin_list_news(db: Session = Depends(get_db), current_user = Depends(admin_required)):
+    return db.query(News).order_by(News.date.desc(), News.id.desc()).all()
+
+@router.post('/news')
+def admin_create_news(payload: NewsCreate, db: Session = Depends(get_db), current_user = Depends(admin_required)):
+    n = News(
+        title=payload.title,
+        content=payload.content,
+        date=datetime.fromisoformat(payload.date).date() if payload.date else date.today(),
+        image=payload.image,
+        movie_id=payload.movie_id,
+        is_public=1 if (payload.is_public is None or payload.is_public) else 0,
+    )
+    db.add(n)
+    db.commit()
+    db.refresh(n)
+    return n
+
+@router.patch('/news/{news_id}')
+def admin_update_news(news_id: int, payload: NewsUpdate, db: Session = Depends(get_db), current_user = Depends(admin_required)):
+    n = db.query(News).filter(News.id == news_id).first()
+    if not n:
+        raise HTTPException(status_code=404, detail='News not found')
+    if payload.title is not None:
+        n.title = payload.title
+    if payload.content is not None:
+        n.content = payload.content
+    if payload.date is not None:
+        try:
+            n.date = datetime.fromisoformat(payload.date).date()
+        except Exception:
+            raise HTTPException(status_code=400, detail='Invalid date format, expected ISO date')
+    if payload.image is not None:
+        n.image = payload.image
+    if payload.movie_id is not None:
+        n.movie_id = payload.movie_id
+    if payload.is_public is not None:
+        n.is_public = 1 if payload.is_public else 0
+    db.commit()
+    db.refresh(n)
+    return n
+
+@router.delete('/news/{news_id}')
+def admin_delete_news(news_id: int, db: Session = Depends(get_db), current_user = Depends(admin_required)):
+    n = db.query(News).filter(News.id == news_id).first()
+    if not n:
+        raise HTTPException(status_code=404, detail='News not found')
+    db.delete(n)
     db.commit()
     return { 'status': 'ok' }

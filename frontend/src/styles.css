@@ -484,6 +484,14 @@ footer {
   object-fit: cover;
 }
 
+.announcements-card .announcements-card-big-img {
+  max-width: 60%;
+  height: auto;
+  border-radius: 5px;
+  object-fit: cover;
+  margin-bottom: 15px;
+}
+
 .announcements-card .announcements-card-body {
   flex-grow: 1;
 }
@@ -504,7 +512,6 @@ footer {
 .announcements-card .announcements-card-text {
   font-size: 1rem;
   color: #eaeaea;
-  line-height: 1.6;
 }
 
 .second-container {

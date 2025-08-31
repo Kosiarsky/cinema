@@ -37,3 +37,14 @@ class AnnouncementResponse(BaseModel):
 
     class Config:
         orm_mode = True
+
+class NewsResponse(BaseModel):
+    id: int
+    title: str
+    content: str | None = None
+    date: date
+    image: str | None = None
+    movie_id: int | None = None
+
+    class Config:
+        orm_mode = True

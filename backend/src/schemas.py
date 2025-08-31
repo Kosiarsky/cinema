@@ -131,3 +131,17 @@ class Slide(Base):
 
     # Optional relationship to Movie for future joins
     movie = relationship("Movie", lazy='joined')
+
+class News(Base):
+    __tablename__ = 'news'
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String, nullable=False)
+    content = Column(String, nullable=True)
+    date = Column(Date, nullable=False, default=date.today)
+    image = Column(String, nullable=True)
+    movie_id = Column(Integer, ForeignKey('movies.id'), nullable=True)
+    is_public = Column(Integer, nullable=False, default=1)
+
+    # Optional relationship to Movie for richer responses
+    movie = relationship("Movie", lazy='joined')

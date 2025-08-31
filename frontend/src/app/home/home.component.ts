@@ -6,6 +6,7 @@ import { SliderComponent } from '../slider/slider.component';
 import { RouterModule } from '@angular/router';
 import { toAbs as toAbsHelper } from '../shared/env';
 import { ServerService } from '../services/server.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -48,11 +49,8 @@ export class HomeComponent {
     }
   ];
 
-  newsList = [
-    { title: 'Oszukać przeznaczenie: Więzy krwi nadchodzi!', summary: 'Najnowsza odsłona krwawego i kasowego cyklu studia New Line Cinema, zabiera widzów do samych początków tego, jak śmierć zaczęła realizować swoje obłąkane poczucie sprawiedliwości. Prześladowana strasznym, powtarzającym się koszmarem studentka Stefanie wraca do rodzinnego miasta. Chce odnaleźć jedyną osobę, która może przerwać błędne koło i ocalić członków jej rodziny przed niechybnie czekającą ich makabryczną śmiercią…' },
-    { title: 'News 2', summary: 'Summary of News 2' },
-    { title: 'News 3', summary: 'Summary of News 3' },
-  ];
+  newsList: any[] = [];
+  newsError: string | null = null;
 
   upcomingMovies: any[] = [];
   loadingAnnouncements = true;
@@ -60,6 +58,7 @@ export class HomeComponent {
 
   constructor(private api: ServerService) {
     this.loadAnnouncements();
+    this.loadNews();
   }
 
   private loadAnnouncements() {
@@ -67,6 +66,31 @@ export class HomeComponent {
     this.api.getAnnouncements(6).subscribe({
       next: (rows) => { this.upcomingMovies = (rows || []).map(r => ({ id: r.id, image: r.image, title: r.title, description: r.description, premiere_date: r.premiere_date })); this.loadingAnnouncements = false; },
       error: () => { this.announcementsError = 'Nie udało się pobrać zapowiedzi'; this.loadingAnnouncements = false; }
+    });
+  }
+
+  private loadNews() {
+    this.newsError = null;
+    this.api.getNews(3).subscribe({
+      next: (rows) => { this.newsList = rows || []; this.enrichLinkedMovies(); },
+      error: () => { this.newsError = 'Nie udało się pobrać aktualności'; }
+    });
+  }
+
+  private enrichLinkedMovies() {
+    const needs = (this.newsList || [])
+      .map((n, i) => ({ n, i }))
+      .filter(x => !!x.n?.movie_id && !x.n?.movie);
+    if (!needs.length) return;
+
+    forkJoin(needs.map(x => this.api.getMovieById(x.n.movie_id))).subscribe({
+      next: (movies) => {
+        movies.forEach((movie, idx) => {
+          const i = needs[idx].i;
+          this.newsList[i] = { ...this.newsList[i], movie };
+        });
+      },
+      error: () => { /* ignoruj błąd uzupełniania */ }
     });
   }
 

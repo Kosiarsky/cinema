@@ -7,7 +7,9 @@
           <small *ngIf="form.durationMinutes">Zostanie zapisane jako: {{ formatDurationPreview(form.durationMinutes) }}</small>
       </div>
       <div class="col-md-4"><input class="form-control form-control-sm" [(ngModel)]="form.cast" name="cast" placeholder="Obsada (lista, przecinkami)" required></div>
-      <div class="col-12"><textarea class="form-control form-control-sm" rows="3" [(ngModel)]="form.description" name="description" placeholder="Opis" required></textarea></div>
+      <div class="col-12">
+        <textarea class="form-control form-control-sm" rows="6" [(ngModel)]="form.description" name="description" placeholder="Opis" required></textarea>
+      </div>
       
       <div class="col-md-4">
         <input type="date" class="form-control form-control-sm" [(ngModel)]="form.premiere_date" name="premiere_date" placeholder="Data premiery (opcjonalnie)">

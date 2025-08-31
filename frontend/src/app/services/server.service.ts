@@ -104,6 +104,30 @@ export class ServerService {
     return this.http.get<any[]>(`${this.baseUrl}/general/public/announcements`, { params });
   }
 
+  // News (public)
+  getNews(limit?: number): Observable<any[]> {
+    let params: HttpParams | undefined = undefined;
+    if (limit && limit > 0) params = new HttpParams().set('limit', limit);
+    return this.http.get<any[]>(`${this.baseUrl}/general/public/news`, { params });
+  }
+  getNewsById(id: number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/general/public/news/${id}`);
+  }
+
+  // News (admin)
+  adminListNews(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/admin/news`, this.authHeaders());
+  }
+  adminCreateNews(payload: { title: string; content?: string | null; date?: string | null; image?: string | null; movie_id?: number | null; is_public?: boolean }): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/admin/news`, payload, this.authHeaders());
+  }
+  adminUpdateNews(id: number, payload: { title?: string; content?: string | null; date?: string | null; image?: string | null; movie_id?: number | null; is_public?: boolean }): Observable<any> {
+    return this.http.patch<any>(`${this.baseUrl}/admin/news/${id}`, payload, this.authHeaders());
+  }
+  adminDeleteNews(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.baseUrl}/admin/news/${id}`, this.authHeaders());
+  }
+
   getUserTickets(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/user/tickets`, this.authHeaders());
   }

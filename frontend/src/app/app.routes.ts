@@ -24,12 +24,15 @@ import { AdminDashboardComponent } from './admin/dashboard/admin-dashboard.compo
 import { UsersAdminComponent } from './admin/users/users-admin.component';
 import { MovieAddComponent } from './admin/movies/movie-add.component';
 import { SlidesAdminComponent } from './admin/slides/slides-admin.component';
+import { NewsAdminComponent } from './admin/news/news-admin.component';
+import { NewsDetailComponent } from './news/news-detail.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
     { path: 'repertoire', component: RepertoireComponent },
     { path: 'announcements', component: AnnouncementsComponent },
     { path: 'news', component: NewsComponent },
+    { path: 'news/:id', component: NewsDetailComponent },
     { path: 'recommended', component: RecommendedComponent },
     { path: 'login', component: LoginComponent, canActivate: [() => {
         const auth = inject(AuthService);
@@ -71,6 +74,7 @@ export const routes: Routes = [
       { path: 'schedules', component: SchedulesAdminComponent },
       { path: 'users', component: UsersAdminComponent },
       { path: 'slides', component: SlidesAdminComponent },
+      { path: 'news', component: NewsAdminComponent },
     ] },
     { path: '**', redirectTo: 'not-found' }
 ];
