@@ -7,15 +7,19 @@
     <div class="text-left py-5 bar-border"><h2 class="red-border-bar">POLECANE</h2></div>
     <div class="row">
       <div class="col-md-2" *ngFor="let movie of recommendedMovies">
-        <div class="card film-card text-light" routerLink="movie/{{ movie.id }}">
+        <div class="card film-card2 text-light" [routerLink]="['/movie', movie.id]">
           <img [src]="toAbs(movie.image)" class="card-img-top" alt="{{ movie.title }}">
           <div class="card-body">
             <h3 class="card-title">{{ movie.title }}</h3>
+            <p class="mb-1" style="font-size: 1rem;" *ngIf="movie.rating !== null && movie.rating !== undefined">Oceny: <i class="fa-solid fa-star text-warning"></i> {{ movie.rating }}</p>
+            <p class="card-text text-truncate-3-lines" style="font-size: 0.8rem;">
+              {{ (movie.content || movie.description || '') | slice:0:120 }}<ng-container *ngIf="(movie.content || movie.description) && (movie.content || movie.description).length > 100">...</ng-container>
+            </p>
           </div>
         </div>
       </div>
-      <div class="col-md-2" routerLink="recommended">
-          <div class="card film-card text-light">
+      <div class="col-md-2" [routerLink]="['/recommended']">
+          <div class="card film-card2 text-light">
             <div class="card-body">
               <i class="fa-solid fa-angles-right fa-2xl"></i><br>
               <h2 class="card-title">POKAŻ WIĘCEJ</h2>
@@ -41,7 +45,7 @@
           </div>
       </div>
       <br>
-      <button class="btn btn-primary" routerLink="news">POKAŻ WIĘCEJ</button>
+      <button class="btn btn-primary" [routerLink]="['/news']">POKAŻ WIĘCEJ</button>
   </div>
 
 
@@ -50,7 +54,7 @@
     <div *ngIf="announcementsError" class="alert alert-danger">{{ announcementsError }}</div>
     <div class="row" *ngIf="!announcementsError">
       <div class="col-md-2" *ngFor="let movie of upcomingMovies">
-        <div class="card film-card2 text-light" routerLink="movie/{{ movie.id }}">
+        <div class="card film-card2 text-light" [routerLink]="['/movie', movie.id]">
           <img [src]="toAbs(movie.image)" class="card-img-top" alt="{{ movie.title }}">
           <div class="card-body">
             <h3 class="card-title">{{ movie.title }}</h3>
@@ -59,7 +63,7 @@
           </div>
         </div>
       </div>
-      <div class="col-md-2" routerLink="announcements">
+      <div class="col-md-2" [routerLink]="['/announcements']">
           <div class="card film-card2 text-light">
             <div class="card-body">
               <i class="fa-solid fa-angles-right fa-2xl"></i><br>

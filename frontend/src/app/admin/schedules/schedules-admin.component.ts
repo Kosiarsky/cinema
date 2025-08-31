@@ -14,14 +14,12 @@ import { forkJoin } from 'rxjs';
 export class SchedulesAdminComponent implements OnInit {
   schedules: any[] = [];
   movies: any[] = [];
-  // Use numeric halls instead of labels like 'Sala X'
   halls: number[] = [1, 2, 3, 4];
   day: string = '';
   cleaningBufferMin: number = 15;
   saving = false;
   error: string | null = null;
   success: string | null = null;
-  // Plan keyed by numeric hall
   plan: Record<number, Array<{ time: string; movie_id: number | null; movie_type?: string }>> = {} as any;
   existingBlocks: Record<number, Array<{ start: number; end: number; label: string; id?: number }>> = {} as any;
   editingExisting: Record<number, { time: string; movie_type: string; hall: number } | null> = {};
@@ -32,11 +30,8 @@ export class SchedulesAdminComponent implements OnInit {
   dayEndMin: number = 23 * 60 + 30;  
   copyDays: number = 1;
   copying = false;
-  // Selection of halls keyed by numeric hall
   copyHalls: Record<number, boolean> = {} as any;
   copySkipDuplicates: boolean = true;
-
-  // New: select specific target dates
   upcomingDays: string[] = [];
   copyTargets: Record<string, boolean> = {};
   selectAllTargets = false;
@@ -71,7 +66,6 @@ export class SchedulesAdminComponent implements OnInit {
     }
   }
 
-  // Build list of next 14 days after selected day
   rebuildUpcomingDays() {
     const keep = { ...this.copyTargets };
     this.upcomingDays = [];
@@ -89,17 +83,14 @@ export class SchedulesAdminComponent implements OnInit {
     for (const d of this.upcomingDays) this.copyTargets[d] = val;
   }
 
-  // New: toggle a single hall (for button-style hall selection)
   toggleHall(h: number) {
     this.copyHalls[h] = !this.copyHalls[h];
   }
 
-  // New: toggle a single target day (for button-style selection)
   toggleDay(d: string) {
     this.copyTargets[d] = !this.copyTargets[d];
   }
 
-  // New: check if any target day is selected
   hasAnyTargetSelected(): boolean {
     return this.upcomingDays.some(d => !!this.copyTargets[d]);
   }
@@ -564,10 +555,8 @@ export class SchedulesAdminComponent implements OnInit {
       next: () => { 
         this.copying = false; 
         this.load();
-        // Clear selected target days
         for (const d of this.upcomingDays) this.copyTargets[d] = false;
         this.selectAllTargets = false;
-        // Also clear selected halls
         for (const h of this.halls) this.copyHalls[h] = false;
         this.success = `Skopiowano ${createdPlanned} seansów.`;
       },

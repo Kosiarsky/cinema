@@ -21,8 +21,8 @@ export class MovieComponent implements OnInit {
   isLoading = true;
   notFound = false;
   trailerUrl: SafeResourceUrl | null = null;
-  // Whether movie premiere date is in the future (hide schedules if true)
   isBeforePremiere = false;
+  reviews: any[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -34,9 +34,11 @@ export class MovieComponent implements OnInit {
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.loadMovieById(id);
+    if (!isNaN(id)) {
+      this.loadReviews(id);
+    }
   }
 
-  // Helpers for date/time handling
   private toISO(d: Date): string {
     const y = d.getFullYear();
     const m = String(d.getMonth() + 1).padStart(2, '0');
@@ -58,16 +60,15 @@ export class MovieComponent implements OnInit {
     return h * 60 + mi;
   }
   private normalizeDateStr(dateStr: string): string {
-    // Keep only YYYY-MM-DD portion if a datetime is provided
     const s = dateStr.trim();
     return s.length >= 10 ? s.substring(0, 10) : s;
   }
-  // Checks if a date string (YYYY-MM-DD or ISO datetime) is in the future relative to today
+
   private isDateInFuture(dateStr?: string | null): boolean {
     if (!dateStr) return false;
     const todayISO = this.toISO(new Date());
     const onlyDate = this.normalizeDateStr(dateStr);
-    return onlyDate > todayISO; // strict: only dates after today are considered future
+    return onlyDate > todayISO; 
   }
 
   loadMovieById(id: number): void {
@@ -75,7 +76,6 @@ export class MovieComponent implements OnInit {
     this.serverService.getMovieById(id).subscribe({
       next: (result: any) => {
         this.movie = result;
-        // Determine if movie is before its premiere date
         this.isBeforePremiere = this.isDateInFuture(this.movie?.premiere_date);
         this.groupSchedulesByDate(result.schedules);
         this.trailerUrl = this.buildTrailerUrl(result?.trailer);
@@ -99,7 +99,6 @@ export class MovieComponent implements OnInit {
   private extractYouTubeId(url: string): string | null {
     if (!url) return null;
     try {
-      // Support youtu.be/<id>, youtube.com/watch?v=<id>, youtube.com/embed/<id>, plus additional params
       const u = new URL(url);
       if (u.hostname.includes('youtu.be')) {
         const p = u.pathname.split('/').filter(Boolean);
@@ -113,7 +112,6 @@ export class MovieComponent implements OnInit {
       if (embedIdx >= 0 && path[embedIdx + 1]) {
         return path[embedIdx + 1];
       }
-      // Shorts format: /shorts/<id>
       const shortsIdx = path.indexOf('shorts');
       if (shortsIdx >= 0 && path[shortsIdx + 1]) {
         return path[shortsIdx + 1];
@@ -125,16 +123,14 @@ export class MovieComponent implements OnInit {
   groupSchedulesByDate(schedules: any[]): void {
     const now = new Date();
     const todayISO = this.toISO(now);
-    const endISO = this.toISO(this.addDays(now, 6)); // today + 6 days = 7 days total
+    const endISO = this.toISO(this.addDays(now, 6)); 
     const nowMin = now.getHours() * 60 + now.getMinutes();
 
     const grouped: { [date: string]: any[] } = {};
     for (const s of (schedules || [])) {
       const date: string = s?.date;
       if (!date) continue;
-      // Limit to [today .. today+6]
       if (date < todayISO || date > endISO) continue;
-      // For today, hide past times
       if (date === todayISO) {
         const tmin = this.timeToMin(s?.time);
         if (isNaN(tmin) || tmin < nowMin) continue;
@@ -143,7 +139,6 @@ export class MovieComponent implements OnInit {
       grouped[date].push(s);
     }
 
-    // Sort times within each date and drop empty dates (just in case)
     for (const d of Object.keys(grouped)) {
       grouped[d].sort((a, b) => this.timeToMin(a?.time) - this.timeToMin(b?.time));
       if (!grouped[d].length) delete grouped[d];
@@ -168,5 +163,12 @@ export class MovieComponent implements OnInit {
 
   toAbs(url?: string): string {
     return (toAbsHelper(url) || '') as string;
+  }
+
+  loadReviews(movieId: number) {
+    this.serverService.listMovieReviews(movieId).subscribe({
+      next: (rows) => { this.reviews = rows || []; },
+      error: () => { this.reviews = []; }
+    });
   }
 }

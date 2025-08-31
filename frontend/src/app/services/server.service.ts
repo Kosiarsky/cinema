@@ -76,12 +76,10 @@ export class ServerService {
     return this.http.get<any[]>(`${this.baseUrl}/general/ticket-prices`);
   }
 
-  // Slides public
   getSlides(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/general/public/slides`);
   }
 
-  // Slides admin
   adminListSlides(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/admin/slides`, this.authHeaders());
   }
@@ -95,7 +93,6 @@ export class ServerService {
     return this.http.delete<any>(`${this.baseUrl}/admin/slides/${id}`, this.authHeaders());
   }
 
-  // Announcements (public)
   getAnnouncements(limit?: number): Observable<any[]> {
     let params: HttpParams | undefined = undefined;
     if (limit && limit > 0) {
@@ -104,7 +101,6 @@ export class ServerService {
     return this.http.get<any[]>(`${this.baseUrl}/general/public/announcements`, { params });
   }
 
-  // News (public)
   getNews(limit?: number): Observable<any[]> {
     let params: HttpParams | undefined = undefined;
     if (limit && limit > 0) params = new HttpParams().set('limit', limit);
@@ -114,7 +110,7 @@ export class ServerService {
     return this.http.get<any>(`${this.baseUrl}/general/public/news/${id}`);
   }
 
-  // News (admin)
+
   adminListNews(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/admin/news`, this.authHeaders());
   }
@@ -152,6 +148,10 @@ export class ServerService {
     return this.http.get<any>(`${this.baseUrl}/movie/schedules/${id}`);
   }
 
+  listMovieReviews(movieId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/movie/movies/${movieId}/reviews`);
+  }
+
   blockSeat(scheduleId: number, row: number, col: number): Observable<{ status: string; expires: string }> {
     return this.http.post<{ status: string; expires: string }>(
       `${this.baseUrl}/movie/schedules/${scheduleId}/block-seat`,
@@ -179,7 +179,7 @@ export class ServerService {
     );
   }
 
-  // Admin stats
+
   getAdminOverview(days: number = 30, from_date?: string, to_date?: string): Observable<any> {
     let params = new HttpParams().set('days', days);
     if (from_date && to_date) {
@@ -204,7 +204,6 @@ export class ServerService {
     return this.http.get<any[]>(`${this.baseUrl}/admin/stats/top-sessions`, { params, ...(this.authHeaders()) });
   }
 
-  // Admin users
   adminListUsers(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/admin/users`, this.authHeaders());
   }
@@ -229,5 +228,22 @@ export class ServerService {
     const form = new FormData();
     form.append('file', file);
     return this.http.post<{ url: string }>(`${this.baseUrl}/movie/movies/upload-image`, form, this.authHeaders());
+  }
+
+  createReview(payload: { movie_id: number; rating: number; comment?: string | null; is_anonymous?: boolean }): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/user/reviews`, payload, this.authHeaders());
+  }
+  listMyReviews(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/user/reviews`, this.authHeaders());
+  }
+
+  getRecommendations(limit: number = 10): Observable<any[]> {
+    const params = new HttpParams().set('limit', limit);
+    return this.http.get<any[]>(`${this.baseUrl}/user/recommendations`, { params, ...(this.authHeaders()) });
+  }
+
+  getRecommendationsAnon(limit: number = 10): Observable<any[]> {
+    const params = new HttpParams().set('limit', limit);
+    return this.http.get<any[]>(`${this.baseUrl}/user/recommendations`, { params });
   }
 }

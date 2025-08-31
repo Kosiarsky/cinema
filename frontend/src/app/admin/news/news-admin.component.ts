@@ -92,4 +92,10 @@ export class NewsAdminComponent implements OnInit {
       error: (err) => this.error = err?.error?.detail || 'Błąd podczas usuwania'
     });
   }
+
+  getMovieTitle(id?: number | null): string {
+    if (!id) return '';
+    const m = (this.movies || []).find(x => x?.id === id);
+    return m?.title || '';
+  }
 }

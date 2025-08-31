@@ -1,6 +1,6 @@
 from pydantic import BaseModel, EmailStr
 from typing import Optional, List
-from datetime import date
+from datetime import date, datetime
 
 class UserBase(BaseModel):
     email: EmailStr
@@ -108,5 +108,25 @@ class TicketResponse(BaseModel):
     schedule: ScheduleResponse
     qr_code_data_url: Optional[str] = None
     ticket_code: Optional[str] = None
+    class Config:
+        orm_mode = True
+
+class ReviewCreate(BaseModel):
+    movie_id: int
+    rating: int
+    comment: Optional[str] = None
+    is_anonymous: Optional[bool] = False
+
+class ReviewResponse(BaseModel):
+    id: int
+    movie_id: int
+    user_id: int
+    rating: int
+    comment: Optional[str] = None
+    is_anonymous: bool
+    created_at: datetime
+    updated_at: datetime
+    reviewer_first_name: Optional[str] = None
+
     class Config:
         orm_mode = True

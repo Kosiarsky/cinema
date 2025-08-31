@@ -1,7 +1,7 @@
 from typing import List, Optional
 from datetime import date
 from pydantic import BaseModel
-from sqlalchemy import Column, Integer, String, Float, Date, ForeignKey, Table
+from sqlalchemy import Column, Integer, String, Float, Date, ForeignKey, Table, DateTime
 from sqlalchemy.orm import relationship, Mapped
 
 try:
@@ -40,7 +40,7 @@ class Movie(Base):
     big_image = Column(String, nullable=True)
     trailer = Column(String, nullable=True)
     cast = Column(String, nullable=True)
-    premiere_date = Column(Date, nullable=True)  # New: optional premiere date to mark upcoming/announcements
+    premiere_date = Column(Date, nullable=True) 
 
     schedules = relationship("Schedule", back_populates="movie")
     categories = relationship(
@@ -125,11 +125,9 @@ class Slide(Base):
     description = Column(String, nullable=True)
     image = Column(String, nullable=False)
     movie_id = Column(Integer, ForeignKey('movies.id'), nullable=True)
-    # New fields
     sort_order = Column(Integer, nullable=False, default=0)
     is_public = Column(Integer, nullable=False, default=1)
 
-    # Optional relationship to Movie for future joins
     movie = relationship("Movie", lazy='joined')
 
 class News(Base):
@@ -143,5 +141,21 @@ class News(Base):
     movie_id = Column(Integer, ForeignKey('movies.id'), nullable=True)
     is_public = Column(Integer, nullable=False, default=1)
 
-    # Optional relationship to Movie for richer responses
     movie = relationship("Movie", lazy='joined')
+
+from datetime import datetime as dt
+
+class Review(Base):
+    __tablename__ = 'reviews'
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey('users.id'), nullable=False)
+    movie_id = Column(Integer, ForeignKey('movies.id'), nullable=False)
+    rating = Column(Integer, nullable=False)
+    comment = Column(String, nullable=True)
+    is_anonymous = Column(Integer, nullable=False, default=0)
+    created_at = Column(DateTime, nullable=False, default=dt.utcnow)
+    updated_at = Column(DateTime, nullable=False, default=dt.utcnow)
+
+    user = relationship("User")
+    movie = relationship("Movie")

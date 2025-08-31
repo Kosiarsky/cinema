@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from get_db import get_db
 from user import service
-from user.schemas import UserCreate, UserResponse, UserLogin, UserUpdate, PasswordChange, RefreshTokenRequest, TicketCreate, TicketResponse
+from user.schemas import UserCreate, UserResponse, UserLogin, UserUpdate, PasswordChange, RefreshTokenRequest, TicketCreate, TicketResponse, ReviewCreate, ReviewResponse
 from user.service import get_current_user, admin_required, update_user, change_password
 from schemas import User 
 
@@ -78,3 +78,18 @@ def buy_ticket(ticket: TicketCreate, db: Session = Depends(get_db), current_user
 @router.get("/tickets", response_model=list[TicketResponse])
 def get_my_tickets(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     return service.get_user_tickets(db, current_user.id)
+
+# Reviews
+@router.post("/reviews", response_model=ReviewResponse)
+def create_review(payload: ReviewCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    rev = service.create_review(db, current_user.id, payload.movie_id, payload.rating, payload.comment, bool(payload.is_anonymous))
+    return rev
+
+@router.get("/reviews", response_model=list[ReviewResponse])
+def my_reviews(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    return service.list_my_reviews(db, current_user.id)
+
+@router.get('/recommendations')
+def recommended_movies(limit: int = 10, db: Session = Depends(get_db), current_user: User | None = Depends(service.get_current_user_optional)):
+    user_id = current_user.id if current_user else None
+    return service.recommend_movies(db, user_id, limit)

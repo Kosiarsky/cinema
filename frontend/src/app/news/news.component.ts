@@ -52,7 +52,7 @@ export class NewsComponent {
           this.newsList[i] = { ...this.newsList[i], movie };
         });
       },
-      error: () => { /* ignoruj błąd uzupełniania */ }
+      error: () => {  }
     });
   }
 

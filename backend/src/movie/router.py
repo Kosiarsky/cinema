@@ -4,13 +4,13 @@ from fastapi import Request
 from sqlalchemy.orm import Session
 from get_db import get_db
 from movie import service
-from schemas import Schedule
+from schemas import Schedule, Review
 from movie.schemas import MovieCreate, Movie, ScheduleCreate
 from movie.schemas import Schedule as ScheduleSchema
 from movie.schemas import ScheduleUpdate
 from movie.schemas import CategoryBase
 from typing import List
-from user.service import admin_required
+from user.service import admin_required, list_movie_reviews as user_list_movie_reviews
 import os
 import uuid
 
@@ -37,6 +37,10 @@ def get_movie(movie_id: int, db: Session = Depends(get_db)):
     if not movie:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Movie not found")
     return movie
+
+@router.get('/movies/{movie_id}/reviews')
+def get_movie_reviews(movie_id: int, db: Session = Depends(get_db)):
+    return user_list_movie_reviews(db, movie_id)
 
 @router.post("/movies", response_model=Movie)
 def create_movie(movie: MovieCreate, db: Session = Depends(get_db), current_user = Depends(admin_required)):

@@ -3,6 +3,8 @@ from schemas import Movie, Schedule, Ticket, TicketSeat, Category
 from movie.schemas import MovieCreate, MovieUpdate, ScheduleCreate, ScheduleUpdate
 from datetime import datetime, timedelta, date
 from typing import List, Tuple, Set
+from sqlalchemy import func
+from schemas import Review
 
 blocked_seats = {}
 
@@ -23,10 +25,33 @@ def create_category(db: Session, name: str):
     return cat
 
 def get_movies(db: Session):
-    return db.query(Movie).all()
+    movies = db.query(Movie).all()
+    try:
+        avgs = (
+            db.query(Review.movie_id, func.avg(Review.rating))
+            .group_by(Review.movie_id)
+            .all()
+        )
+        avg_map = {mid: float(avg) if avg is not None else None for mid, avg in avgs}
+        for m in movies:
+            if m.id in avg_map:
+                m.rating = round(avg_map[m.id], 1) if avg_map[m.id] is not None else None
+    except Exception:
+        pass
+    return movies
+
 
 def get_movie_by_id(db: Session, movie_id: int):
-    return db.query(Movie).filter(Movie.id == movie_id).first()
+    m = db.query(Movie).filter(Movie.id == movie_id).first()
+    if not m:
+        return None
+    try:
+        avg = db.query(func.avg(Review.rating)).filter(Review.movie_id == movie_id).scalar()
+        if avg is not None:
+            m.rating = round(float(avg), 1)
+    except Exception:
+        pass
+    return m
 
 def create_movie(db: Session, movie: MovieCreate):
     data = movie.dict(exclude={"category_ids", "categories"}, exclude_unset=True)
@@ -60,7 +85,6 @@ def get_schedules_for_movie(db: Session, movie_id: int):
     return db.query(Schedule).filter(Schedule.movie_id == movie_id).all()
 
 def create_schedule(db: Session, schedule: ScheduleCreate):
-    # Prevent creating schedules for movies with future premiere date
     mv = db.query(Movie).filter(Movie.id == schedule.movie_id).first()
     if mv and mv.premiere_date is not None and mv.premiere_date > date.today():
         raise ValueError("Nie można dodać seansu dla filmu, który ma przyszłą datę premiery")

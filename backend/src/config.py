@@ -16,7 +16,6 @@ STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET", "")
 
 FRONTEND_BASE_URL = os.getenv("FRONTEND_BASE_URL", "http://localhost:4200")
 
-# Comma-separated list of allowed CORS origins. Falls back to FRONTEND_BASE_URL.
 _cors_from_env = os.getenv("CORS_ALLOW_ORIGINS", "").strip()
 if _cors_from_env:
     CORS_ALLOW_ORIGINS = [o.strip() for o in _cors_from_env.split(",") if o.strip()]

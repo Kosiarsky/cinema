@@ -75,7 +75,6 @@ def admin_delete_user(user_id: int, db: Session = Depends(get_db), current_user 
     result = service.delete_user(db, user_id)
     return result
 
-# --- Admin stats ---
 @router.get("/stats/overview")
 def stats_overview(days: int = 30, from_date: Optional[date] = None, to_date: Optional[date] = None, db: Session = Depends(get_db), current_user = Depends(admin_required)):
     try:
@@ -224,7 +223,7 @@ def stats_top_sessions(days: int = 30, limit: int = 5, from_date: Optional[date]
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-# --- Slides CRUD ---
+
 @router.get('/slides')
 def admin_list_slides(db: Session = Depends(get_db), current_user = Depends(admin_required)):
     return db.query(Slide).order_by(Slide.sort_order.asc(), Slide.id.desc()).all()
@@ -274,7 +273,6 @@ def admin_delete_slide(slide_id: int, db: Session = Depends(get_db), current_use
     db.commit()
     return { 'status': 'ok' }
 
-# --- News CRUD ---
 @router.get('/news')
 def admin_list_news(db: Session = Depends(get_db), current_user = Depends(admin_required)):
     return db.query(News).order_by(News.date.desc(), News.id.desc()).all()

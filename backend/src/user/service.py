@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
-from schemas import User, Ticket, TicketSeat
+from schemas import User, Ticket, TicketSeat, Schedule, Review
 from user.schemas import UserCreate, UserUpdate
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from jose import JWTError, jwt
 from fastapi import HTTPException, status
 from config import SECRET_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES, REFRESH_TOKEN_EXPIRE_MINUTES
@@ -12,9 +12,11 @@ from get_db import get_db
 from jose.exceptions import ExpiredSignatureError
 from sqlalchemy import and_, or_
 import secrets
+from sqlalchemy import func
+from schemas import Movie, Category, movie_categories
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/user/login")
-
+oauth2_scheme_optional = OAuth2PasswordBearer(tokenUrl="/api/user/login", auto_error=False)
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -111,6 +113,19 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
             raise HTTPException(status_code=401, detail="Token expired")
     except JWTError:
         raise HTTPException(status_code=401, detail="Invalid token")
+
+def get_current_user_optional(token: str | None = Depends(oauth2_scheme_optional), db: Session = Depends(get_db)) -> User | None:
+    if not token:
+        return None
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        email: str = payload.get("sub")
+        if not email:
+            return None
+        user = get_user_by_email(db, email)
+        return user
+    except Exception:
+        return None
 
 def admin_required(current_user = Depends(get_current_user)):
     if not current_user.is_admin:
@@ -270,3 +285,208 @@ def get_user_tickets(db: Session, user_id: int):
     for t in tickets:
         _attach_qr_code(t)
     return tickets
+
+def _user_attended_movie(db: Session, user_id: int, movie_id: int) -> bool:
+    now_date = date.today()
+    q = (
+        db.query(Ticket)
+        .join(Schedule, Ticket.schedule_id == Schedule.id)
+        .filter(Ticket.user_id == user_id)
+        .filter(Schedule.movie_id == movie_id)
+        .filter(Schedule.date <= now_date)
+    )
+    return db.query(q.exists()).scalar()
+
+
+def create_review(db: Session, user_id: int, movie_id: int, rating: int, comment: str | None, is_anonymous: bool) -> 'Review':
+    if rating is None or rating < 1 or rating > 5:
+        raise HTTPException(status_code=400, detail="Ocena musi być w zakresie 1-5")
+    if not _user_attended_movie(db, user_id, movie_id):
+        raise HTTPException(status_code=403, detail="Możesz ocenić film tylko po udziale w seansie")
+    existing = db.query(Review).filter(Review.user_id == user_id, Review.movie_id == movie_id).first()
+    if existing:
+        existing.rating = rating
+        existing.comment = comment
+        existing.is_anonymous = 1 if is_anonymous else 0
+        existing.updated_at = datetime.utcnow()
+        db.add(existing)
+        db.commit()
+        db.refresh(existing)
+        return existing
+    rev = Review(
+        user_id=user_id,
+        movie_id=movie_id,
+        rating=rating,
+        comment=comment,
+        is_anonymous=1 if is_anonymous else 0,
+    )
+    db.add(rev)
+    db.commit()
+    db.refresh(rev)
+    return rev
+
+
+def list_my_reviews(db: Session, user_id: int):
+    return db.query(Review).filter(Review.user_id == user_id).order_by(Review.created_at.desc()).all()
+
+
+def list_movie_reviews(db: Session, movie_id: int):
+    rows = (
+        db.query(Review)
+        .filter(Review.movie_id == movie_id)
+        .order_by(Review.created_at.desc())
+        .all()
+    )
+    enriched = []
+    for r in rows:
+        try:
+            first_name = r.user.first_name if (not bool(r.is_anonymous)) and getattr(r, 'user', None) else None
+        except Exception:
+            first_name = None
+        enriched.append({
+            'id': r.id,
+            'movie_id': r.movie_id,
+            'user_id': r.user_id,
+            'rating': r.rating,
+            'comment': r.comment,
+            'is_anonymous': bool(r.is_anonymous),
+            'created_at': r.created_at,
+            'updated_at': r.updated_at,
+            'reviewer_first_name': first_name,
+        })
+    return enriched
+
+
+
+def recommend_movies(db: Session, user_id: int | None, limit: int = 10, _fallback: bool = False):
+    if user_id is not None:
+        watched_movie_ids = set(
+            mid for (mid,) in (
+                db.query(Schedule.movie_id)
+                .join(Ticket, Ticket.schedule_id == Schedule.id)
+                .filter(Ticket.user_id == user_id)
+                .all()
+            )
+        )
+    else:
+        watched_movie_ids = set()
+
+    if user_id is not None:
+        cat_freq_rows = (
+            db.query(Category.id, func.count().label('cnt'))
+            .join(movie_categories, Category.id == movie_categories.c.category_id)
+            .join(Movie, Movie.id == movie_categories.c.movie_id)
+            .join(Schedule, Schedule.movie_id == Movie.id)
+            .join(Ticket, Ticket.schedule_id == Schedule.id)
+            .filter(Ticket.user_id == user_id)
+            .group_by(Category.id)
+            .all()
+        )
+        cat_scores = {cid: int(cnt) for cid, cnt in cat_freq_rows}
+    else:
+        cat_scores = {}
+
+    released_filter = or_(Movie.premiere_date == None, Movie.premiere_date <= date.today())
+    if cat_scores:
+        candidate_q = (
+            db.query(Movie)
+            .join(movie_categories, Movie.id == movie_categories.c.movie_id)
+            .filter(movie_categories.c.category_id.in_(list(cat_scores.keys())))
+            .filter(released_filter)
+        )
+    else:
+        candidate_q = db.query(Movie).filter(released_filter)
+
+    candidates = {m.id: m for m in candidate_q.all()}
+
+    available_candidate_ids = set(candidates.keys()) - watched_movie_ids
+    if not candidates or not available_candidate_ids:
+        candidates = {m.id: m for m in db.query(Movie).filter(released_filter).all()}
+
+    avg_rows = db.query(Review.movie_id, func.avg(Review.rating)).group_by(Review.movie_id).all()
+    avg_map = {mid: (float(avg) if avg is not None else None) for mid, avg in avg_rows}
+
+    pop_rows = (
+        db.query(Schedule.movie_id, func.count(Ticket.id))
+        .join(Ticket, Ticket.schedule_id == Schedule.id)
+        .group_by(Schedule.movie_id)
+        .all()
+    )
+    pop_map = {mid: int(cnt) for mid, cnt in pop_rows}
+
+    cat_score_per_movie: dict[int, int] = {}
+    max_cat_score = 0
+    if cat_scores:
+        for m in candidates.values():
+            score = 0
+            try:
+                for c in getattr(m, 'categories', []) or []:
+                    if c and c.id in cat_scores:
+                        score += cat_scores.get(c.id, 0)
+            except Exception:
+                score = 0
+            cat_score_per_movie[m.id] = score
+            if score > max_cat_score:
+                max_cat_score = score
+
+    max_pop = max(pop_map.values()) if pop_map else 0
+
+    scored = []
+    for mid, m in candidates.items():
+        if mid in watched_movie_ids:
+            continue
+        avg = avg_map.get(mid) or 0.0
+        pop = pop_map.get(mid, 0)
+        if max_cat_score > 0:
+            norm_cat = (cat_score_per_movie.get(mid, 0) / max_cat_score)
+        else:
+            norm_cat = 0.0
+        norm_rating = (avg / 5.0) if avg else 0.0
+        norm_pop = (pop / max_pop) if max_pop > 0 else 0.0
+        score = 0.6 * norm_cat + 0.3 * norm_rating + 0.1 * norm_pop
+        scored.append((score, m))
+
+    if not scored:
+        all_released = {m.id: m for m in db.query(Movie).filter(released_filter).all()}
+        top_by_rating = sorted(
+            [(avg or 0.0, mid) for mid, avg in avg_map.items() if mid in all_released], reverse=True
+        )
+        picked_ids: list[int] = []
+        for _, mid in top_by_rating:
+            if mid not in watched_movie_ids and mid in all_released:
+                picked_ids.append(mid)
+            if len(picked_ids) >= limit:
+                break
+        if len(picked_ids) < limit:
+            for _cnt, mid in sorted([(cnt, mid) for mid, cnt in pop_map.items() if mid in all_released], reverse=True):
+                if mid not in watched_movie_ids and mid in all_released and mid not in picked_ids:
+                    picked_ids.append(mid)
+                if len(picked_ids) >= limit:
+                    break
+        movies = [all_released[mid] for mid in picked_ids]
+    else:
+        movies = [m for _, m in sorted(scored, key=lambda x: x[0], reverse=True)[:limit]]
+
+    if user_id is not None and not movies and not _fallback:
+        return recommend_movies(db, None, limit, _fallback=True)
+
+    out = []
+    for m in movies:
+        avg = avg_map.get(m.id)
+        img = m.image
+        
+        try:
+            cat_names = [c.name for c in (getattr(m, 'categories', []) or []) if getattr(c, 'name', None)]
+        except Exception:
+            cat_names = []
+        out.append({
+            'id': m.id,
+            'title': m.title,
+            'image': img,
+            'rating': round(float(avg), 1) if avg is not None else None,
+            'time': m.duration,
+            'cast': m.cast,
+            'content': m.description,
+            'categories': cat_names,
+        })
+    return out

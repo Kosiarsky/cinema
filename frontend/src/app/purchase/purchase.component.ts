@@ -76,7 +76,6 @@ export class PurchaseComponent implements OnInit, OnDestroy {
     this.serverService.getScheduleById(id).subscribe({
       next: (schedule) => {
         this.schedule = schedule;
-        // Compute if show already started
         const dt = this.getScheduleDateTime();
         this.showStarted = !!dt && dt.getTime() <= Date.now();
         this.missingHall = !schedule?.hall;

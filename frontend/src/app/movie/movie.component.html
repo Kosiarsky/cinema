@@ -15,7 +15,12 @@
                     </div>
                     <div class="col-md-9">
                         <h1 class="movie-title">{{ movie.title }}</h1>
-                        <p class="movie-rating"><strong>Ocena:</strong> &nbsp; <i class="fa-solid fa-star"></i> {{ movie.rating }}</p>
+                        <p class="movie-rating"><strong>Ocena oglądających:</strong> &nbsp;
+                          <ng-container *ngIf="movie?.rating !== null && movie?.rating !== undefined && movie?.rating !== 0; else noRating">
+                            <i class="fa-solid fa-star text-warning"></i> {{ movie.rating }}
+                          </ng-container>
+                          <ng-template #noRating>Brak ocen</ng-template>
+                        </p>
                     </div>
                 </div>
                 
@@ -75,6 +80,18 @@
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                     allowfullscreen>
                                 </iframe>
+                            </div>
+                        </div>
+                        <div class="col-12 mt-4">
+                            <h4 class="red-border-small-bar pl-0">Opinie widzów</h4>
+                            <div *ngIf="reviews?.length === 0" class="text-muted2">Brak opinii. Obejrzyj i bądź pierwszy!</div>
+                            <div *ngFor="let r of reviews" class="mb-3 p-3 announcements-card rounded">
+                                <div class="d-flex align-items-center mb-1">
+                                    <span class="me-2"><i class="fa-solid fa-star text-warning"></i> {{ r.rating }}/5</span>
+                                    <span class="text-muted2" *ngIf="r.is_anonymous">Anonim</span>
+                                    <span class="text-muted2" *ngIf="!r.is_anonymous && r.reviewer_first_name">{{ r.reviewer_first_name }}</span>
+                                </div>
+                                <div>{{ r.comment }}</div>
                             </div>
                         </div>
                     </div>

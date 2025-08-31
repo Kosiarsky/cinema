@@ -123,7 +123,6 @@ def _normalize_hall_value(h: Any) -> int | None:
         return None
     ls = s.lower()
     if ls.startswith('sala'):
-        # remove possible prefix like 'Sala ' or 'sala-'
         s = s.split(None, 1)[1] if ' ' in s else s[4:]
         s = s.strip().lstrip('-').strip()
     try:

@@ -18,7 +18,6 @@ def get_slides(db: Session = Depends(get_db)):
 def get_public_slides(db: Session = Depends(get_db)):
     return db.query(Slide).filter(Slide.is_public == 1).order_by(Slide.sort_order.asc(), Slide.id.desc()).all()
 
-# Announcements (upcoming movies)
 @router.get('/public/announcements', response_model=list[AnnouncementResponse])
 def get_public_announcements(limit: int | None = None, db: Session = Depends(get_db)):
     q = db.query(Movie).filter(Movie.premiere_date != None)
@@ -29,7 +28,6 @@ def get_public_announcements(limit: int | None = None, db: Session = Depends(get
         q = q.limit(limit)
     return q.all()
 
-# News (public)
 @router.get('/public/news', response_model=list[NewsResponse])
 def get_public_news(limit: int | None = None, db: Session = Depends(get_db)):
     q = db.query(News).filter(News.is_public == 1).order_by(News.date.desc(), News.id.desc())

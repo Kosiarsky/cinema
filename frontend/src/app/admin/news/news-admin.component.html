@@ -52,53 +52,75 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let n of list">
-              <td>{{ n.id }}</td>
-              <td *ngIf="!editing[n.id]">{{ n.title }}</td>
-              <td *ngIf="editing[n.id]"><input class="form-control form-control-sm" [(ngModel)]="editing[n.id].title" /></td>
+            <ng-container *ngFor="let n of list">
+              <tr>
+                <td>{{ n.id }}</td>
+                <td *ngIf="!editing[n.id]">{{ n.title }}</td>
+                <td *ngIf="editing[n.id]"><input class="form-control form-control-sm" [(ngModel)]="editing[n.id].title" /></td>
 
-              <td *ngIf="!editing[n.id]">{{ n.date }}</td>
-              <td *ngIf="editing[n.id]"><input type="date" class="form-control form-control-sm" [(ngModel)]="editing[n.id].date" /></td>
+                <td *ngIf="!editing[n.id]">{{ n.date }}</td>
+                <td *ngIf="editing[n.id]"><input type="date" class="form-control form-control-sm" [(ngModel)]="editing[n.id].date" /></td>
 
-              <td>
-                <img *ngIf="!editing[n.id] && n.image" [src]="n.image" style="max-height:60px" />
-                <div *ngIf="editing[n.id]" class="d-flex align-items-center gap-2">
-                  <img *ngIf="editing[n.id].image" [src]="editing[n.id].image" style="max-height:60px" />
-                  <input type="file" class="form-control form-control-sm" (change)="onEditFileChange(n.id, $event)" />
-                </div>
-              </td>
+                <td>
+                  <img *ngIf="!editing[n.id] && n.image" [src]="n.image" style="max-height:60px" />
+                  <div *ngIf="editing[n.id]" class="d-flex align-items-center gap-2">
+                    <img *ngIf="editing[n.id].image" [src]="editing[n.id].image" style="max-height:60px" />
+                    <input type="file" class="form-control form-control-sm" (change)="onEditFileChange(n.id, $event)" />
+                  </div>
+                </td>
 
-              <td *ngIf="!editing[n.id]">{{ n.movie?.title || '-' }}</td>
-              <td *ngIf="editing[n.id]">
-                <select class="form-select form-select-sm" [(ngModel)]="editing[n.id].movie_id">
-                  <option [ngValue]="null">(brak)</option>
-                  <option *ngFor="let m of movies" [ngValue]="m.id">{{ m.title }}</option>
-                </select>
-              </td>
+                <td *ngIf="!editing[n.id]">{{ n.movie?.title || '-' }}</td>
+                <td *ngIf="editing[n.id]">
+                  <select class="form-select form-select-sm" [(ngModel)]="editing[n.id].movie_id">
+                    <option [ngValue]="null">(brak)</option>
+                    <option *ngFor="let m of movies" [ngValue]="m.id">{{ m.title }}</option>
+                  </select>
+                </td>
 
-              <td *ngIf="!editing[n.id]">{{ n.is_public ? 'tak' : 'nie' }}</td>
-              <td *ngIf="editing[n.id]">
-                <input type="checkbox" class="form-check-input" [(ngModel)]="editing[n.id].is_public" />
-              </td>
+                <td *ngIf="!editing[n.id]">{{ n.is_public ? 'tak' : 'nie' }}</td>
+                <td *ngIf="editing[n.id]">
+                  <input type="checkbox" class="form-check-input" [(ngModel)]="editing[n.id].is_public" />
+                </td>
 
-              <td>
-                <ng-container *ngIf="!editing[n.id]">
-                  <button class="btn btn-sm btn-primary me-2" (click)="startEdit(n)">Edytuj</button>
-                  <button class="btn btn-sm btn-secondary" (click)="remove(n.id)">Usuń</button>
-                </ng-container>
-                <ng-container *ngIf="editing[n.id]">
-                  <button class="btn btn-sm btn-primary me-2" (click)="save(n.id)">Zapisz</button>
-                  <button class="btn btn-sm btn-secondary" (click)="cancelEdit(n.id)">Anuluj</button>
-                </ng-container>
-              </td>
-            </tr>
-
-            <tr *ngFor="let n of list">
-              <td colspan="7" *ngIf="editing[n.id]">
-                <label class="form-label">Treść</label>
-                <textarea class="form-control form-control-sm" rows="5" [(ngModel)]="editing[n.id].content" placeholder="Treść artykułu"></textarea>
-              </td>
-            </tr>
+                <td>
+                  <ng-container *ngIf="!editing[n.id]">
+                    <button class="btn btn-sm btn-primary me-2" (click)="startEdit(n)">Edytuj</button>
+                    <button class="btn btn-sm btn-secondary" (click)="remove(n.id)">Usuń</button>
+                  </ng-container>
+                  <ng-container *ngIf="editing[n.id]">
+                    <button class="btn btn-sm btn-primary me-2" (click)="save(n.id)">Zapisz</button>
+                    <button class="btn btn-sm btn-secondary" (click)="cancelEdit(n.id)">Anuluj</button>
+                  </ng-container>
+                </td>
+              </tr>
+              <tr *ngIf="editing[n.id]">
+                <td colspan="7">
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <label class="form-label">Treść</label>
+                      <textarea class="form-control form-control-sm" rows="5" [(ngModel)]="editing[n.id].content" placeholder="Treść artykułu"></textarea>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label">Podgląd</label>
+                      <div class="p-3 announcements-card rounded">
+                        <h5 class="mb-1">{{ editing[n.id].title || n.title }}</h5>
+                        <small class="text-muted">{{ editing[n.id].date || n.date }}</small>
+                        <div class="mt-2">
+                          <img *ngIf="editing[n.id].image; else fallbackImg" [src]="editing[n.id].image" style="max-height:120px" />
+                          <ng-template #fallbackImg>
+                            <img *ngIf="n.image" [src]="n.image" style="max-height:120px" />
+                          </ng-template>
+                        </div>
+                        <div class="mt-2" style="white-space: pre-line;">{{ editing[n.id].content }}</div>
+                        <div class="mt-2" *ngIf="editing[n.id].movie_id || n.movie?.title">
+                          <small class="text-muted">Powiązany film: {{ getMovieTitle(editing[n.id].movie_id) || n.movie?.title }}</small>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </ng-container>
           </tbody>
         </table>
       </div>

@@ -38,7 +38,7 @@ class SlideUpdate(BaseModel):
 class NewsCreate(BaseModel):
     title: str
     content: Optional[str] = None
-    date: Optional[str] = None  # ISO date string
+    date: Optional[str] = None  
     image: Optional[str] = None
     movie_id: Optional[int] = None
     is_public: Optional[bool] = True

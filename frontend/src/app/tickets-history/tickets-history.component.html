@@ -29,6 +29,42 @@
                     <div class="mt-2 repertoire-border px-2">
                         <span class="repertoire-card-text">Kod biletu: <b>{{ ticket.ticket_code }}</b></span>
                     </div>
+
+                    <div class="mt-3">
+                      <button class="btn btn-secondary" (click)="toggleReview(ticket.id)">
+                        {{ showReviewFor[ticket.id] ? 'Anuluj' : 'Oceń ten film' }}
+                      </button>
+                    </div>
+
+                    <div *ngIf="showReviewFor[ticket.id]" class="mt-3 p-3 announcements-card rounded flex-column">
+                      <div>Twoja ocena:</div>
+                      <div class="d-flex align-items-center gap-2 mb-2">
+                        <ng-container *ngFor="let star of [1,2,3,4,5]">
+                          <span
+                            class="pointer"
+                            (click)="setRating(ticket.id, star)"
+                            (mouseenter)="setHover(ticket.id, star)"
+                            (mouseleave)="setHover(ticket.id, null)"
+                            (keydown.enter)="setRating(ticket.id, star)"
+                            tabindex="0"
+                            role="button"
+                            [attr.aria-label]="'Oceń na ' + star + ' gwiazdek'"
+                          >
+                            <i [ngClass]="getDisplayedRating(ticket.id) >= star ? 'fa-solid fa-star text-warning' : 'fa-regular fa-star text-secondary'"></i>
+                          </span>
+                        </ng-container>
+                        <span class="ms-2">{{ getDisplayedRating(ticket.id) || 0 }}/5</span>
+                        
+                      </div>
+                      <div class="mb-2">
+                        <textarea class="form-control form-control-sm" rows="3" [(ngModel)]="reviewForms[ticket.id]!.comment" placeholder="Opcjonalna recenzja..."></textarea>
+                      </div>
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="anon-{{ticket.id}}" [(ngModel)]="reviewForms[ticket.id]!.is_anonymous">
+                        <label class="form-check-label" for="anon-{{ticket.id}}">Publikuj anonimowo</label>
+                      </div>
+                      <button class="btn btn-primary btn-sm" (click)="submitReview(ticket)">Wyślij ocenę</button>
+                    </div>
                 </div>
                 <img [src]="ticket.qr_code_data_url" class="repertoire-card-qr" alt="Kod QR biletu" />
             </li>

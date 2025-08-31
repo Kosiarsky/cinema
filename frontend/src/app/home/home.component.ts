@@ -16,38 +16,7 @@ import { forkJoin } from 'rxjs';
   styles: ``
 })
 export class HomeComponent {
-  recommendedMovies = [
-    {
-      id: 3,
-      image: 'https://fwcdn.pl/fpo/15/75/10031575/8171655.8.webp',
-      title: 'Amator',
-      description: 'Poruszający dramat o pasji i wytrwałości w dążeniu do celu.'
-    },
-    {
-      id: 1,
-      image: 'https://fwcdn.pl/fpo/94/80/10009480/8166856.8.webp',
-      title: 'Oszukać przeznaczenie: Wieże krwi',
-      description: 'Film o walce z przeznaczeniem i tajemniczymi wydarzeniami.'
-    },
-    {
-      id: 2,
-      image: 'https://fwcdn.pl/fpo/88/48/10068848/8173706.8.webp',
-      title: 'Hurry Up Tomorrow',
-      description: 'Historia pełna emocji i niespodziewanych zwrotów akcji.'
-    },
-    {
-      id: 3,
-      image: 'https://fwcdn.pl/fpo/15/75/10031575/8171655.8.webp',
-      title: 'Amator',
-      description: 'Poruszający dramat o pasji i wytrwałości w dążeniu do celu.'
-    },
-    {
-      id: 2,
-      image: 'https://fwcdn.pl/fpo/88/48/10068848/8173706.8.webp',
-      title: 'Hurry Up Tomorrow',
-      description: 'Historia pełna emocji i niespodziewanych zwrotów akcji.'
-    }
-  ];
+  recommendedMovies: any[] = [];
 
   newsList: any[] = [];
   newsError: string | null = null;
@@ -57,8 +26,31 @@ export class HomeComponent {
   announcementsError: string | null = null;
 
   constructor(private api: ServerService) {
+    this.loadRecommended();
     this.loadAnnouncements();
     this.loadNews();
+  }
+
+  private loadRecommended() {
+    const limit = 5; 
+    this.api.getRecommendations(limit).subscribe({
+      next: (rows) => {
+        if (!rows || rows.length === 0) {
+          this.api.getRecommendationsAnon(limit).subscribe({
+            next: (alt) => { this.recommendedMovies = alt || []; },
+            error: () => { this.recommendedMovies = []; }
+          });
+          return;
+        }
+        this.recommendedMovies = rows || [];
+      },
+      error: () => {
+        this.api.getRecommendationsAnon(limit).subscribe({
+          next: (alt) => { this.recommendedMovies = alt || []; },
+          error: () => { this.recommendedMovies = []; }
+        });
+      }
+    });
   }
 
   private loadAnnouncements() {
@@ -90,7 +82,7 @@ export class HomeComponent {
           this.newsList[i] = { ...this.newsList[i], movie };
         });
       },
-      error: () => { /* ignoruj błąd uzupełniania */ }
+      error: () => {}
     });
   }
 
