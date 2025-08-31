@@ -14,8 +14,9 @@ import { AdminMenuComponent } from '../admin-menu/admin-menu.component';
 export class MovieAddComponent {
   saving = false;
   error: string | null = null;
+  success: string | null = null;
   categories: any[] = [];
-  form: any = { title: '', durationMinutes: null as number | null, image: '', big_image: '', trailer: '', cast: '', description: '', category_ids: [] as number[] };
+  form: any = { title: '', durationMinutes: null as number | null, image: '', big_image: '', trailer: '', cast: '', description: '', category_ids: [] as number[], premiere_date: '' };
   newCategoryName = '';
 
   constructor(private api: ServerService) {
@@ -80,7 +81,8 @@ export class MovieAddComponent {
       big_image: trimOrNull(src.big_image),
       trailer: trimOrNull(src.trailer),
       cast: trimOrNull(src.cast),
-      category_ids: src.category_ids || []
+      category_ids: src.category_ids || [],
+      premiere_date: trimOrNull(src.premiere_date)
     };
   }
 
@@ -114,10 +116,18 @@ export class MovieAddComponent {
       .every((v: any) => String(v ?? '').trim().length > 0) && minutesOk;
     if (!allFilled) { this.error = 'Uzupełnij wszystkie pola'; formRef?.control.markAllAsTouched(); return; }
 
-    this.saving = true; this.error = null;
+    this.saving = true; this.error = null; this.success = null;
     const payload = this.buildPayload(this.form);
+    const isAnnouncement = !!payload.premiere_date;
     this.api.createMovie(payload).subscribe({
-      next: () => { this.saving = false; this.form = { title: '', durationMinutes: null, image: '', big_image: '', trailer: '', cast: '', description: '', category_ids: [] }; formRef?.resetForm(); },
+      next: () => {
+        this.saving = false;
+        this.success = isAnnouncement ? 'Zapowiedź została dodana (ustawiono datę premiery).' : 'Film został dodany.';
+   
+        this.form = { title: '', durationMinutes: null, image: '', big_image: '', trailer: '', cast: '', description: '', category_ids: [], premiere_date: '' };
+        formRef?.resetForm();
+        setTimeout(() => { this.success = null; }, 5000);
+      },
       error: (e) => { this.saving = false; this.error = e?.error?.detail || 'Błąd podczas dodawania'; }
     });
   }

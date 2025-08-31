@@ -46,17 +46,20 @@
 
   <div class="container mt-5 mb-5 text-dark">
     <div class="text-left py-5 bar-border"><h2 class="red-border-bar">ZAPOWIEDZI</h2></div>
-    <div class="row">
+    <div *ngIf="announcementsError" class="alert alert-danger">{{ announcementsError }}</div>
+    <div class="row" *ngIf="!announcementsError">
       <div class="col-md-2" *ngFor="let movie of upcomingMovies">
-        <div class="card film-card text-light" routerLink="movie/{{ movie.id }}">
+        <div class="card film-card2 text-light" routerLink="movie/{{ movie.id }}">
           <img [src]="toAbs(movie.image)" class="card-img-top" alt="{{ movie.title }}">
           <div class="card-body">
             <h3 class="card-title">{{ movie.title }}</h3>
+            <small class="mb-1"  style="font-size: 0.8rem;" *ngIf="movie.premiere_date">Premiera: {{ movie.premiere_date }}</small>
+            <p class="card-text text-truncate-3-lines" style="font-size: 0.8rem;">{{ movie.description | slice:0:120 }}<ng-container *ngIf="movie.description && movie.description.length > 120">...</ng-container></p>
           </div>
         </div>
       </div>
       <div class="col-md-2" routerLink="announcements">
-          <div class="card film-card text-light">
+          <div class="card film-card2 text-light">
             <div class="card-body">
               <i class="fa-solid fa-angles-right fa-2xl"></i><br>
               <h3 class="card-title">POKAŻ WIĘCEJ</h3>

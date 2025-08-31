@@ -5,6 +5,7 @@ import { FooterComponent } from '../footer/footer.component';
 import { SliderComponent } from '../slider/slider.component';
 import { RouterModule } from '@angular/router';
 import { toAbs as toAbsHelper } from '../shared/env';
+import { ServerService } from '../services/server.service';
 
 @Component({
   selector: 'app-home',
@@ -53,39 +54,21 @@ export class HomeComponent {
     { title: 'News 3', summary: 'Summary of News 3' },
   ];
 
-  upcomingMovies = [
-    {
-      id: 3,
-      image: 'https://fwcdn.pl/fpo/15/75/10031575/8171655.8.webp',
-      title: 'Amator',
-      description: 'Poruszający dramat o pasji i wytrwałości w dążeniu do celu.'
-    },
-    {
-      id: 1,
-      image: 'https://fwcdn.pl/fpo/94/80/10009480/8166856.8.webp',
-      title: 'Oszukać przeznaczenie: Wieże krwi',
-      description: 'Film o walce z przeznaczeniem i tajemniczymi wydarzeniami.'
-    },
-    {
-      id: 2,
-      image: 'https://fwcdn.pl/fpo/88/48/10068848/8173706.8.webp',
-      title: 'Hurry Up Tomorrow',
-      description: 'Historia pełna emocji i niespodziewanych zwrotów akcji.'
-    },
-    {
-      id: 3,
-      image: 'https://fwcdn.pl/fpo/15/75/10031575/8171655.8.webp',
-      title: 'Amator',
-      description: 'Poruszający dramat o pasji i wytrwałości w dążeniu do celu.'
-    },
-    {
-      id: 2,
-      image: 'https://fwcdn.pl/fpo/88/48/10068848/8173706.8.webp',
-      title: 'Hurry Up Tomorrow',
-      description: 'Historia pełna emocji i niespodziewanych zwrotów akcji.'
-    }
-  ];
+  upcomingMovies: any[] = [];
+  loadingAnnouncements = true;
+  announcementsError: string | null = null;
 
+  constructor(private api: ServerService) {
+    this.loadAnnouncements();
+  }
+
+  private loadAnnouncements() {
+    this.loadingAnnouncements = true; this.announcementsError = null;
+    this.api.getAnnouncements(6).subscribe({
+      next: (rows) => { this.upcomingMovies = (rows || []).map(r => ({ id: r.id, image: r.image, title: r.title, description: r.description, premiere_date: r.premiere_date })); this.loadingAnnouncements = false; },
+      error: () => { this.announcementsError = 'Nie udało się pobrać zapowiedzi'; this.loadingAnnouncements = false; }
+    });
+  }
 
   toAbs(url?: string): string {
     return (toAbsHelper(url) || '') as string;

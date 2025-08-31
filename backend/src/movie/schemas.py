@@ -40,6 +40,8 @@ class MovieBase(BaseModel):
     trailer: Optional[str]
     cast: Optional[str]
     categories: List[CategoryBase] = []
+    # New: premiere date marks upcoming/announcement movies
+    premiere_date: Optional[DateType] = None
 
 class Schedule(ScheduleBase):
     id: int
@@ -65,6 +67,7 @@ class MovieUpdate(BaseModel):
     trailer: Optional[str] = None
     cast: Optional[str] = None
     category_ids: Optional[List[int]] = None
+    premiere_date: Optional[DateType] = None
 
 
 class Movie(BaseModel):
@@ -80,6 +83,7 @@ class Movie(BaseModel):
     cast: Optional[str]
     categories: List[CategoryBase] = []
     schedules: List[Schedule] = []
+    premiere_date: Optional[DateType] = None
 
     class Config:
         orm_mode = True

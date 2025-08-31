@@ -95,6 +95,15 @@ export class ServerService {
     return this.http.delete<any>(`${this.baseUrl}/admin/slides/${id}`, this.authHeaders());
   }
 
+  // Announcements (public)
+  getAnnouncements(limit?: number): Observable<any[]> {
+    let params: HttpParams | undefined = undefined;
+    if (limit && limit > 0) {
+      params = new HttpParams().set('limit', limit);
+    }
+    return this.http.get<any[]>(`${this.baseUrl}/general/public/announcements`, { params });
+  }
+
   getUserTickets(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/user/tickets`, this.authHeaders());
   }

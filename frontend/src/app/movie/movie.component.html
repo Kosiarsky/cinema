@@ -36,7 +36,12 @@
                             <p class="movie-description pt-2">{{ movie.description }}</p>
                         </div>
                         <br>
-                        <div class="col-12 mt-2" *ngIf="groupedSchedules">
+                        <div class="col-12 mt-2" *ngIf="isBeforePremiere">
+                            <div class="alert alert-info" role="alert">
+                                Premiera: <strong>{{ movie.premiere_date }}</strong>. Harmonogram seansów będzie dostępny po premierze.
+                            </div>
+                        </div>
+                        <div class="col-12 mt-2" *ngIf="!isBeforePremiere && groupedSchedules">
                             <h4 class="red-border-small-bar pl-0">Seanse</h4>
                         
                             <ng-container *ngIf="getScheduleDates().length > 0; else noSchedules">

@@ -16,7 +16,7 @@ export class MoviesAdminComponent implements OnInit {
   categories: any[] = [];
   saving = false;
   error: string | null = null;
-  form: any = { title: '', durationMinutes: null as number | null, image: '', big_image: '', trailer: '', cast: '', description: '', category_ids: [] as number[] };
+  form: any = { title: '', durationMinutes: null as number | null, image: '', big_image: '', trailer: '', cast: '', description: '', category_ids: [] as number[], premiere_date: '' };
   newCategoryName = '';
   editingId: number | null = null;
 
@@ -119,7 +119,8 @@ export class MoviesAdminComponent implements OnInit {
       big_image: trimOrNull(src.big_image),
       trailer: trimOrNull(src.trailer),
       cast: trimOrNull(src.cast),
-      category_ids: src.category_ids || []
+      category_ids: src.category_ids || [],
+      premiere_date: trimOrNull(src.premiere_date)
     };
   }
 
@@ -195,7 +196,8 @@ export class MoviesAdminComponent implements OnInit {
       trailer: m.trailer || '',
       cast: m.cast || '',
       description: m.description || '',
-      category_ids: (m.categories || []).map((c: any) => c.id)
+      category_ids: (m.categories || []).map((c: any) => c.id),
+      premiere_date: m.premiere_date || ''
     };
     this.error = null;
   }
@@ -239,7 +241,7 @@ export class MoviesAdminComponent implements OnInit {
   }
 
   private resetForm(formRef?: NgForm) {
-    this.form = { title: '', durationMinutes: null, image: '', big_image: '', trailer: '', cast: '', description: '', category_ids: [] };
+    this.form = { title: '', durationMinutes: null, image: '', big_image: '', trailer: '', cast: '', description: '', category_ids: [], premiere_date: '' };
     formRef?.resetForm();
   }
 }

@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from schemas import Movie, Schedule, Ticket, TicketSeat, Category
 from movie.schemas import MovieCreate, MovieUpdate, ScheduleCreate, ScheduleUpdate
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from typing import List, Tuple, Set
 
 blocked_seats = {}
@@ -60,6 +60,10 @@ def get_schedules_for_movie(db: Session, movie_id: int):
     return db.query(Schedule).filter(Schedule.movie_id == movie_id).all()
 
 def create_schedule(db: Session, schedule: ScheduleCreate):
+    # Prevent creating schedules for movies with future premiere date
+    mv = db.query(Movie).filter(Movie.id == schedule.movie_id).first()
+    if mv and mv.premiere_date is not None and mv.premiere_date > date.today():
+        raise ValueError("Nie można dodać seansu dla filmu, który ma przyszłą datę premiery")
     db_schedule = Schedule(**schedule.dict())
     db.add(db_schedule)
     db.commit()

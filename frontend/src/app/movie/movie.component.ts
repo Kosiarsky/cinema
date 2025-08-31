@@ -21,6 +21,8 @@ export class MovieComponent implements OnInit {
   isLoading = true;
   notFound = false;
   trailerUrl: SafeResourceUrl | null = null;
+  // Whether movie premiere date is in the future (hide schedules if true)
+  isBeforePremiere = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -55,12 +57,26 @@ export class MovieComponent implements OnInit {
     if (isNaN(h) || isNaN(mi)) return Number.NaN;
     return h * 60 + mi;
   }
+  private normalizeDateStr(dateStr: string): string {
+    // Keep only YYYY-MM-DD portion if a datetime is provided
+    const s = dateStr.trim();
+    return s.length >= 10 ? s.substring(0, 10) : s;
+  }
+  // Checks if a date string (YYYY-MM-DD or ISO datetime) is in the future relative to today
+  private isDateInFuture(dateStr?: string | null): boolean {
+    if (!dateStr) return false;
+    const todayISO = this.toISO(new Date());
+    const onlyDate = this.normalizeDateStr(dateStr);
+    return onlyDate > todayISO; // strict: only dates after today are considered future
+  }
 
   loadMovieById(id: number): void {
     this.isLoading = true;
     this.serverService.getMovieById(id).subscribe({
       next: (result: any) => {
         this.movie = result;
+        // Determine if movie is before its premiere date
+        this.isBeforePremiere = this.isDateInFuture(this.movie?.premiere_date);
         this.groupSchedulesByDate(result.schedules);
         this.trailerUrl = this.buildTrailerUrl(result?.trailer);
         this.notFound = false;

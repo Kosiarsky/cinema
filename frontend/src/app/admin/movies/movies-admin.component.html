@@ -9,6 +9,12 @@
       <div class="col-md-4"><input class="form-control form-control-sm" [(ngModel)]="form.cast" name="cast" placeholder="Obsada (lista, przecinkami)" required></div>
       <div class="col-12"><textarea class="form-control form-control-sm" rows="3" [(ngModel)]="form.description" name="description" placeholder="Opis" required></textarea></div>
       
+      <div class="col-md-4">
+        <input type="date" class="form-control form-control-sm" [(ngModel)]="form.premiere_date" name="premiere_date" placeholder="Data premiery (opcjonalnie)">
+        <small>Ustaw datę premiery aby film był zapowiedzią do tego dnia</small>
+      </div>
+      <div class="col-md-8"></div>
+      
       <div class="col-12 mb-2 pb-2 d-flex flex-wrap gap-3">
           <div class="col-12 red-border-bar-small mb-2">Obrazy i zwiastun</div>
       </div>
@@ -69,6 +75,7 @@
             <th>Tytuł</th>
             <th>Kategorie</th>
             <th>Czas</th>
+            <th>Premiera</th>
             <th>Ocena</th>
             <th>Obrazy</th>
             <th>Trailer</th>
@@ -87,6 +94,7 @@
               <ng-template #nocat>-</ng-template>
             </td>
             <td>{{ m.duration }}</td>
+            <td>{{ m.premiere_date || '-' }}</td>
             <td>{{ m.rating ?? '-' }}</td>
             <td>
               <ng-container *ngIf="m.image || m.big_image; else noimg">
@@ -99,7 +107,7 @@
               <a *ngIf="m.trailer" [href]="m.trailer" target="_blank" class="link-light text-decoration-underline">link</a>
               <span *ngIf="!m.trailer">-</span>
             </td>
-            <td class="small">{{ m.cast || '-' }}</td>
+            <td class="small" style="max-width: 150px;">{{ m.cast || '-' }}</td>
             <td>
               <button class="btn btn-sm btn-secondary btn-third me-2" (click)="editMovieStart(m)">Edytuj</button>
               <button class="btn btn-sm btn-secondary" (click)="deleteMovie(m.id)">Usuń</button>

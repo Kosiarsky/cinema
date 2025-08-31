@@ -142,6 +142,25 @@ h2 {
   transition: background-color 0.3s ease, border 0.3s ease;
 }
 
+.film-card2 {
+  cursor: pointer;
+  height: 500px !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  background-color: #050A11 !important;
+  border: 2px solid #0f1b2f !important;
+  box-sizing: border-box;
+  transition: background-color 0.3s ease, border 0.3s ease;
+}
+
+.film-card2:hover {
+  background-color: #0f1b2f !important;
+  border: 2px solid #cc0000 !important;
+  transition: background-color 0.3s ease, border 0.3s ease;
+}
+
 .card img {
   height: 270px;
   object-fit: cover;

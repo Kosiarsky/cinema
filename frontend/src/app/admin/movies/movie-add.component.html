@@ -3,6 +3,8 @@
   <a routerLink="/admin/movies" class="btn btn-sm btn-secondary">Powrót do listy</a>
 </div>
 
+<div *ngIf="success" class="alert alert-success">{{ success }}</div>
+
 <form class="row g-1 mb-3" #f="ngForm" (ngSubmit)="createMovie(f)">
   <div class="col-md-4">
     <input class="form-control form-control-sm" [(ngModel)]="form.title" name="title" placeholder="Tytuł" required>
@@ -18,6 +20,12 @@
   <div class="col-12">
     <textarea class="form-control form-control-sm" rows="3" [(ngModel)]="form.description" name="description" placeholder="Opis" required></textarea>
   </div>
+
+  <div class="col-md-4">
+    <input type="date" class="form-control form-control-sm" [(ngModel)]="form.premiere_date" name="premiere_date" placeholder="Data premiery (opcjonalnie)">
+    <small>Ustaw datę premiery aby film był zapowiedzią do tego dnia</small>
+  </div>
+  <div class="col-md-8"></div>
 
   <div class="col-12 mb-2 pb-2 d-flex flex-wrap gap-3">
     <div class="col-12 red-border-bar-small mb-2">Obrazy i zwiastun</div>

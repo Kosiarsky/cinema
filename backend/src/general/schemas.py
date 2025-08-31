@@ -25,3 +25,15 @@ class SlideResponse(BaseModel):
 
     class Config:
         orm_mode = True
+
+class AnnouncementResponse(BaseModel):
+    id: int
+    title: str
+    image: str | None = None
+    description: str | None = None
+    cast: str | None = None
+    duration: str | None = None
+    premiere_date: date | None = None
+
+    class Config:
+        orm_mode = True

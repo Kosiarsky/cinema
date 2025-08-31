@@ -40,6 +40,7 @@ class Movie(Base):
     big_image = Column(String, nullable=True)
     trailer = Column(String, nullable=True)
     cast = Column(String, nullable=True)
+    premiere_date = Column(Date, nullable=True)  # New: optional premiere date to mark upcoming/announcements
 
     schedules = relationship("Schedule", back_populates="movie")
     categories = relationship(
