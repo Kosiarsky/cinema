@@ -244,6 +244,7 @@ export class ServerService {
 
   getRecommendationsAnon(limit: number = 10): Observable<any[]> {
     const params = new HttpParams().set('limit', limit);
-    return this.http.get<any[]>(`${this.baseUrl}/user/recommendations`, { params });
+    const headers = new HttpHeaders().set('X-Skip-Auth', '1');
+    return this.http.get<any[]>(`${this.baseUrl}/user/recommendations`, { params, headers });
   }
 }

@@ -42,9 +42,23 @@ export class AuthService {
     );
   }
 
+  private setCookie(name: string, value: string, days = 7) {
+    if (!isPlatformBrowser(this.platformId)) return;
+    const d = new Date();
+    d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
+    const expires = `expires=${d.toUTCString()}`;
+    document.cookie = `${name}=${encodeURIComponent(value)}; ${expires}; Path=/; SameSite=Lax`;
+  }
+
+  private deleteCookie(name: string) {
+    if (!isPlatformBrowser(this.platformId)) return;
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; Path=/; SameSite=Lax`;
+  }
+
   saveToken(token: string): void {
     if (isPlatformBrowser(this.platformId)) {
       localStorage.setItem('auth_token', token); 
+      this.setCookie('auth_token', token);
     }
   }
 
@@ -73,6 +87,7 @@ export class AuthService {
       localStorage.removeItem('auth_token'); 
       localStorage.removeItem('refresh_token'); 
       localStorage.removeItem('user');
+      this.deleteCookie('auth_token');
     }
     this.router.navigate(['/login']);
   }
@@ -111,7 +126,14 @@ export class AuthService {
 
   refreshToken() {
     const refresh_token = this.getRefreshToken();
-    return this.http.post<any>(`${this.baseUrl}/refresh-token`, { refresh_token });
+    return this.http.post<any>(`${this.baseUrl}/refresh-token`, { refresh_token }).pipe(
+      map((data) => {
+        if (data?.access_token) {
+          this.saveToken(data.access_token); 
+        }
+        return data;
+      })
+    );
   }
 
   twoFASetup(): Observable<{ secret: string; otpauth_url: string; qr_data_url: string }> {

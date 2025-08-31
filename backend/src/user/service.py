@@ -523,12 +523,14 @@ def recommend_movies(db: Session, user_id: int | None, limit: int = 10, _fallbac
         norm_rating = (avg / 5.0) if avg else 0.0
         norm_pop = (pop / max_pop) if max_pop > 0 else 0.0
         score = 0.6 * norm_cat + 0.3 * norm_rating + 0.1 * norm_pop
-        scored.append((score, m))
+        title = getattr(m, 'title', '') or ''
+        has_rating = 1 if (avg_map.get(mid) is not None) else 0
+        scored.append((has_rating, score, avg, pop, title, m))
 
     if not scored:
         all_released = {m.id: m for m in db.query(Movie).filter(released_filter).all()}
         top_by_rating = sorted(
-            [(avg or 0.0, mid) for mid, avg in avg_map.items() if mid in all_released], reverse=True
+            [(avg or 0.0, mid) for mid, avg in avg_rows if mid in all_released], reverse=True
         )
         picked_ids: list[int] = []
         for _, mid in top_by_rating:
@@ -544,7 +546,7 @@ def recommend_movies(db: Session, user_id: int | None, limit: int = 10, _fallbac
                     break
         movies = [all_released[mid] for mid in picked_ids]
     else:
-        movies = [m for _, m in sorted(scored, key=lambda x: x[0], reverse=True)[:limit]]
+        movies = [m for _, _, _, _, _, m in sorted(scored, key=lambda x: (-x[0], -x[1], -x[2], -x[3], x[4]))[:limit]]
 
     if user_id is not None and not movies and not _fallback:
         return recommend_movies(db, None, limit, _fallback=True)

@@ -8,7 +8,7 @@ import { AuthService } from './services/auth.service';
 import { HttpRequest, HttpHandlerFn, HttpEvent, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
-import { API_BASE_URL_TOKEN, FRONTEND_BASE_URL_TOKEN } from './shared/tokens';
+import { API_BASE_URL_TOKEN, FRONTEND_BASE_URL_TOKEN, SSR_AUTH_HEADER_TOKEN } from './shared/tokens';
 
 const resolveApiBase = () =>
   (typeof window !== 'undefined' && (window as any).__API_BASE_URL__) ||
@@ -27,20 +27,25 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     { provide: API_BASE_URL_TOKEN, useFactory: resolveApiBase },
     { provide: FRONTEND_BASE_URL_TOKEN, useFactory: resolveFrontendBase },
+    { provide: SSR_AUTH_HEADER_TOKEN, useValue: null },
     provideHttpClient(
       withFetch(),
       withInterceptors([
         (req: HttpRequest<any>, next: HttpHandlerFn): Observable<HttpEvent<any>> => {
           const authService = inject(AuthService);
+          const ssrAuth = inject(SSR_AUTH_HEADER_TOKEN, { optional: true }) || null;
           const token = authService.getToken();
+          const skipAuth = req.headers.has('X-Skip-Auth');
           let modifiedReq = req;
 
-          if (token) {
-            modifiedReq = req.clone({
-              setHeaders: {
-                Authorization: `Bearer ${token}`
-              }
-            });
+          if (skipAuth) {
+            modifiedReq = modifiedReq.clone({ headers: modifiedReq.headers.delete('X-Skip-Auth') });
+          }
+
+          if (ssrAuth && !skipAuth) {
+            modifiedReq = modifiedReq.clone({ setHeaders: { Authorization: ssrAuth } });
+          } else if (token && !skipAuth) {
+            modifiedReq = modifiedReq.clone({ setHeaders: { Authorization: `Bearer ${token}` } });
           }
 
           return next(modifiedReq).pipe(
@@ -50,11 +55,7 @@ export const appConfig: ApplicationConfig = {
                 return authService.refreshToken().pipe(
                   switchMap((data: any) => {
                     authService.saveToken(data.access_token);
-                    const retryReq = req.clone({
-                      setHeaders: {
-                        Authorization: `Bearer ${data.access_token}`
-                      }
-                    });
+                    const retryReq = req.clone({ setHeaders: { Authorization: `Bearer ${data.access_token}` } });
                     return next(retryReq);
                   }),
                   catchError(refreshError => {

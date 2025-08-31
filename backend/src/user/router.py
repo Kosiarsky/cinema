@@ -94,7 +94,6 @@ def buy_ticket(ticket: TicketCreate, db: Session = Depends(get_db), current_user
 def get_my_tickets(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     return service.get_user_tickets(db, current_user.id)
 
-# Reviews
 @router.post("/reviews", response_model=ReviewResponse)
 def create_review(payload: ReviewCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     rev = service.create_review(db, current_user.id, payload.movie_id, payload.rating, payload.comment, bool(payload.is_anonymous))
@@ -107,7 +106,29 @@ def my_reviews(db: Session = Depends(get_db), current_user: User = Depends(get_c
 @router.get('/recommendations')
 def recommended_movies(limit: int = 10, db: Session = Depends(get_db), current_user: User | None = Depends(service.get_current_user_optional)):
     user_id = current_user.id if current_user else None
-    return service.recommend_movies(db, user_id, limit)
+    result = service.recommend_movies(db, user_id, limit)
+
+    def _get(obj, name, default=None):
+        try:
+            return obj.get(name, default)  
+        except Exception:
+            return getattr(obj, name, default)  
+
+    try:
+        def _key(o):
+            rating = _get(o, 'rating', None)
+            has_rating = 1 if rating is not None else 0
+            try:
+                rating_val = float(rating) if rating is not None else 0.0
+            except Exception:
+                rating_val = 0.0
+            title = _get(o, 'title', '') or ''
+            return (-has_rating, -rating_val, title)
+        result = sorted(list(result), key=_key)
+    except Exception:
+        pass
+
+    return result
 
 @router.post('/2fa/setup', response_model=TwoFactorSetupResponse)
 def twofa_setup(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):

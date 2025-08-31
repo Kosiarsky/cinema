@@ -2,12 +2,16 @@
 <div class="third-container">
   <div class="container mt-5 text-light">
     <div class="text-left py-5 bar-border"><h2 class="red-border-bar">POLECANE FILMY</h2></div>
-    <div class="row">
-      <div class="col-md-12" *ngFor="let recommended of recommendedList">
+
+    <div *ngIf="loading" class="mb-3">Ładowanie…</div>
+    <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+    <div class="row" *ngIf="!loading && !error">
+      <div class="col-md-12" *ngFor="let recommended of recommendedList; trackBy: trackByIdx">
         <div class="card announcements-card mb-4 d-flex flex-row">
-          <img [src]="toAbs(recommended.image)" class="announcements-card-img pointer" alt="{{ recommended.title }}" routerLink="/movie/{{ recommended.id }}">
+          <img [src]="toAbs(recommended.image)" class="announcements-card-img pointer" [alt]="recommended.title" [routerLink]="['/movie', recommended.id]">
           <div class="announcements-card-body flex-grow-1">
-            <h3 class="announcements-card-title pointer" routerLink="/movie/{{ recommended.id }}">{{ recommended.title }}</h3>
+            <h3 class="announcements-card-title pointer" [routerLink]="['/movie', recommended.id]">{{ recommended.title }}</h3>
             <p class="announcements-card-text">Ocena: <i class="fa-solid fa-star"></i> {{ recommended.rating }}</p>
             <p class="announcements-card-text">{{ recommended.content }}</p>
             <p class="announcements-card-date">Obsada: {{ recommended.cast }}</p>
