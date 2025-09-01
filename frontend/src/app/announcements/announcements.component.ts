@@ -24,10 +24,27 @@ export class AnnouncementsComponent {
     this.load();
   }
 
+  private pad2(n: number): string { return n < 10 ? `0${n}` : `${n}`; }
+  private todayKey(): string {
+    const now = new Date();
+    return `${now.getFullYear()}-${this.pad2(now.getMonth() + 1)}-${this.pad2(now.getDate())}`;
+  }
+  private isFuturePremiere(v: any): boolean {
+    if (!v) return false;
+    const key = String(v).slice(0, 10);
+    return key > this.todayKey();
+  }
+
   load() {
     this.loading = true; this.error = null;
     this.api.getAnnouncements().subscribe({
-      next: (rows) => { this.newsList = rows || []; this.loading = false; },
+      next: (rows) => {
+        const onlyFuture = (rows || [])
+          .filter(r => this.isFuturePremiere(r?.premiere_date))
+          .sort((a, b) => String(a?.premiere_date || '').localeCompare(String(b?.premiere_date || '')));
+        this.newsList = onlyFuture;
+        this.loading = false;
+      },
       error: () => { this.error = 'Nie udało się pobrać zapowiedzi'; this.loading = false; }
     });
   }

@@ -19,7 +19,9 @@ URLs are centralized and provided via Angular DI tokens, with runtime overrides:
     - `window.__FRONTEND_BASE_URL__ = 'https://app.example.com'`
   - This script is loaded by `src/index.html` and can be swapped during deployment.
 - Server-side rendering (Node) env vars:
-  - Set before starting the SSR server:
+  - Create `frontend/.env` (copy from `.env.example`). These variables are loaded by SSR automatically:
+    - `API_BASE_URL`, `FRONTEND_BASE_URL`, `PORT`
+  - Or set them before starting the SSR server:
     - PowerShell example:
       - `$env:API_BASE_URL = "https://api.example.com"`
       - `$env:FRONTEND_BASE_URL = "https://app.example.com"`

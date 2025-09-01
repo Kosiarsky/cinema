@@ -11,13 +11,13 @@ import { catchError, switchMap } from 'rxjs/operators';
 import { API_BASE_URL_TOKEN, FRONTEND_BASE_URL_TOKEN, SSR_AUTH_HEADER_TOKEN } from './shared/tokens';
 
 const resolveApiBase = () =>
-  (typeof window !== 'undefined' && (window as any).__API_BASE_URL__) ||
   (typeof process !== 'undefined' && (process as any).env && (process as any).env.API_BASE_URL) ||
+  (typeof window !== 'undefined' && (window as any).__API_BASE_URL__) ||
   'http://localhost:8000';
 
 const resolveFrontendBase = () =>
-  (typeof window !== 'undefined' && (window as any).__FRONTEND_BASE_URL__) ||
   (typeof process !== 'undefined' && (process as any).env && (process as any).env.FRONTEND_BASE_URL) ||
+  (typeof window !== 'undefined' && (window as any).__FRONTEND_BASE_URL__) ||
   'http://localhost:4200';
 
 export const appConfig: ApplicationConfig = {

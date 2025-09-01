@@ -82,10 +82,25 @@ export class HomeComponent implements AfterViewInit {
     });
   }
 
+  private pad2(n: number): string { return n < 10 ? `0${n}` : `${n}`; }
+  private todayKey(): string {
+    const now = new Date();
+    return `${now.getFullYear()}-${this.pad2(now.getMonth() + 1)}-${this.pad2(now.getDate())}`;
+  }
+  private isFuturePremiere(v: any): boolean {
+    if (!v) return false;
+    const key = String(v).slice(0, 10);
+    return key > this.todayKey();
+  }
+
   private loadAnnouncements() {
     this.loadingAnnouncements = true; this.announcementsError = null;
     this.api.getAnnouncements(6).subscribe({
-      next: (rows) => { this.upcomingMovies = (rows || []).map(r => ({ id: r.id, image: r.image, title: r.title, description: r.description, premiere_date: r.premiere_date })); this.loadingAnnouncements = false; },
+      next: (rows) => {
+        const onlyFuture = (rows || []).filter(r => this.isFuturePremiere(r?.premiere_date));
+        this.upcomingMovies = onlyFuture.map(r => ({ id: r.id, image: r.image, title: r.title, description: r.description, premiere_date: r.premiere_date }));
+        this.loadingAnnouncements = false;
+      },
       error: () => { this.announcementsError = 'Nie udało się pobrać zapowiedzi'; this.loadingAnnouncements = false; }
     });
   }
