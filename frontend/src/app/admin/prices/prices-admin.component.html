@@ -1,0 +1,69 @@
+<div class="container">
+  <h2 class="mb-3">Cennik</h2>
+
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+  <div *ngIf="success" class="alert alert-success">{{ success }}</div>
+
+  <div class="table-responsive">
+    <table class="table table-dark table-striped align-middle">
+      <thead>
+        <tr>
+          <th>Typ</th>
+          <th>Czw. Tanie</th>
+          <th>3 dni przed</th>
+          <th>2 dni przed</th>
+          <th>1 dzień przed</th>
+          <th>W dniu seansu</th>
+          <th style="width: 1%"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of rows">
+          <td>
+            <ng-container *ngIf="!editing[r.id]; else editType">{{ r.type }}</ng-container>
+            <ng-template #editType>
+              <input class="form-control" [(ngModel)]="editing[r.id].type" />
+            </ng-template>
+          </td>
+          <td>
+            <ng-container *ngIf="!editing[r.id]; else editThu">{{ r.cheap_thursday }}</ng-container>
+            <ng-template #editThu>
+              <input class="form-control" [(ngModel)]="editing[r.id].cheap_thursday" />
+            </ng-template>
+          </td>
+          <td>
+            <ng-container *ngIf="!editing[r.id]; else edit3">{{ r.three_days_before }}</ng-container>
+            <ng-template #edit3>
+              <input class="form-control" [(ngModel)]="editing[r.id].three_days_before" />
+            </ng-template>
+          </td>
+          <td>
+            <ng-container *ngIf="!editing[r.id]; else edit2">{{ r.two_days_before }}</ng-container>
+            <ng-template #edit2>
+              <input class="form-control" [(ngModel)]="editing[r.id].two_days_before" />
+            </ng-template>
+          </td>
+          <td>
+            <ng-container *ngIf="!editing[r.id]; else edit1">{{ r.one_day_before }}</ng-container>
+            <ng-template #edit1>
+              <input class="form-control" [(ngModel)]="editing[r.id].one_day_before" />
+            </ng-template>
+          </td>
+          <td>
+            <ng-container *ngIf="!editing[r.id]; else edit0">{{ r.same_day }}</ng-container>
+            <ng-template #edit0>
+              <input class="form-control" [(ngModel)]="editing[r.id].same_day" />
+            </ng-template>
+          </td>
+          <td class="text-nowrap">
+            <button *ngIf="!editing[r.id]" class="btn btn-sm btn-primary me-2" (click)="startEdit(r)">Edytuj</button>
+            <ng-container *ngIf="editing[r.id]">
+              <button class="btn btn-sm btn-success me-2" (click)="save(r.id)">Zapisz</button>
+              <button class="btn btn-sm btn-secondary" (click)="cancelEdit(r.id)">Anuluj</button>
+            </ng-container>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -76,6 +76,13 @@ export class ServerService {
     return this.http.get<any[]>(`${this.baseUrl}/general/ticket-prices`);
   }
 
+  adminListTicketPrices(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/admin/ticket-prices`, this.authHeaders());
+  }
+  adminUpdateTicketPrice(id: number, payload: { type?: string; cheap_thursday?: string; three_days_before?: string; two_days_before?: string; one_day_before?: string; same_day?: string }): Observable<any> {
+    return this.http.patch<any>(`${this.baseUrl}/admin/ticket-prices/${id}`, payload, this.authHeaders());
+  }
+
   getSlides(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}/general/public/slides`);
   }

@@ -50,3 +50,11 @@ class NewsUpdate(BaseModel):
     image: Optional[str] = None
     movie_id: Optional[int] = None
     is_public: Optional[bool] = None
+
+class TicketPriceUpdate(BaseModel):
+    type: Optional[str] = None
+    cheap_thursday: Optional[str] = None
+    three_days_before: Optional[str] = None
+    two_days_before: Optional[str] = None
+    one_day_before: Optional[str] = None
+    same_day: Optional[str] = None

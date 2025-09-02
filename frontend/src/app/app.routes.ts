@@ -26,6 +26,7 @@ import { MovieAddComponent } from './admin/movies/movie-add.component';
 import { SlidesAdminComponent } from './admin/slides/slides-admin.component';
 import { NewsAdminComponent } from './admin/news/news-admin.component';
 import { NewsDetailComponent } from './news/news-detail.component';
+import { PricesAdminComponent } from './admin/prices/prices-admin.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -75,6 +76,7 @@ export const routes: Routes = [
       { path: 'users', component: UsersAdminComponent },
       { path: 'slides', component: SlidesAdminComponent },
       { path: 'news', component: NewsAdminComponent },
+      { path: 'prices', component: PricesAdminComponent },
     ] },
     { path: '**', redirectTo: 'not-found' }
 ];

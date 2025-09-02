@@ -5,10 +5,10 @@ from user import service
 from user.schemas import UserCreate, UserResponse, UserLogin
 from user.service import admin_required
 from sqlalchemy import func
-from schemas import Ticket, TicketSeat, Schedule, Movie, Slide, News
+from schemas import Ticket, TicketSeat, Schedule, Movie, Slide, News, TicketPrice
 from datetime import date, timedelta, datetime
 from typing import Optional
-from admin.schemas import SlideCreate, SlideUpdate, NewsCreate, NewsUpdate
+from admin.schemas import SlideCreate, SlideUpdate, NewsCreate, NewsUpdate, TicketPriceUpdate
 
 router = APIRouter()
 
@@ -324,3 +324,28 @@ def admin_delete_news(news_id: int, db: Session = Depends(get_db), current_user 
     db.delete(n)
     db.commit()
     return { 'status': 'ok' }
+
+@router.get('/ticket-prices')
+def admin_list_ticket_prices(db: Session = Depends(get_db), current_user = Depends(admin_required)):
+    return db.query(TicketPrice).order_by(TicketPrice.id.asc()).all()
+
+@router.patch('/ticket-prices/{price_id}')
+def admin_update_ticket_price(price_id: int, payload: TicketPriceUpdate, db: Session = Depends(get_db), current_user = Depends(admin_required)):
+    row = db.query(TicketPrice).filter(TicketPrice.id == price_id).first()
+    if not row:
+        raise HTTPException(status_code=404, detail='Pozycja cennika nie istnieje')
+    if payload.type is not None:
+        row.type = payload.type
+    if payload.cheap_thursday is not None:
+        row.cheap_thursday = payload.cheap_thursday
+    if payload.three_days_before is not None:
+        row.three_days_before = payload.three_days_before
+    if payload.two_days_before is not None:
+        row.two_days_before = payload.two_days_before
+    if payload.one_day_before is not None:
+        row.one_day_before = payload.one_day_before
+    if payload.same_day is not None:
+        row.same_day = payload.same_day
+    db.commit()
+    db.refresh(row)
+    return row
