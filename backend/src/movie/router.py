@@ -71,14 +71,8 @@ def upload_image(file: UploadFile = File(...), request: Request = None, current_
     path = os.path.join(uploads_dir, filename)
     with open(path, 'wb') as f:
         f.write(file.file.read())
-    try:
-        if request is not None:
-            abs_url = str(request.url_for('static', path=f'uploads/{filename}'))
-        else:
-            abs_url = f"/api/static/uploads/{filename}"
-    except Exception:
-        abs_url = f"/api/static/uploads/{filename}"
-    return { 'url': abs_url }
+    rel_url = f"/api/static/uploads/{filename}"
+    return { 'url': rel_url }
 
 @router.get("/movies/{movie_id}/schedules", response_model=list[ScheduleSchema])
 def get_schedules_for_movie(movie_id: int, db: Session = Depends(get_db)):

@@ -6,6 +6,9 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve } from 'node:path';
 import bootstrap from './src/main.server';
 import { SSR_AUTH_HEADER_TOKEN } from './src/app/shared/tokens';
+// Add HTTPS & FS support
+import https from 'node:https';
+import fs from 'node:fs';
 
 export function app(): express.Express {
   const server = express();
@@ -17,6 +20,8 @@ export function app(): express.Express {
 
   server.set('view engine', 'html');
   server.set('views', browserDistFolder);
+  // Ensure Express respects X-Forwarded-* headers when behind a proxy and sets req.protocol accordingly
+  server.set('trust proxy', true);
 
 
   server.get('*.*', express.static(browserDistFolder, {
@@ -67,9 +72,29 @@ export function app(): express.Express {
 
 function run(): void {
   const port = process.env['PORT'] || 4000;
+  const useHttps = String(process.env['FRONTEND_USE_HTTPS'] || '').toLowerCase() === 'true';
+  const keyPath = process.env['FRONTEND_SSL_KEY_PATH'];
+  const certPath = process.env['FRONTEND_SSL_CERT_PATH'];
 
-  const server = app();
-  server.listen(port, () => {
+  const expressApp = app();
+
+  if (useHttps && keyPath && certPath) {
+    const resolvedKey = resolve(String(keyPath));
+    const resolvedCert = resolve(String(certPath));
+
+    const options: https.ServerOptions = {
+      key: fs.readFileSync(resolvedKey),
+      cert: fs.readFileSync(resolvedCert),
+    };
+
+    const httpsServer = https.createServer(options, expressApp);
+    httpsServer.listen(port, () => {
+      console.log(`Node Express server listening on https://localhost:${port}`);
+    });
+    return;
+  }
+
+  const httpServer = expressApp.listen(port, () => {
     console.log(`Node Express server listening on http://localhost:${port}`);
   });
 }

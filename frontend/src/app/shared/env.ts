@@ -4,7 +4,7 @@ function resolveApiBase(): string {
   return (
     (typeof window !== 'undefined' && (window as any).__API_BASE_URL__) ||
     (typeof process !== 'undefined' && (process as any).env && (process as any).env.API_BASE_URL) ||
-    'http://localhost:8000'
+    'https://127.0.0.1:8000'
   );
 }
 

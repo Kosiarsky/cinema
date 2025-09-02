@@ -16,7 +16,7 @@
               <input type="file" class="form-control form-control-sm" accept="image/png,image/jpeg" (change)="onCreateFileChange($event)" />
               <small>Wgraj plik (PNG/JPG)</small>
               <div class="mt-1" *ngIf="form.image">
-                <a [href]="form.image" target="_blank" class="badge bg-tickets">podgląd</a>
+                <a [href]="toAbs(form.image)" target="_blank" class="badge bg-tickets">podgląd</a>
               </div>
             </div>
             <div class="col-12 col-md-12">
@@ -43,7 +43,7 @@
                (dragstart)="onDragStart(s.id)" (dragover)="onDragOver($event)" (drop)="onDrop(s.id)">
             <div *ngIf="!editing[s.id]">
               <div class="d-flex align-items-center mb-2">
-                <img [src]="s.image" style="width: 180px; height: 72px; object-fit: cover; border: 1px solid #11213b;" class="me-3 rounded" />
+                <img [src]="toAbs(s.image)" style="width: 180px; height: 72px; object-fit: cover; border: 1px solid #11213b;" class="me-3 rounded" />
                 <div class="flex-grow-1">
                   <div class="fw-bold">{{ s.title }} <span class="badge" [class.bg-success]="s.is_public" [class.bg-secondary]="!s.is_public">{{ s.is_public ? 'Publiczny' : 'Ukryty' }}</span></div>
                   <div class="text-muted2">{{ s.description }}</div>
@@ -66,7 +66,7 @@
                   <input type="file" class="form-control form-control-sm" accept="image/png,image/jpeg" (change)="onEditFileChange(s.id, $event)" />
                   <small>Wgraj plik (PNG/JPG)</small>
                   <div class="mt-1" *ngIf="editing[s.id].image">
-                    <a [href]="editing[s.id].image" target="_blank" class="badge bg-tickets">podgląd</a>
+                    <a [href]="toAbs(editing[s.id].image)" target="_blank" class="badge bg-tickets">podgląd</a>
                   </div>
                 </div>
                 

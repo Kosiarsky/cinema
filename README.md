@@ -1,14 +1,14 @@
-# Cinema (Angular + FastAPI) — uruchomienie i konfiguracja na Windows (PowerShell)
+# Cinema (Angular + FastAPI) — uruchomienie i konfiguracja na Windows
 Aplikacja to system kina. Frontend - Angular 17, backend - FastAPI, baza danych - PostgreSQL. Całość korzysta z JWT do autoryzacji, Alembica do migracji oraz Stripe do płatności.
 
 Najważniejsze elementy:
 - Frontend: Angular, komunikacja z API, widoki: repertuar, szczegóły filmu, lista seansów, wybór miejsc, koszyk/checkout, panel konta, panel administratora; konfiguracja przez plik .env.
 - Backend: FastAPI z root_path /api, moduły: uwierzytelnianie (JWT access/refresh), filmy, seanse, sale/miejsca, rezerwacje, płatności (Stripe), użytkownicy; walidacja Pydantic, SQLAlchemy (async), CORS; migracje przez Alembica; dokumentacja OpenAPI pod /api/docs.
 - Baza: PostgreSQL; inicjalizacja przez snapshot lub migracje.
-- Konfiguracja: backend/.env (DB URL, klucze JWT, Stripe, CORS), frontend/.env (adresy API/Frontend, port SSR).
+- Konfiguracja: backend/.env (DB URL, klucze JWT, Stripe, CORS), frontend/.env (adresy API/Frontend, port SSR) + certy w katalogu certs/ na poziomie repo.
 - Przepływ użytkownika: przegląd repertuaru → wybór seansu i miejsc → rezerwacja → płatność Stripe → potwierdzenie; panel administracyjny umożliwia zarządzanie repertuarem.
 
-Adresy domyślne (dev): API http://localhost:8000/api, frontend http://localhost:4200.
+Adresy domyślne (dev): API https://localhost:8000/api, frontend https://localhost:4000.
 
 Poniżej zwięzły przewodnik. Zawiera instrukcje konfiguracji, snapshotu bazy i startu "na czysto" z Alembica.
 
@@ -22,6 +22,7 @@ Poniżej zwięzły przewodnik. Zawiera instrukcje konfiguracji, snapshotu bazy i
 ## Struktura repo (skrócona)
 - backend/ — FastAPI, Alembic, zależności Pythona
 - frontend/ — Angular 17 
+- certs/ — lokalne certyfikaty deweloperskie (nie dodawaj do repo)
 
 ## 1) Baza danych (PostgreSQL + pgAdmin)
 1. Zainstaluj PostgreSQL i pgAdmin.
@@ -37,7 +38,7 @@ Katalog: backend/
 ### 2.1 Konfiguracja
 Pliki konfiguracyjne:
 - backend/src/config.py
-- backend/.env =
+- backend/.env
 
 Co uzupełnić/zmienić:
 - Łącze do bazy:
@@ -49,11 +50,11 @@ Co uzupełnić/zmienić:
     - przykład generowania: python -c "import secrets; print(secrets.token_urlsafe(64))"
   - ACCESS_TOKEN_EXPIRE_MINUTES, REFRESH_TOKEN_EXPIRE_MINUTES — opcjonalnie (w src/config.py)
 - CORS/URL frontendu:
-  - backend/.env → FRONTEND_BASE_URL (np. http://localhost:4200)
+  - backend/.env → FRONTEND_BASE_URL (np. http://localhost:4000)
 - Stripe :
   - backend/.env → STRIPE_SECRET_KEY
 
-Uwaga: Aplikacja FastAPI działa z root_path='/api', więc API będzie pod http://localhost:8000/api.
+Uwaga: Aplikacja FastAPI działa z root_path='/api', więc API będzie pod https://127.0.0.1:8000/api.
 
 ### 2.2 Instalacja zależności (PowerShell)
 - python -m venv venv
@@ -65,8 +66,8 @@ Uwaga: Aplikacja FastAPI działa z root_path='/api', więc API będzie pod http:
 - Wykonaj migracje: alembic upgrade head
 
 ### 2.4 Start serwera API (dev)
-- fastapi dev ./main.py
-- API: http://localhost:8000/api
+- uvicorn main:app --host 127.0.0.1 --port 8000 --ssl-keyfile ..\..\certs\localhost.key --ssl-certfile ..\..\certs\localhost.crt
+- API: https://127.0.0.1:8000/api
 
 ## 3) Frontend (Angular)
 Katalog: frontend/
@@ -82,27 +83,26 @@ Katalog: frontend/
 
 ### 3.3 Plik .env w frontendzie
 - Skopiuj frontend/.env.example do frontend/.env i ustaw:
-  - API_BASE_URL=http://localhost:8000
-  - FRONTEND_BASE_URL=http://localhost:4200
+  - API_BASE_URL=https://localhost:8000
+  - FRONTEND_BASE_URL=https://localhost:4000
   - PORT=4000 (port SSR)
-- SSR ładuje .env automatycznie (import 'dotenv/config' w server.ts).
+  - FRONTEND_USE_HTTPS=true
+  - FRONTEND_SSL_KEY_PATH=../certs/localhost.key (lub .pem w zależności co wygenerujesz)
+  - FRONTEND_SSL_CERT_PATH=../certs/localhost.crt
+- SSR ładuje .env automatycznie (import 'dotenv/config' w server.ts). Skrypt prebuild/prestart synchronizuje runtime-config dla CSR.
 
-### 3.4 Start frontendu (dev, CSR)
-- npm start
-- Aplikacja: http://localhost:4200/
+### 3.4 Certyfikaty
+- OpenSSL:
+  - Uruchom z poziomu katalogu repo:
+    - openssl req -x509 -newkey rsa:2048 -nodes -keyout certs/localhost.key -out certs/localhost.crt -days 365 -subj "/CN=localhost"
+  - Jeśli jesteś w katalogu certs/: pomiń prefiks certs/ w ścieżkach wyjściowych.
 
-## 4) Ustawienia/sekcje do edycji (szybkie podsumowanie)
-- backend/.env
-  - SQLALCHEMY_DATABASE_URL — łącze do bazy (używane przez aplikację i Alembic)
-  - JWT_SECRET_KEY — koniecznie ustaw
-  - FRONTEND_BASE_URL — adres frontendu
-  - STRIPE_SECRET_KEY 
-- backend/alembic.ini
-  - może pozostać domyślny; URL i tak nadpisuje .env (przez `alembic/env.py`)
-- frontend/.env
-  - API_BASE_URL, FRONTEND_BASE_URL, PORT — używane przez SSR i synchronizowane do CSR
+### 3.5 Start frontendu
+- ng serve --ssl true --ssl-key ../certs/localhost.key --ssl-cert ../certs/localhost.crt --port 4000
+- Aplikacja: https://localhost:4000/
 
-## 5) Inicjalizacja bazy — snapshot vs. Alembic (na czysto)
+
+## 4) Inicjalizacja bazy — snapshot vs. Alembic (na czysto)
 Masz dwie drogi:
 
 ### A) Przywrócenie snapshotu (szybkie odwzorowanie aktualnych danych — domyślna ścieżka)
@@ -116,16 +116,18 @@ Masz dwie drogi:
 - Upewnij się, że `backend/.env` zawiera poprawny `SQLALCHEMY_DATABASE_URL`
 - Uruchom migracje: alembic upgrade head
 
-## 7) Kolejność uruchomienia (dev)
+## 7) Kolejność uruchomienia 
 1. Baza: upewnij się, że PostgreSQL działa; utwórz bazę apollo.
 2. Backend:
    - venv → pip install
    - ustaw backend/.env (SQLALCHEMY_DATABASE_URL, JWT_SECRET_KEY, FRONTEND_BASE_URL, CORS_ALLOW_ORIGINS)
-   - alembic upgrade head (lub przywróć snapshot)
-   - fastapi dev ./main.py
+   - alembic upgrade head (lub przywróć snapshot - opisane wcześniej)
+   - w folderze src:
+     uvicorn main:app --host 127.0.0.1 --port 8000 --ssl-keyfile ..\..\certs\localhost.key --ssl-certfile ..\..\certs\localhost.crt
 3. Frontend:
    - npm install
-   - ustaw frontend/.env (API_BASE_URL, FRONTEND_BASE_URL, PORT)
-   - npm start
+   - ustaw frontend/.env (API_BASE_URL, FRONTEND_BASE_URL, PORT, FRONTEND_USE_HTTPS=true, ścieżki certów z certs/)
+   - w folderze frontend:
+     ng serve --ssl true --ssl-key ../certs/localhost.key --ssl-cert ../certs/localhost.crt --port 4000
 
-Gotowe. Po wykonaniu powyższych kroków można już korzystać z systemu kina!
+Gotowe. Po wykonaniu powyższych kroków możesz korzystać z systemu kina pod HTTPS.

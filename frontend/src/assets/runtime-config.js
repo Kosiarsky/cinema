@@ -1,10 +1,10 @@
 // Runtime overrides for frontend URLs.
-// Edit or replace this file during deployment to customize environments without rebuilding.
-// Leave values undefined to fall back to defaults in src/app/shared/env.ts
+// Edit this file to hard-set URLs for CSR builds without changing .env.
+// If left undefined, the app falls back to values from .env (SSR) or defaults.
 
-// Example:
-// window.__API_BASE_URL__ = "https://api.mycinema.com";
-// window.__FRONTEND_BASE_URL__ = "https://app.mycinema.com";
+// API base URL (e.g., "https://127.0.0.1:8000")
+window.__API_BASE_URL__ = "https://127.0.0.1:8000";
 
-window.__API_BASE_URL__ = window.__API_BASE_URL__ || undefined;
-window.__FRONTEND_BASE_URL__ = window.__FRONTEND_BASE_URL__ || undefined;
+// Frontend public URL (used rarely)
+window.__FRONTEND_BASE_URL__ = "https://localhost:4000";
+

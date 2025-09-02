@@ -42,3 +42,13 @@ testem.log
 Thumbs.db
 
 .env
+
+# SSL certs (local)
+certs/localhost.key
+certs/localhost.crt
+# Top-level certs (when referenced from frontend)
+../certs/localhost.key
+../certs/localhost.crt
+
+# Do not commit environment runtime overrides
+src/assets/runtime-config.js

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminMenuComponent } from '../admin-menu/admin-menu.component';
 import { ServerService } from '../../services/server.service';
+import { toAbs as toAbsHelper } from '../../shared/env';
 
 @Component({
   selector: 'app-news-admin',
@@ -25,6 +26,8 @@ export class NewsAdminComponent implements OnInit {
     this.load();
     this.api.getMovies().subscribe(m => this.movies = m || []);
   }
+
+  toAbs(url?: string): string { return (toAbsHelper(url) || '') as string; }
 
   load() {
     this.api.adminListNews().subscribe({

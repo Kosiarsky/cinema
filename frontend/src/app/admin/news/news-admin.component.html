@@ -13,7 +13,7 @@
         <div class="col-12 col-md-6 mb-3">
           <input type="file" class="form-control form-control-sm" (change)="onCreateFileChange($event)" />
           <small *ngIf="uploading">Przesyłanie...</small>
-          <div *ngIf="form.image" class="mt-2"><img [src]="form.image" style="max-height:100px"></div>
+          <div *ngIf="form.image" class="mt-2"><img [src]="toAbs(form.image)" style="max-height:100px"></div>
           <label class="form-label">Obraz (opcjonalnie)</label>
         </div>
         <div class="col-12 col-md-6 mb-3">
@@ -62,9 +62,9 @@
                 <td *ngIf="editing[n.id]"><input type="date" class="form-control form-control-sm" [(ngModel)]="editing[n.id].date" /></td>
 
                 <td>
-                  <img *ngIf="!editing[n.id] && n.image" [src]="n.image" style="max-height:60px" />
+                  <img *ngIf="!editing[n.id] && n.image" [src]="toAbs(n.image)" style="max-height:60px" />
                   <div *ngIf="editing[n.id]" class="d-flex align-items-center gap-2">
-                    <img *ngIf="editing[n.id].image" [src]="editing[n.id].image" style="max-height:60px" />
+                    <img *ngIf="editing[n.id].image" [src]="toAbs(editing[n.id].image)" style="max-height:60px" />
                     <input type="file" class="form-control form-control-sm" (change)="onEditFileChange(n.id, $event)" />
                   </div>
                 </td>
@@ -106,9 +106,9 @@
                         <h5 class="mb-1">{{ editing[n.id].title || n.title }}</h5>
                         <small class="text-muted">{{ editing[n.id].date || n.date }}</small>
                         <div class="mt-2">
-                          <img *ngIf="editing[n.id].image; else fallbackImg" [src]="editing[n.id].image" style="max-height:120px" />
+                          <img *ngIf="editing[n.id].image; else fallbackImg" [src]="toAbs(editing[n.id].image)" style="max-height:120px" />
                           <ng-template #fallbackImg>
-                            <img *ngIf="n.image" [src]="n.image" style="max-height:120px" />
+                            <img *ngIf="n.image" [src]="toAbs(n.image)" style="max-height:120px" />
                           </ng-template>
                         </div>
                         <div class="mt-2" style="white-space: pre-line;">{{ editing[n.id].content }}</div>
