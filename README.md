@@ -131,3 +131,48 @@ Masz dwie drogi:
      ng serve --ssl true --ssl-key ../certs/localhost.key --ssl-cert ../certs/localhost.crt --port 4000
 
 Gotowe. Po wykonaniu powyższych kroków możesz korzystać z systemu kina pod HTTPS.
+
+## Galeria zrzutów ekranu
+
+### Strona główna
+  <p align="center">
+    <a href="img/stronaglowna1.png"><img src="img/stronaglowna1.png" alt="Strona główna 1" width="500"></a>
+    <a href="img/stronaglowna2.png"><img src="img/stronaglowna2.png" alt="Strona główna 2" width="500"></a>
+    <a href="img/stronaglowna3.png"><img src="img/stronaglowna3.png" alt="Strona główna 3" width="500"></a>
+  </p>
+
+### Repertuar, aktualności, polecane filmy
+  <p align="center">
+    <a href="img/repertuar.png"><img src="img/repertuar.png" alt="Repertuar" width="500"></a>
+    <a href="img/aktualnosci.png"><img src="img/aktualnosci.png" alt="Aktualności" width="500"></a>
+    <a href="img/polecane.png"><img src="img/polecane.png" alt="Polecane" width="500"></a>
+  </p>
+
+### Szczegóły filmu
+  <p align="center">
+    <a href="img/film1.png"><img src="img/film1.png" alt="Szczegóły filmu 1" width="500"></a>
+    <a href="img/film2.png"><img src="img/film2.png" alt="Szczegóły filmu 2" width="500"></a>
+    <a href="img/film3.png"><img src="img/film3.png" alt="Szczegóły filmu 3" width="500"></a>
+  </p>
+
+### Zakup Biletu
+  <p align="center">
+    <a href="img/wybormiejsc.png"><img src="img/wybormiejsc.png" alt="Wybór miejsc" width="500"></a>
+    <a href="img/wyborbiletow.png"><img src="img/wyborbiletow.png" alt="Wybór biletów" width="500"></a>
+    <a href="img/zakupionybilet.png"><img src="img/zakupionybilet.png" alt="Zakupiony bilet" width="500"></a>
+  </p>
+
+### Profil klienta, cennik kina
+  <p align="center">
+    <a href="img/profilklienta.png"><img src="img/profilklienta.png" alt="Profil klienta" width="500"></a>
+    <a href="img/cennik.png"><img src="img/cennik.png" alt="Cennik (panel admina)" width="500"></a>
+  </p>
+
+### Panel administratora
+  <p align="center">
+    <a href="img/admin1.png"><img src="img/admin1.png" alt="Panel admina 1" width="500"></a>
+    <a href="img/admin2.png"><img src="img/admin2.png" alt="Panel admina 2" width="500"></a>
+    <a href="img/admin3.png"><img src="img/admin3.png" alt="Panel admina 3" width="500"></a>
+    <a href="img/admin4.png"><img src="img/admin4.png" alt="Panel admina 4" width="500"></a>
+    <a href="img/admin5.png"><img src="img/admin5.png" alt="Panel admina 5" width="500"></a>
+  </p>
